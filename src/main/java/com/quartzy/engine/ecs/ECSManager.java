@@ -37,6 +37,15 @@ public class ECSManager{
         }
     }
     
+    public void initComponents(){
+        for(ComponentManager value : components.values()){
+            for(Object o : value.getComponents().values()){
+                Component component = (Component) o;
+                component.init();
+            }
+        }
+    }
+    
     public <T extends Component> T getComponent(short entityId, Class<T> clazz){
         if(!components.containsKey(clazz))return null;
         return (T) components.get(clazz).getComponent(entityId);

@@ -4,6 +4,7 @@ import com.quartzy.engine.ecs.Component;
 import lombok.CustomLog;
 import lombok.Getter;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,7 +26,16 @@ public class BehaviourComponent extends Component{
         behaviour.update(delta);
     }
     
-    public void start(){
+    @Override
+    public void init(){
+        try{
+            Field entityId = Behaviour.class.getDeclaredField("entityId");
+            entityId.setAccessible(true);
+            entityId.setShort(this.behaviour, this.entityId);
+            entityId.setAccessible(false);
+        } catch(NoSuchFieldException | IllegalAccessException e){
+            log.warning("Can't access 'entityId' field from %s class?!", e, Behaviour.class.getName());
+        }
         behaviour.start();
     }
     

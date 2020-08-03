@@ -1,6 +1,7 @@
 import com.quartzy.engine.ApplicationClient;
 import com.quartzy.engine.Client;
 import com.quartzy.engine.ecs.ECSManager;
+import com.quartzy.engine.ecs.components.BehaviourComponent;
 import com.quartzy.engine.ecs.components.RigidBodyComponent;
 import com.quartzy.engine.ecs.components.TextureComponent;
 import com.quartzy.engine.graphics.Window;
@@ -21,11 +22,10 @@ public class Game implements ApplicationClient{
         World.setCurrentWorld(world);
     
         ECSManager ecsManager = world.getEcsManager();
-        short entity = ecsManager.createEntity();
+        short entity = ecsManager.createBlankObject();
+        ecsManager.addComponentToEntity(entity, new RigidBodyComponent(64, 64, 200, 200));
         ecsManager.addComponentToEntity(entity, new TextureComponent(client.getTextureManager().getTexture("stone")));
-    
-        RigidBodyComponent rigidBody = ecsManager.getComponent(entity, RigidBodyComponent.class);
-        rigidBody.getBody().translate(100, 100);
+        ecsManager.addComponentToEntity(entity, new BehaviourComponent(TestBehaviour.class));
     }
     
     @Override

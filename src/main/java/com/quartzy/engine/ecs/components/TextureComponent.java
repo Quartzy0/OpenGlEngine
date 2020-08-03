@@ -29,6 +29,11 @@ public class TextureComponent extends Component{
     }
     
     @Override
+    public void init(){
+    
+    }
+    
+    @Override
     public List<Class<? extends Component>> requiredComponents(){
         return Collections.singletonList(RigidBodyComponent.class);
     }

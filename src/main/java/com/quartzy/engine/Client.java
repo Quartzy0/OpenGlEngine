@@ -1,6 +1,7 @@
 package com.quartzy.engine;
 
 import com.quartzy.engine.audio.SoundManager;
+import com.quartzy.engine.events.Input;
 import com.quartzy.engine.events.KeyPressed;
 import com.quartzy.engine.events.Keyboard;
 import com.quartzy.engine.events.Mods;
@@ -35,7 +36,6 @@ public class Client{
     
     private int tickInSecond;
     private Renderer renderer;
-    private Keyboard keyboard;
     private SoundManager soundManager;
     private ResourceManager resourceManager;
     private TextureManager textureManager;
@@ -77,10 +77,11 @@ public class Client{
         }else {
             networkManager = new NetworkManager(Side.CLIENT);
         }
-        keyboard = new Keyboard(window.getId());
+        Input.init(window.getId());
         soundManager = new SoundManager();
         textureManager = new TextureManager();
-        keyboard.addListener(GLFW_KEY_ESCAPE, new KeyPressed(){
+        resourceManager = new ResourceManager(true, true, soundManager, textureManager);
+        Input.getKeyboard().addListener(GLFW_KEY_ESCAPE, new KeyPressed(){
             @Override
             public void pressed(int scancode, int action, Mods mods){
                 if(action==GLFW_PRESS){
@@ -88,7 +89,6 @@ public class Client{
                 }
             }
         });
-        resourceManager = new ResourceManager(true, true, soundManager, textureManager);
         renderer = new Renderer();
         Resource resource = resourceManager.addResource(vertexShader);
         Resource resource1 = resourceManager.addResource(fragmentShader);
@@ -174,10 +174,6 @@ public class Client{
         if(World.getCurrentWorld()!=null){
             World.getCurrentWorld().update(delta);
         }
-    }
-    
-    public Keyboard getKeyboard(){
-        return keyboard;
     }
     
     public SoundManager getSoundManager(){

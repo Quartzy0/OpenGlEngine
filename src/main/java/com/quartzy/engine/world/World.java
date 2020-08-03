@@ -94,9 +94,7 @@ public class World{
      */
     public void update(float delta){
         if(this.firstRun){
-            for(BehaviourComponent value : ecsManager.getAllEntitiesWithComponent(BehaviourComponent.class).values()){
-                value.start();
-            }
+            ecsManager.initComponents();
             this.firstRun = false;
         }else {
             for(BehaviourComponent value : ecsManager.getAllEntitiesWithComponent(BehaviourComponent.class).values()){
