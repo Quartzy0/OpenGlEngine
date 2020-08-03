@@ -1,0 +1,11 @@
+com.quartzy.engine
+com.quartzy.engine.audio
+com.quartzy.engine.entities
+com.quartzy.engine.entities.components
+com.quartzy.engine.events
+com.quartzy.engine.graphics
+com.quartzy.engine.math
+com.quartzy.engine.text
+com.quartzy.engine.utils
+com.quartzy.engine.world
+com.quartzy.client
