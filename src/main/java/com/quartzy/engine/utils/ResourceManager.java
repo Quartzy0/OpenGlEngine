@@ -63,10 +63,7 @@ public class ResourceManager{
         this.soundManager = soundManager;
     }
     
-    /**
-     * @param gameName Name of the game
-     */
-    public ResourceManager(String gameName){
+    public ResourceManager(){
         this(false,false, null, null);
     }
     
@@ -80,15 +77,20 @@ public class ResourceManager{
             log.warning("Resource provided was null", new NullPointerException("Resource was null"));
             return null;
         }
+        String name = resource.substring(resource.lastIndexOf('/')+1, resource.lastIndexOf('.'));
+        Resource resource111 = resources.get(name);
+        if(resource111!=null){
+            log.warning("A resource by the name %s already exists and so will not be loaded again", name);
+            return resource111;
+        }
         String ext = resource.substring(resource.lastIndexOf('.')+1);
         ResourceType type = ResourceType.UNKNOWN;
         for(ResourceType value : ResourceType.values()){
-            if(Arrays.stream(value.extensions).anyMatch(ext::equals)){
+            if(Arrays.asList(value.extensions).contains(ext)){
                 type = value;
                 break;
             }
         }
-        String name = resource.substring(resource.lastIndexOf('/')+1, resource.lastIndexOf('.'));
         File file = new File(this.gameDir.getAbsolutePath() + File.separator + resource);
         if(!file.exists()){
             String dir = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf(File.separator));

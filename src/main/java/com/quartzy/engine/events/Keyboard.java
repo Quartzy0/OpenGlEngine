@@ -13,6 +13,8 @@ public class Keyboard{
     
     private final GLFWKeyCallback callback;
     
+    private final HashMap<Integer, Boolean> prevKeyStates = new HashMap<>();
+    
     /**
      * Creates the object and sets all of the appropriate GLFW event callbacks
      * @param window The GLFW window id
@@ -36,8 +38,20 @@ public class Keyboard{
      * @param key The GLFW key code
      * @return <code>true</code> if key is pressed, and <code>false</code> if not pressed
      */
-    public boolean isKeyDown(int key){
+    public boolean isKeyPressed(int key){
         return glfwGetKey(window, key)==GLFW_PRESS;
+    }
+    
+    /**
+     * Checks if a key is pressed and was't pressed last time it was checked
+     * @param key The key you want to check for
+     * @return Is the key newly pressed
+     */
+    public boolean isKeyDown(int key){
+        boolean currentState = isKeyPressed(key);
+        boolean b = prevKeyStates.containsKey(key) ? (!prevKeyStates.get(key)) && currentState : currentState;
+        prevKeyStates.put(key, currentState);
+        return b;
     }
     
     /**
