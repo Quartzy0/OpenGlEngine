@@ -80,5 +80,8 @@ public class World{
             }
         }
         this.physicsWorld.update(delta);
+        for(RigidBodyComponent value : ecsManager.getAllEntitiesWithComponent(RigidBodyComponent.class).values()){
+            value.updateTransform();
+        }
     }
 }

@@ -35,6 +35,6 @@ public class TextureComponent extends Component{
     
     @Override
     public List<Class<? extends Component>> requiredComponents(){
-        return Collections.singletonList(RigidBodyComponent.class);
+        return Collections.singletonList(TransformComponent.class);
     }
 }

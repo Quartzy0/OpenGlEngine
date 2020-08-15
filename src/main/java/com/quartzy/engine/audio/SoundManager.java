@@ -119,4 +119,8 @@ public class SoundManager{
             throw new IllegalStateException("OpenAL is not supported on this device");
         }
     }
+    
+    public Sound getSound(String name){
+        return sounds.get(name);
+    }
 }

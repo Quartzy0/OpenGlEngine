@@ -16,33 +16,30 @@ public class RigidBodyComponent extends Component{
     @Getter
     private Body body;
     
-    private double x,y,width,height;
+    private double width,height;
     
     public RigidBodyComponent(double width, double height){
-        this.width = width;
-        this.height = height;
-        this.x = 0;
-        this.y = 0;
-    }
-    
-    public RigidBodyComponent(double width, double height, double x, double y){
-        this.x = x;
-        this.y = y;
         this.width = width;
         this.height = height;
     }
     
     @Override
     public void init(){
+        TransformComponent component = world.getEcsManager().getComponent(entityId, TransformComponent.class);
         this.body = new Body();
+        body.setTransform(component.getTransform());
         body.addFixture(Geometry.createRectangle(width, height));
         body.setMass(new Mass(new Vector2(0, 0), 30, 30));
-        body.translate(x, y);
         world.getPhysicsWorld().addBody(body);
+    }
+    
+    public void updateTransform(){
+        TransformComponent component = world.getEcsManager().getComponent(entityId, TransformComponent.class);
+        component.setTransform(this.body.getTransform());
     }
     
     @Override
     public List<Class<? extends Component>> requiredComponents(){
-        return Collections.emptyList();
+        return Collections.singletonList(TransformComponent.class);
     }
 }

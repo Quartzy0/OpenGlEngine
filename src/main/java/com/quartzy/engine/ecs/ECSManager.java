@@ -1,8 +1,10 @@
 package com.quartzy.engine.ecs;
 
 import com.quartzy.engine.ecs.components.RigidBodyComponent;
+import com.quartzy.engine.ecs.components.TransformComponent;
 import com.quartzy.engine.world.World;
 import lombok.CustomLog;
+import org.dyn4j.geometry.Transform;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,8 +76,8 @@ public class ECSManager{
         while(hasEntity(s)){
             s = (short) r.nextInt(Short.MAX_VALUE + 1);
         }
-        RigidBodyComponent rigidBody = new RigidBodyComponent(64, 64, 0, 0);
-        addComponentToEntity(s, rigidBody);
+        TransformComponent transformComponent = new TransformComponent(new Transform());
+        addComponentToEntity(s, transformComponent);
         return s;
     }
     
