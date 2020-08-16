@@ -1,6 +1,9 @@
 package com.quartzy.engine.audio;
 
+import com.quartzy.engine.ecs.components.AudioListenerComponent;
 import lombok.CustomLog;
+import lombok.Getter;
+import lombok.Setter;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
@@ -23,7 +26,6 @@ public class SoundManager{
     private long device, context;
     private ALCCapabilities alcCapabilities;
     private ALCapabilities alCapabilities;
-    private int sourcePointer = -1;
     
     private HashMap<String, Sound> sounds = new HashMap<>();
     
@@ -44,7 +46,6 @@ public class SoundManager{
         }
         alcDestroyContext(context);
         alcCloseDevice(device);
-        alDeleteSources(sourcePointer);
     }
     
     /**
@@ -79,19 +80,6 @@ public class SoundManager{
         free(rawAudioBuffer);
         
         sounds.put(resource.getName(), new Sound(bufferPointer, resource.getName()));
-    }
-    
-    /**
-     * Play the sound that goes by the name provided
-     * @param name The name of the sound which was specified in the load method
-     */
-    public void play(String name){
-        Sound sound = sounds.get(name);
-        if(sourcePointer==-1){
-            sourcePointer = alGenSources();
-        }
-        alSourcei(sourcePointer, AL_BUFFER, sound.getBufferPointer());
-        alSourcePlay(sourcePointer);
     }
     
     /**

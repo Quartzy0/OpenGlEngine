@@ -22,14 +22,23 @@ public class Game implements ApplicationClient{
         World.setCurrentWorld(world);
     
         ECSManager ecsManager = world.getEcsManager();
-        short entity = ecsManager.createBlankObject();
-        Transform transform = new Transform();
-        transform.setTranslation(20, 20);
-        ecsManager.addComponentToEntity(entity, new TransformComponent(transform));
-        ecsManager.addComponentToEntity(entity, new RigidBodyComponent(64, 64));
-        ecsManager.addComponentToEntity(entity, new AudioSourceComponent());
-        ecsManager.addComponentToEntity(entity, new TextureComponent(client.getTextureManager().getTexture("stone")));
-        ecsManager.addComponentToEntity(entity, new BehaviourComponent(TestBehaviour.class));
+        {
+            short entity = ecsManager.createBlankObject();
+            Transform transform = new Transform();
+            transform.setTranslation(20, 20);
+            ecsManager.addComponentToEntity(entity, new TransformComponent(transform));
+            ecsManager.addComponentToEntity(entity, new AudioSourceComponent());
+            ecsManager.addComponentToEntity(entity, new TextureComponent(client.getTextureManager().getTexture("stone")));
+            ecsManager.addComponentToEntity(entity, new BehaviourComponent(TestBehaviour.class));
+        }
+        {
+            short entity = ecsManager.createBlankObject();
+            Transform transform = new Transform();
+            transform.setTranslation(200, 200);
+            ecsManager.addComponentToEntity(entity, new TransformComponent(transform));
+            ecsManager.addComponentToEntity(entity, new AudioListenerComponent(true));
+            ecsManager.addComponentToEntity(entity, new TextureComponent(client.getTextureManager().getTexture("stone")));
+        }
     }
     
     @Override

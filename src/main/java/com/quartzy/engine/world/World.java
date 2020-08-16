@@ -4,6 +4,7 @@ import com.quartzy.engine.ecs.ECSManager;
 import com.quartzy.engine.ecs.components.BehaviourComponent;
 import com.quartzy.engine.ecs.components.RigidBodyComponent;
 import com.quartzy.engine.ecs.components.TextureComponent;
+import com.quartzy.engine.ecs.components.TransformComponent;
 import com.quartzy.engine.graphics.Renderer;
 import com.quartzy.engine.graphics.Texture;
 import lombok.Getter;
@@ -47,7 +48,7 @@ public class World{
         Texture prevTexture = null;
         renderer.begin();
         for(Map.Entry<Short, TextureComponent> shortComponentEntry : allEntitiesWithComponent.entrySet()){
-            RigidBodyComponent component = ecsManager.getComponent(shortComponentEntry.getKey(), RigidBodyComponent.class);
+            TransformComponent component = ecsManager.getComponent(shortComponentEntry.getKey(), TransformComponent.class);
             if(component==null)continue;
             TextureComponent textureComponent = shortComponentEntry.getValue();
             Texture texture = textureComponent.getTexture();
@@ -61,7 +62,7 @@ public class World{
                 }
                 texture.bind(k);
             }
-            renderer.drawTextureRegion((float) component.getBody().getTransform().getTranslationX(), (float) component.getBody().getTransform().getTranslationY(), textureComponent.getTexture().getWidth(), textureComponent.getTexture().getHeight(), k);
+            renderer.drawTextureRegion((float) component.getTransform().getTranslationX(), (float) component.getTransform().getTranslationY(), textureComponent.getTexture().getWidth(), textureComponent.getTexture().getHeight(), k);
         }
         renderer.end();
     }
@@ -80,7 +81,10 @@ public class World{
             }
         }
         this.physicsWorld.update(delta);
-        for(RigidBodyComponent value : ecsManager.getAllEntitiesWithComponent(RigidBodyComponent.class).values()){
+        HashMap<Short, RigidBodyComponent> allEntitiesWithComponent = ecsManager.getAllEntitiesWithComponent(RigidBodyComponent.class);
+        if(allEntitiesWithComponent==null || allEntitiesWithComponent.isEmpty())return;
+        Collection<RigidBodyComponent> values = allEntitiesWithComponent.values();
+        for(RigidBodyComponent value : values){
             value.updateTransform();
         }
     }

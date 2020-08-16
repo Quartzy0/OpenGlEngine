@@ -63,6 +63,18 @@ public class TransformComponent extends Component{
         }
     }
     
+    public double getX(){
+        return this.transform.getTranslationX();
+    }
+    
+    public double getY(){
+        return this.transform.getTranslationY();
+    }
+    
+    public void translate(double x, double y){
+        this.transform.translate(x, y);
+    }
+    
     @Override
     public List<Class<? extends Component>> requiredComponents(){
         return Collections.emptyList();
