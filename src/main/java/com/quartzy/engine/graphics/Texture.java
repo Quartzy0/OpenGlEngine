@@ -1,9 +1,9 @@
 package com.quartzy.engine.graphics;
 
-import com.quartzy.engine.utils.Logger;
 import com.quartzy.engine.utils.Resource;
 import com.quartzy.engine.utils.ResourceType;
 import lombok.CustomLog;
+import lombok.Getter;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
@@ -16,17 +16,11 @@ import static org.lwjgl.stb.STBImage.*;
 @CustomLog
 public class Texture{
     
-    private int id;
-    private int width;
-    private int height;
+    @Getter
+    private int id, width, height;
     
-    public int getWidth(){
-        return width;
-    }
-    
-    public int getHeight(){
-        return height;
-    }
+    @Getter
+    private Resource resource;
     
     /**
      * Initializes the texture and loads it from the resource file
@@ -34,8 +28,10 @@ public class Texture{
      */
     public Texture(Resource resource){
         if(resource.getType()!= ResourceType.IMAGE){
-            throw new IllegalArgumentException("Resource must be an image");
+            log.severe("Resource must be an image!", new IllegalArgumentException("Resource must be an image"));
+            return;
         }
+        this.resource = resource;
         this.id = glGenTextures();
         log.info("Loading texture " + resource.getName());
         glBindTexture(GL_TEXTURE_2D, id);

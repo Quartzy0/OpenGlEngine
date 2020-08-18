@@ -1,4 +1,4 @@
-package com.quartzy.engine.events;
+package com.quartzy.engine.input;
 
 public class Mods{
     public final boolean ctrl;

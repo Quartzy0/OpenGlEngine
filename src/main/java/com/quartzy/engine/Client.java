@@ -1,10 +1,9 @@
 package com.quartzy.engine;
 
 import com.quartzy.engine.audio.SoundManager;
-import com.quartzy.engine.events.Input;
-import com.quartzy.engine.events.KeyPressed;
-import com.quartzy.engine.events.Keyboard;
-import com.quartzy.engine.events.Mods;
+import com.quartzy.engine.input.Input;
+import com.quartzy.engine.input.KeyPressed;
+import com.quartzy.engine.input.Mods;
 import com.quartzy.engine.graphics.Color;
 import com.quartzy.engine.graphics.Renderer;
 import com.quartzy.engine.graphics.TextureManager;
@@ -70,7 +69,7 @@ public class Client{
      */
     public void init(String... args){
         Thread.currentThread().setName("Main game thread");
-        if(Arrays.stream(args).anyMatch("debug"::equals))Logger.setEnabled(true);
+        if(Arrays.asList(args).contains("debug"))Logger.setEnabled(true);
         window = applicationClient.preInit(args, this);
         if(host!=null){
             networkManager = new NetworkManagerClient(port, host);
@@ -81,12 +80,9 @@ public class Client{
         soundManager = new SoundManager();
         textureManager = new TextureManager();
         resourceManager = new ResourceManager(true, true, soundManager, textureManager);
-        Input.getKeyboard().addListener(GLFW_KEY_ESCAPE, new KeyPressed(){
-            @Override
-            public void pressed(int scancode, int action, Mods mods){
-                if(action==GLFW_PRESS){
-                    running = false;
-                }
+        Input.getKeyboard().addListener(GLFW_KEY_ESCAPE, (scancode, action, mods) -> {
+            if(action==GLFW_PRESS){
+                running = false;
             }
         });
         renderer = new Renderer();

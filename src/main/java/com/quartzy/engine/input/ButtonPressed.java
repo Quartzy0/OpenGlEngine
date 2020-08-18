@@ -1,4 +1,4 @@
-package com.quartzy.engine.events;
+package com.quartzy.engine.input;
 
 public interface ButtonPressed{
     

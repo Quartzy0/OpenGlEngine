@@ -2,6 +2,7 @@ package com.quartzy.engine.ecs.components;
 
 import com.quartzy.engine.audio.Sound;
 import com.quartzy.engine.ecs.Component;
+import io.netty.buffer.ByteBuf;
 import org.dyn4j.geometry.Vector2;
 
 import java.util.Collections;
@@ -39,5 +40,15 @@ public class AudioSourceComponent extends Component{
     @Override
     public List<Class<? extends Component>> requiredComponents(){
         return Collections.singletonList(TransformComponent.class);
+    }
+    
+    @Override
+    public void toBytes(ByteBuf out){
+    
+    }
+    
+    @Override
+    public void fromBytes(ByteBuf in){
+    
     }
 }

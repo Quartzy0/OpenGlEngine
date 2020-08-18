@@ -1,10 +1,13 @@
 package com.quartzy.engine.ecs.components;
 
 import com.quartzy.engine.ecs.Component;
+import io.netty.buffer.ByteBuf;
 import lombok.CustomLog;
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,5 +45,37 @@ public class BehaviourComponent extends Component{
     @Override
     public List<Class<? extends Component>> requiredComponents(){
         return Collections.emptyList();
+    }
+    
+    @Override
+    public void toBytes(ByteBuf out){
+        String name = behaviour.getClass().getName();
+        out.writeInt(name.length());
+        out.writeCharSequence(name, StandardCharsets.US_ASCII);
+    }
+    
+    @Override
+    public void fromBytes(ByteBuf in){
+        int len = in.readInt();
+        String className = in.readCharSequence(len, StandardCharsets.US_ASCII).toString();
+        try{
+            Class<?> aClass = Class.forName(className);
+            if(!Behaviour.class.isAssignableFrom(aClass)){
+                log.warning("Class %s does not extend the Behaviour class", className);
+                return;
+            }
+            try{
+                Class<? extends Behaviour> behaviourClass = (Class<? extends Behaviour>) aClass;
+                this.behaviour = behaviourClass.newInstance();
+            }catch(ClassCastException e){
+                log.warning("Cannot cast class %s to Behaviour class", e, className);
+            } catch(IllegalAccessException e){
+                log.warning("Cannot access class %s", e, className);
+            } catch(InstantiationException e){
+                log.warning("Cannot instantiate class %s", e, className);
+            }
+        } catch(ClassNotFoundException e){
+            log.warning("Cannot find behaviour class by the name %s", e, className);
+        }
     }
 }

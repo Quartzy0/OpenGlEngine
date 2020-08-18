@@ -1,6 +1,7 @@
 package com.quartzy.engine.ecs.components;
 
 import com.quartzy.engine.ecs.Component;
+import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.Setter;
 import org.dyn4j.geometry.Rotation;
@@ -78,5 +79,15 @@ public class TransformComponent extends Component{
     @Override
     public List<Class<? extends Component>> requiredComponents(){
         return Collections.emptyList();
+    }
+    
+    @Override
+    public void toBytes(ByteBuf out){
+    
+    }
+    
+    @Override
+    public void fromBytes(ByteBuf in){
+    
     }
 }

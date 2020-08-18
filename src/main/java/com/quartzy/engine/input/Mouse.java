@@ -1,4 +1,4 @@
-package com.quartzy.engine.events;
+package com.quartzy.engine.input;
 
 import com.quartzy.engine.math.Vector2f;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;

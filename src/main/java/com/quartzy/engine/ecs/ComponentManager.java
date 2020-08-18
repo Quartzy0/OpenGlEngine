@@ -15,10 +15,9 @@ public class ComponentManager<T extends Component>{
     }
     
     public void addComponent(T component, short entity, World worldIn){
-        Class<?> superclass = component.getClass().getSuperclass();
         try{
-            Field entityId = superclass.getDeclaredField("entityId");
-            Field world = superclass.getDeclaredField("world");
+            Field entityId = Component.class.getDeclaredField("entityId");
+            Field world = Component.class.getDeclaredField("world");
             
             entityId.setAccessible(true);
             world.setAccessible(true);
@@ -27,7 +26,7 @@ public class ComponentManager<T extends Component>{
             entityId.setAccessible(false);
             world.setAccessible(false);
         } catch(NoSuchFieldException | IllegalAccessException e){
-            log.severe("Couldn't find world/entityId field in component %s?!", e, superclass.getName());
+            log.severe("Couldn't find world/entityId field in component %s?!", e, component.getClass().getName());
         }
         components.put(entity, component);
     }

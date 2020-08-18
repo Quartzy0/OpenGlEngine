@@ -1,6 +1,7 @@
 package com.quartzy.engine.ecs.components;
 
 import com.quartzy.engine.ecs.Component;
+import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.Setter;
 import org.dyn4j.dynamics.Body;
@@ -58,6 +59,16 @@ public class AudioListenerComponent extends Component{
     @Override
     public List<Class<? extends Component>> requiredComponents(){
         return Collections.singletonList(TransformComponent.class);
+    }
+    
+    @Override
+    public void toBytes(ByteBuf out){
+    
+    }
+    
+    @Override
+    public void fromBytes(ByteBuf in){
+    
     }
     
     public void setAt(double x, double y, double z){
