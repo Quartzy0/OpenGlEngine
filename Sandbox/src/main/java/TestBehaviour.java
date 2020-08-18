@@ -1,5 +1,6 @@
 import com.quartzy.engine.Client;
 import com.quartzy.engine.audio.Sound;
+import com.quartzy.engine.audio.SoundManager;
 import com.quartzy.engine.ecs.components.AudioSourceComponent;
 import com.quartzy.engine.ecs.components.Behaviour;
 import com.quartzy.engine.ecs.components.RigidBodyComponent;
@@ -35,7 +36,7 @@ public class TestBehaviour extends Behaviour{
         }
         if(keyboard.isKeyDown(GLFW.GLFW_KEY_O)){
             AudioSourceComponent component = getComponent(AudioSourceComponent.class);
-            Sound explosion = Client.getInstance().getSoundManager().getSound("explosion");
+            Sound explosion = SoundManager.getInstance().getSound("explosion");
             component.play(explosion);
         }
     

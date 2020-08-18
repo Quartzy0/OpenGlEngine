@@ -23,6 +23,8 @@ import static org.lwjgl.system.libc.LibCStdlib.*;
 @CustomLog
 public class SoundManager{
     
+    private static SoundManager instance;
+    
     private long device, context;
     private ALCCapabilities alcCapabilities;
     private ALCapabilities alCapabilities;
@@ -110,5 +112,9 @@ public class SoundManager{
     
     public Sound getSound(String name){
         return sounds.get(name);
+    }
+    
+    public static SoundManager getInstance(){
+        return instance==null ? (instance = new SoundManager()) : instance;
     }
 }

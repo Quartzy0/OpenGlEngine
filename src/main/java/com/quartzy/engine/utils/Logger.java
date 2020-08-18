@@ -24,7 +24,7 @@ public class Logger{
      */
     public Logger(Level level){
         this.level = level;
-        this.FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy h:mm");
+        this.FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
     }
     
     private String constructMessage(int stackOffset, String message, Object... args){

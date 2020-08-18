@@ -1,12 +1,11 @@
 package com.quartzy.engine.world;
 
 import com.quartzy.engine.ecs.ECSManager;
-import com.quartzy.engine.ecs.components.BehaviourComponent;
-import com.quartzy.engine.ecs.components.RigidBodyComponent;
-import com.quartzy.engine.ecs.components.TextureComponent;
-import com.quartzy.engine.ecs.components.TransformComponent;
+import com.quartzy.engine.ecs.Particle;
+import com.quartzy.engine.ecs.components.*;
 import com.quartzy.engine.graphics.Renderer;
 import com.quartzy.engine.graphics.Texture;
+import com.quartzy.engine.math.Vector2f;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -44,27 +43,54 @@ public class World{
     public void render(Renderer renderer){
         HashMap<Short, TextureComponent> allEntitiesWithComponent = ecsManager.getAllEntitiesWithComponent(TextureComponent.class);
         if(allEntitiesWithComponent==null || allEntitiesWithComponent.isEmpty())return;
-        int k = 0;
-        Texture prevTexture = null;
-        renderer.begin();
-        for(Map.Entry<Short, TextureComponent> shortComponentEntry : allEntitiesWithComponent.entrySet()){
-            TransformComponent component = ecsManager.getComponent(shortComponentEntry.getKey(), TransformComponent.class);
-            if(component==null)continue;
-            TextureComponent textureComponent = shortComponentEntry.getValue();
-            Texture texture = textureComponent.getTexture();
-            if(!texture.equals(prevTexture)){
-                prevTexture = texture;
-                k++;
-                if(k>=renderer.getMaxTextureSlots()){
-                    k = 0;
-                    renderer.end();
-                    renderer.begin();
+        {
+            int k = 0;
+            Texture prevTexture = null;
+            renderer.begin();
+            for(Map.Entry<Short, TextureComponent> shortComponentEntry : allEntitiesWithComponent.entrySet()){
+                TransformComponent component = ecsManager.getComponent(shortComponentEntry.getKey(), TransformComponent.class);
+                if(component == null) continue;
+                TextureComponent textureComponent = shortComponentEntry.getValue();
+                Texture texture = textureComponent.getTexture();
+                if(!texture.equals(prevTexture)){
+                    prevTexture = texture;
+                    texture.bind(k);
+                    k++;
+                    if(k >= renderer.getMaxTextureSlots()){
+                        k = 0;
+                        renderer.end();
+                        renderer.begin();
+                    }
                 }
-                texture.bind(k);
+                renderer.drawTextureRegion((float) component.getTransform().getTranslationX(), (float) component.getTransform().getTranslationY(), textureComponent.getTexture().getWidth(), textureComponent.getTexture().getHeight(), k-1);
             }
-            renderer.drawTextureRegion((float) component.getTransform().getTranslationX(), (float) component.getTransform().getTranslationY(), textureComponent.getTexture().getWidth(), textureComponent.getTexture().getHeight(), k);
+            renderer.end();
         }
-        renderer.end();
+    
+        HashMap<Short, ParticleEmitterComponent> allParticleEmitters = this.ecsManager.getAllEntitiesWithComponent(ParticleEmitterComponent.class);
+        if(allParticleEmitters!=null && !allParticleEmitters.isEmpty()){
+            int k = 0;
+            Texture prevTexture = null;
+            renderer.begin();
+            for(ParticleEmitterComponent emitter : allParticleEmitters.values()){
+                for(Particle particle : emitter.getParticles()){
+                    Texture texture = particle.getTexture();
+                    if(!texture.equals(prevTexture)){
+                        prevTexture = texture;
+                        texture.bind(k);
+                        k++;
+                        if(k >= renderer.getMaxTextureSlots()){
+                            k = 0;
+                            renderer.end();
+                            renderer.begin();
+                        }
+                    }
+                    Vector2f size = particle.getBaseSize().add(new Vector2f(particle.getScale(), particle.getScale()));
+                    renderer.drawTextureRegion(particle.getPosition().x, particle.getPosition().y, size.x, size.y, k-1);
+                }
+            }
+            renderer.end();
+        }
     }
     
     /**
@@ -82,10 +108,17 @@ public class World{
         }
         this.physicsWorld.update(delta);
         HashMap<Short, RigidBodyComponent> allEntitiesWithComponent = ecsManager.getAllEntitiesWithComponent(RigidBodyComponent.class);
-        if(allEntitiesWithComponent==null || allEntitiesWithComponent.isEmpty())return;
-        Collection<RigidBodyComponent> values = allEntitiesWithComponent.values();
-        for(RigidBodyComponent value : values){
-            value.updateTransform();
+        if(allEntitiesWithComponent!=null && !allEntitiesWithComponent.isEmpty()){
+            Collection<RigidBodyComponent> values = allEntitiesWithComponent.values();
+            for(RigidBodyComponent value : values){
+                value.updateTransform();
+            }
+        }
+        HashMap<Short, ParticleEmitterComponent> allParticleEmitters = this.ecsManager.getAllEntitiesWithComponent(ParticleEmitterComponent.class);
+        if(allParticleEmitters!=null && !allParticleEmitters.isEmpty()){
+            for(ParticleEmitterComponent emitter : allParticleEmitters.values()){
+                emitter.update(delta);
+            }
         }
     }
 }

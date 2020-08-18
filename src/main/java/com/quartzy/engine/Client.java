@@ -35,7 +35,6 @@ public class Client{
     
     private int tickInSecond;
     private Renderer renderer;
-    private SoundManager soundManager;
     private ResourceManager resourceManager;
     private TextureManager textureManager;
     private boolean running;
@@ -77,9 +76,8 @@ public class Client{
             networkManager = new NetworkManager(Side.CLIENT);
         }
         Input.init(window.getId());
-        soundManager = new SoundManager();
         textureManager = new TextureManager();
-        resourceManager = new ResourceManager(true, true, soundManager, textureManager);
+        resourceManager = new ResourceManager(true, true, SoundManager.getInstance(), textureManager);
         Input.getKeyboard().addListener(GLFW_KEY_ESCAPE, (scancode, action, mods) -> {
             if(action==GLFW_PRESS){
                 running = false;
@@ -128,7 +126,7 @@ public class Client{
         running = false;
         applicationClient.dispose(this);
         networkManager.close();
-        soundManager.dispose();
+        SoundManager.getInstance().dispose();
         renderer.dispose();
         window.dispose();
         log.info("Goodbye!");
@@ -170,10 +168,6 @@ public class Client{
         if(World.getCurrentWorld()!=null){
             World.getCurrentWorld().update(delta);
         }
-    }
-    
-    public SoundManager getSoundManager(){
-        return soundManager;
     }
     
     public ResourceManager getResourceManager(){
