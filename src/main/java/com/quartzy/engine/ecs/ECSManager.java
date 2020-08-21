@@ -2,6 +2,7 @@ package com.quartzy.engine.ecs;
 
 import com.quartzy.engine.ecs.components.RigidBodyComponent;
 import com.quartzy.engine.ecs.components.TransformComponent;
+import com.quartzy.engine.math.Vector2f;
 import com.quartzy.engine.world.World;
 import lombok.CustomLog;
 import org.dyn4j.geometry.Transform;

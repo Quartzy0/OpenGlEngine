@@ -6,6 +6,7 @@ import com.quartzy.engine.ecs.components.*;
 import com.quartzy.engine.graphics.Texture;
 import com.quartzy.engine.graphics.Window;
 import com.quartzy.engine.math.Vector2f;
+import com.quartzy.engine.math.Vector3f;
 import com.quartzy.engine.world.World;
 import org.dyn4j.geometry.Transform;
 
@@ -31,19 +32,11 @@ public class Game implements ApplicationClient{
         {
             short entity = ecsManager.createBlankObject();
             Transform transform = new Transform();
-            transform.setTranslation(20, 20);
+            transform.setTranslation(232, 232);
             ecsManager.addComponentToEntity(entity, new TransformComponent(transform));
             ecsManager.addComponentToEntity(entity, new AudioSourceComponent());
-            ecsManager.addComponentToEntity(entity, new TextureComponent(stone));
+            ecsManager.addComponentToEntity(entity, new LightSourceComponent(new Vector3f(1.0f, 0.0f, 0.0f), 50.0f));
             ecsManager.addComponentToEntity(entity, new BehaviourComponent(TestBehaviour.class));
-        }
-        {
-            short entity = ecsManager.createBlankObject();
-            Transform transform = new Transform();
-            transform.setTranslation(200, 200);
-            ecsManager.addComponentToEntity(entity, new TransformComponent(transform));
-            ecsManager.addComponentToEntity(entity, new AudioListenerComponent(true));
-            ecsManager.addComponentToEntity(entity, new TextureComponent(stone));
         }
         {
             short entity = ecsManager.createBlankObject();
@@ -52,6 +45,14 @@ public class Game implements ApplicationClient{
             ecsManager.addComponentToEntity(entity, new TransformComponent(transform));
             Particle defaultParticle = new Particle(flame, 1000, 50, new Vector2f(-1f, 0f), new Vector2f(16f, 16f));
             ecsManager.addComponentToEntity(entity, new ParticleEmitterComponent(defaultParticle, 20, 5, 2, 3, 50));
+        }
+    
+        for(int i = 0; i < 6; i++){
+            short entity = ecsManager.createBlankObject();
+            Transform transform = new Transform();
+            transform.setTranslation(200 + i*64, 200);
+            ecsManager.addComponentToEntity(entity, new TransformComponent(transform));
+            ecsManager.addComponentToEntity(entity, new TextureComponent(stone));
         }
     }
     

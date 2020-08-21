@@ -6,6 +6,7 @@ import com.quartzy.engine.ecs.components.*;
 import com.quartzy.engine.graphics.Renderer;
 import com.quartzy.engine.graphics.Texture;
 import com.quartzy.engine.math.Vector2f;
+import com.quartzy.engine.math.Vector3f;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -90,6 +91,29 @@ public class World{
                 }
             }
             renderer.end();
+        }
+        HashMap<Short, LightSourceComponent> allLights = this.ecsManager.getAllEntitiesWithComponent(LightSourceComponent.class);
+        if(allLights!=null && !allLights.isEmpty()){
+            int i = 0;
+            Vector3f[] positions = new Vector3f[renderer.getMaxLightsPerDrawCall()];
+            Vector3f[] colors = new Vector3f[renderer.getMaxLightsPerDrawCall()];
+            for(LightSourceComponent light : allLights.values()){
+                if(i<renderer.getMaxLightsPerDrawCall()){
+                    positions[i] = light.getPosition();
+                    colors[i] = light.getColor();
+                    i++;
+                }else {
+                    break;
+                }
+            }
+            if(i<renderer.getMaxLightsPerDrawCall()){
+                for(int j = i; j < renderer.getMaxLightsPerDrawCall(); j++){
+                    positions[j] = new Vector3f(0,0,0);
+                    colors[j] = new Vector3f(0,0,0);
+                }
+            }
+            renderer.getProgram().setUniform("lightPosition", positions);
+            renderer.getProgram().setUniform("lightColors", colors);
         }
     }
     

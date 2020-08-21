@@ -15,6 +15,7 @@ public class ComponentManager<T extends Component>{
     }
     
     public void addComponent(T component, short entity, World worldIn){
+        if(component==null)return;
         try{
             Field entityId = Component.class.getDeclaredField("entityId");
             Field world = Component.class.getDeclaredField("world");

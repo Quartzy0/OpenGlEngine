@@ -3,6 +3,7 @@ package com.quartzy.engine.graphics;
 import com.quartzy.engine.math.Matrix4f;
 import com.quartzy.engine.utils.Resource;
 import lombok.CustomLog;
+import lombok.Getter;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
@@ -22,6 +23,7 @@ public class Renderer{
     
     private VertexArray vao;
     private VertexBuffer vbo;
+    @Getter
     private ShaderProgram program;
     
     private FloatBuffer vertices;
@@ -32,12 +34,14 @@ public class Renderer{
     
     private long window;
     
-    private int maxTextureSlots;
+    @Getter
+    private int maxTextureSlots, maxLightsPerDrawCall;
     
     /**
      * Initializes the renderer. It loads the default shaders from the default resource directory
      */
     public void init(Resource vertex, Resource fragment){
+        maxLightsPerDrawCall = 10;
         log.info("Initializing renderer");
         try(MemoryStack stack = MemoryStack.stackPush()){
             IntBuffer buffer = stack.mallocInt(1);
@@ -60,6 +64,10 @@ public class Renderer{
         vbo.uploadData(GL_ARRAY_BUFFER, size, GL_DYNAMIC_DRAW);
         
         program = new ShaderProgram(vertex, fragment);
+        program.addDefinition("MAX_TEXTURES", maxTextureSlots);
+        program.addDefinition("MAX_LIGHTS", maxLightsPerDrawCall);
+        
+        program.compileShaders();
     
         this.window = GLFW.glfwGetCurrentContext();
         int width, height;
@@ -76,6 +84,7 @@ public class Renderer{
         Matrix4f model = new Matrix4f();
         Matrix4f view = new Matrix4f();
         Matrix4f projection = Matrix4f.orthographic(0f, width, 0f, height, -1f, 1f);
+        
         program.setUniform("model", model);
         program.setUniform("view", view);
         program.setUniform("projection", projection);
@@ -228,22 +237,23 @@ public class Renderer{
         float b = c.getBlue();
         float a = c.getAlpha();
     
-        vertices.put(x1).put(y1).put(r).put(g).put(b).put(a).put(s1).put(t1).put(textureIndex);
-        vertices.put(x1).put(y2).put(r).put(g).put(b).put(a).put(s1).put(t2).put(textureIndex);
-        vertices.put(x2).put(y2).put(r).put(g).put(b).put(a).put(s2).put(t2).put(textureIndex);
+        vertices.put(x1).put(y1).put(r).put(g).put(b).put(a).put(s1).put(t1).put(textureIndex).put(0f).put(0f).put(1f);
+        vertices.put(x1).put(y2).put(r).put(g).put(b).put(a).put(s1).put(t2).put(textureIndex).put(0f).put(0f).put(1f);
+        vertices.put(x2).put(y2).put(r).put(g).put(b).put(a).put(s2).put(t2).put(textureIndex).put(0f).put(0f).put(1f);
     
-        vertices.put(x1).put(y1).put(r).put(g).put(b).put(a).put(s1).put(t1).put(textureIndex);
-        vertices.put(x2).put(y2).put(r).put(g).put(b).put(a).put(s2).put(t2).put(textureIndex);
-        vertices.put(x2).put(y1).put(r).put(g).put(b).put(a).put(s2).put(t1).put(textureIndex);
+        vertices.put(x1).put(y1).put(r).put(g).put(b).put(a).put(s1).put(t1).put(textureIndex).put(0f).put(0f).put(1f);
+        vertices.put(x2).put(y2).put(r).put(g).put(b).put(a).put(s2).put(t2).put(textureIndex).put(0f).put(0f).put(1f);
+        vertices.put(x2).put(y1).put(r).put(g).put(b).put(a).put(s2).put(t1).put(textureIndex).put(0f).put(0f).put(1f);
         
         numVertices += 6;
     }
     
     private void specifyVertexAttributes(){
-        program.setVertexAttribute("position", 2, 9 * Float.BYTES, 0);
-        program.setVertexAttribute("color", 4, 9 * Float.BYTES, 2 * Float.BYTES);
-        program.setVertexAttribute("texcoord", 2, 9 * Float.BYTES, 6 * Float.BYTES);
-        program.setVertexAttribute("textureIndex", 1, 9 * Float.BYTES, 8 * Float.BYTES);
+        program.setVertexAttribute("position", 2, 12 * Float.BYTES, 0);
+        program.setVertexAttribute("color", 4, 12 * Float.BYTES, 2 * Float.BYTES);
+        program.setVertexAttribute("texcoord", 2, 12 * Float.BYTES, 6 * Float.BYTES);
+        program.setVertexAttribute("textureIndex", 1, 12 * Float.BYTES, 8 * Float.BYTES);
+        program.setVertexAttribute("normal", 3, 12 * Float.BYTES, 9 * Float.BYTES);
     }
     
     /**
@@ -272,9 +282,5 @@ public class Renderer{
         vbo.delete();
         program.dispose();
         font.dispose();
-    }
-    
-    public int getMaxTextureSlots(){
-        return maxTextureSlots;
     }
 }

@@ -4,6 +4,7 @@ import com.quartzy.engine.math.*;
 import com.quartzy.engine.utils.Logger;
 import com.quartzy.engine.utils.Resource;
 import lombok.CustomLog;
+import org.dyn4j.geometry.Vector3;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.File;
@@ -11,10 +12,10 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 
 @CustomLog
@@ -24,7 +25,11 @@ public class ShaderProgram{
     private int fragmentShader;
     private int programId;
     
+    private Resource vertexName, fragmentName;
+    
     private HashMap<String, Integer> uniforms = new HashMap<>();
+    
+    private HashMap<String, Integer> definitions = new HashMap<>();
     
     /**
      * Compiles the shaders
@@ -32,10 +37,8 @@ public class ShaderProgram{
      * @param fragmentName Fragment shader name
      */
     public ShaderProgram(Resource vertexName, Resource fragmentName){
-        log.info("Initializing shader program");
-        compileShaders(vertexName.getFile(), fragmentName.getFile());
-        this.bind();
-        log.info("Done initializing shader program");
+        this.vertexName = vertexName;
+        this.fragmentName = fragmentName;
     }
     
     /**
@@ -60,15 +63,14 @@ public class ShaderProgram{
     
     /**
      * Compiles the shaders and sets the program id
-     * @param vertexShaderFile Vertex shader file
-     * @param fragmentShaderFile Fragment shader file
      */
-    private void compileShaders(File vertexShaderFile, File fragmentShaderFile){
+    public void compileShaders(){
+        log.info("Initializing shader program");
         String vertexSource = null;
         String fragmentSource = null;
         try{
-            vertexSource = new String(Files.readAllBytes(vertexShaderFile.toPath()));
-            fragmentSource = new String(Files.readAllBytes(fragmentShaderFile.toPath()));
+            vertexSource = new String(Files.readAllBytes(this.vertexName.getFile().toPath()));
+            fragmentSource = new String(Files.readAllBytes(this.fragmentName.getFile().toPath()));
         } catch(IOException e){
             log.severe("Error while loading shader files");
             e.printStackTrace();
@@ -81,6 +83,21 @@ public class ShaderProgram{
         if(fragmentSource==null){
             log.severe("Couldn't load fragment shader file");
             return;
+        }
+        
+        vertexSource = vertexSource.replace("\r\n", "\n");
+        fragmentSource = fragmentSource.replace("\r\n", "\n");
+    
+        for(Map.Entry<String, Integer> entry : definitions.entrySet()){
+            String definitionString = "\n#define " + entry.getKey() + " " + entry.getValue().intValue() + "\n";
+            
+            StringBuilder builder = new StringBuilder(vertexSource);
+            builder.insert(builder.indexOf("\n"), definitionString);
+            vertexSource = builder.toString();
+    
+            StringBuilder builder1 = new StringBuilder(fragmentSource);
+            builder1.insert(builder.indexOf("\n"), definitionString);
+            fragmentSource = builder1.toString();
         }
         
         vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -113,6 +130,9 @@ public class ShaderProgram{
         if (status != GL_TRUE) {
             log.severe("Error while creating shader program: " + glGetProgramInfoLog(programId));
         }
+        
+        this.bind();
+        log.info("Done initializing shader program");
     }
     
     /**
@@ -125,6 +145,10 @@ public class ShaderProgram{
         int loc = glGetAttribLocation(programId, name);
         glEnableVertexAttribArray(loc);
         glVertexAttribPointer(loc, size, GL_FLOAT, false, stride, offset);
+    }
+    
+    public void addDefinition(String name, int value){
+        this.definitions.put(name, value);
     }
     
     /**
@@ -155,6 +179,17 @@ public class ShaderProgram{
     
     public void setUniform(String name, int[] arr){
         glUniform1iv(getUniformLocation(name), arr);
+    }
+    
+    public void setUniform(String name, Vector3f[] arr){
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(3);
+            for(int i = 0; i < arr.length; i++){
+                arr[i].toBuffer(buffer);
+                glUniform3fv(getUniformLocation(name + "[" + i + "]"), buffer);
+                buffer.clear();
+            }
+        }
     }
     
     /**
