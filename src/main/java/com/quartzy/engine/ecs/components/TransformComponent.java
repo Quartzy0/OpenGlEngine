@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class TransformComponent extends Component{
+    public static boolean anyChanged;
+    
     @Setter
     @Getter
     private Transform transform;
@@ -27,6 +29,7 @@ public class TransformComponent extends Component{
         if(component!=null){
             bodyComponent = component;
         }
+        anyChanged = true;
     }
     
     public void setX(double x){
@@ -34,6 +37,7 @@ public class TransformComponent extends Component{
         if(this.bodyComponent!=null){
             this.bodyComponent.getBody().getTransform().setTranslationX(x);
         }
+        anyChanged = true;
     }
     
     public void setY(double y){
@@ -41,6 +45,7 @@ public class TransformComponent extends Component{
         if(this.bodyComponent!=null){
             this.bodyComponent.getBody().getTransform().setTranslationY(y);
         }
+        anyChanged = true;
     }
     
     public void setPosition(double x, double y){
@@ -48,6 +53,7 @@ public class TransformComponent extends Component{
         if(this.bodyComponent!=null){
             this.bodyComponent.getBody().getTransform().setTranslation(x,y);
         }
+        anyChanged = true;
     }
     
     public void setRotation(double theta){
@@ -55,6 +61,7 @@ public class TransformComponent extends Component{
         if(this.bodyComponent!=null){
             this.bodyComponent.getBody().getTransform().setRotation(theta);
         }
+        anyChanged = true;
     }
     
     public void setRotation(Rotation rotation){
@@ -62,6 +69,7 @@ public class TransformComponent extends Component{
         if(this.bodyComponent!=null){
             this.bodyComponent.getBody().getTransform().setRotation(rotation);
         }
+        anyChanged = true;
     }
     
     public double getX(){
@@ -74,6 +82,7 @@ public class TransformComponent extends Component{
     
     public void translate(double x, double y){
         this.transform.translate(x, y);
+        anyChanged = true;
     }
     
     @Override

@@ -37,9 +37,7 @@ public class Font{
         try{
             font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, fontFile).deriveFont(size);
             this.fontTexture = generateFontTexture(false);
-        } catch(FontFormatException e){
-            e.printStackTrace();
-        } catch(IOException e){
+        } catch(FontFormatException | IOException e){
             e.printStackTrace();
         }
     }

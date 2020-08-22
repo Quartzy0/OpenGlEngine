@@ -25,6 +25,10 @@ public class Renderer{
     private VertexBuffer vbo;
     @Getter
     private ShaderProgram program;
+    @Getter
+    private ShaderProgram uiProgram;
+    
+    private boolean drawingUi;
     
     private FloatBuffer vertices;
     private int numVertices;
@@ -62,10 +66,16 @@ public class Renderer{
     
         long size = vertices.capacity() * Float.BYTES;
         vbo.uploadData(GL_ARRAY_BUFFER, size, GL_DYNAMIC_DRAW);
+    
+        uiProgram = new ShaderProgram(vertex, fragment);
+        uiProgram.addDefinition("MAX_TEXTURES", maxTextureSlots);
+    
+        uiProgram.compileShaders();
         
         program = new ShaderProgram(vertex, fragment);
         program.addDefinition("MAX_TEXTURES", maxTextureSlots);
         program.addDefinition("MAX_LIGHTS", maxLightsPerDrawCall);
+        program.addDefinition("LIGHTING_ENABLED", 1);
         
         program.compileShaders();
     
@@ -84,7 +94,18 @@ public class Renderer{
         Matrix4f model = new Matrix4f();
         Matrix4f view = new Matrix4f();
         Matrix4f projection = Matrix4f.orthographic(0f, width, 0f, height, -1f, 1f);
+    
+        Matrix4f model1 = new Matrix4f();
+        Matrix4f view1 = new Matrix4f();
+        Matrix4f projection1 = Matrix4f.orthographic(0f, width, 0f, height, -1f, 1f);
+    
+        uiProgram.bind();
+        uiProgram.setUniform("model", model1);
+        uiProgram.setUniform("view", view1);
+        uiProgram.setUniform("projection", projection1);
+        uiProgram.setUniform("textures", new int[]{0, 1});
         
+        program.bind();
         program.setUniform("model", model);
         program.setUniform("view", view);
         program.setUniform("projection", projection);
@@ -135,7 +156,12 @@ public class Renderer{
                 vbo.bind(GL_ARRAY_BUFFER);
                 specifyVertexAttributes();
             }
-            program.bind();
+            
+            if(drawingUi){
+                uiProgram.bind();
+            }else {
+                program.bind();
+            }
         
             /* Upload the new vertex data */
             vbo.bind(GL_ARRAY_BUFFER);
@@ -158,7 +184,9 @@ public class Renderer{
      * @param c Color of the text
      */
     public void drawString(String s, float x, float y, Color c){
+        drawingUi = true;
         font.drawText(this, s, x, y, c);
+        drawingUi = false;
     }
     
     /**
@@ -168,7 +196,7 @@ public class Renderer{
      * @param y Y position
      */
     public void drawString(String s, float x, float y){
-        font.drawText(this, s, x, y, Color.WHITE);
+        this.drawString(s, x, y, Color.WHITE);
     }
     
     /**
@@ -228,7 +256,7 @@ public class Renderer{
      * @param c Color
      */
     public void drawTextureRegion(float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2, Color c, int textureIndex) {
-        if (vertices.remaining() < 9 * 6) {
+        if (vertices.remaining() < 12 * 6) {
             flush();
         }
         
@@ -249,6 +277,13 @@ public class Renderer{
     }
     
     private void specifyVertexAttributes(){
+        uiProgram.bind();
+        uiProgram.setVertexAttribute("position", 2, 9 * Float.BYTES, 0);
+        uiProgram.setVertexAttribute("color", 4, 9 * Float.BYTES, 2 * Float.BYTES);
+        uiProgram.setVertexAttribute("texcoord", 2, 9 * Float.BYTES, 6 * Float.BYTES);
+        uiProgram.setVertexAttribute("textureIndex", 1, 9 * Float.BYTES, 8 * Float.BYTES);
+        
+        program.bind();
         program.setVertexAttribute("position", 2, 12 * Float.BYTES, 0);
         program.setVertexAttribute("color", 4, 12 * Float.BYTES, 2 * Float.BYTES);
         program.setVertexAttribute("texcoord", 2, 12 * Float.BYTES, 6 * Float.BYTES);
@@ -281,6 +316,7 @@ public class Renderer{
         }
         vbo.delete();
         program.dispose();
+        uiProgram.dispose();
         font.dispose();
     }
 }

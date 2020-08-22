@@ -92,28 +92,31 @@ public class World{
             }
             renderer.end();
         }
-        HashMap<Short, LightSourceComponent> allLights = this.ecsManager.getAllEntitiesWithComponent(LightSourceComponent.class);
-        if(allLights!=null && !allLights.isEmpty()){
-            int i = 0;
-            Vector3f[] positions = new Vector3f[renderer.getMaxLightsPerDrawCall()];
-            Vector3f[] colors = new Vector3f[renderer.getMaxLightsPerDrawCall()];
-            for(LightSourceComponent light : allLights.values()){
-                if(i<renderer.getMaxLightsPerDrawCall()){
-                    positions[i] = light.getPosition();
-                    colors[i] = light.getColor();
-                    i++;
-                }else {
-                    break;
+        if(LightSourceComponent.isAnyChanged()){
+            HashMap<Short, LightSourceComponent> allLights = this.ecsManager.getAllEntitiesWithComponent(LightSourceComponent.class);
+            if(allLights != null && !allLights.isEmpty()){
+                int i = 0;
+                Vector3f[] positions = new Vector3f[renderer.getMaxLightsPerDrawCall()];
+                Vector3f[] colors = new Vector3f[renderer.getMaxLightsPerDrawCall()];
+                for(LightSourceComponent light : allLights.values()){
+                    if(i < renderer.getMaxLightsPerDrawCall()){
+                        positions[i] = light.getPosition();
+                        colors[i] = light.getColor();
+                        i++;
+                    } else{
+                        break;
+                    }
                 }
-            }
-            if(i<renderer.getMaxLightsPerDrawCall()){
-                for(int j = i; j < renderer.getMaxLightsPerDrawCall(); j++){
-                    positions[j] = new Vector3f(0,0,0);
-                    colors[j] = new Vector3f(0,0,0);
+                if(i < renderer.getMaxLightsPerDrawCall()){
+                    for(int j = i; j < renderer.getMaxLightsPerDrawCall(); j++){
+                        positions[j] = new Vector3f(0, 0, 0);
+                        colors[j] = new Vector3f(0, 0, 0);
+                    }
                 }
+                renderer.getProgram().bind();
+                renderer.getProgram().setUniform("lightPosition", positions);
+                renderer.getProgram().setUniform("lightColors", colors);
             }
-            renderer.getProgram().setUniform("lightPosition", positions);
-            renderer.getProgram().setUniform("lightColors", colors);
         }
     }
     

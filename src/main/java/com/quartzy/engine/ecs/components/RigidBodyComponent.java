@@ -36,6 +36,7 @@ public class RigidBodyComponent extends Component{
     public void updateTransform(){
         TransformComponent component = world.getEcsManager().getComponent(entityId, TransformComponent.class);
         component.setTransform(this.body.getTransform());
+        TransformComponent.anyChanged = true;
     }
     
     @Override
