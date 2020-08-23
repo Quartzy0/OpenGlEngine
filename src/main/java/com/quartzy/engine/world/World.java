@@ -5,10 +5,9 @@ import com.quartzy.engine.ecs.Particle;
 import com.quartzy.engine.ecs.components.*;
 import com.quartzy.engine.graphics.Renderer;
 import com.quartzy.engine.graphics.Texture;
-import com.quartzy.engine.math.Vector2f;
-import com.quartzy.engine.math.Vector3f;
 import lombok.Getter;
 import lombok.Setter;
+import com.quartzy.engine.math.*;
 
 import java.util.*;
 
@@ -42,6 +41,8 @@ public class World{
      * @param renderer Renderer object
      */
     public void render(Renderer renderer){
+        CameraComponent mainCamera = renderer.getMainCamera();
+        if(mainCamera!=null)mainCamera.update();
         HashMap<Short, TextureComponent> allEntitiesWithComponent = ecsManager.getAllEntitiesWithComponent(TextureComponent.class);
         if(allEntitiesWithComponent==null || allEntitiesWithComponent.isEmpty())return;
         {

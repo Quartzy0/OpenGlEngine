@@ -4,7 +4,6 @@ import com.quartzy.engine.ecs.Component;
 import com.quartzy.engine.math.Vector3f;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Collections;
 import java.util.List;

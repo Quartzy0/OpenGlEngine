@@ -23,9 +23,6 @@
  */
 package com.quartzy.engine.math;
 
-import org.joml.Vector3f;
-import org.joml.Vector4f;
-
 import java.nio.FloatBuffer;
 
 /**

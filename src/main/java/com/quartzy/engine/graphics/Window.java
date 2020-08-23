@@ -2,6 +2,7 @@ package com.quartzy.engine.graphics;
 
 import lombok.CustomLog;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWWindowSizeCallbackI;
 import org.lwjgl.opengl.GL;
 
 import java.util.logging.Level;
@@ -64,6 +65,8 @@ public class Window{
     
         GL.createCapabilities();
         setClearColor(new Color(0.0f, 0.0f, 0.0f, 0.0f));
+        
+        
     }
     
     /**
@@ -73,6 +76,11 @@ public class Window{
         glfwSetWindowShouldClose(id, true);
         glfwDestroyWindow(id);
         glfwTerminate();
+    }
+    
+    public void updateViewport(int newWidth, int newHeight){
+        this.width = newWidth;
+        this.height = newHeight;
     }
     
     /**

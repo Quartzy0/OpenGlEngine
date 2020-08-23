@@ -1,13 +1,12 @@
 package com.quartzy.engine.ecs;
 
-import com.quartzy.engine.ecs.components.RigidBodyComponent;
 import com.quartzy.engine.ecs.components.TransformComponent;
-import com.quartzy.engine.math.Vector2f;
 import com.quartzy.engine.world.World;
 import lombok.CustomLog;
 import org.dyn4j.geometry.Transform;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -25,10 +24,13 @@ public class ECSManager{
     }
     
     public <T extends Component> void addComponentToEntity(short entityId, T component){
-        for(Class<? extends Component> requiredComponent : component.requiredComponents()){
-            ComponentManager componentManager = components.get(requiredComponent);
-            if(componentManager==null || !componentManager.hasComponent(entityId)){
-                log.severe("Component %s was attempted to be added onto an entity without a %s component", new RuntimeException("Missing component") ,component.getClass().getName(), requiredComponent.getName());
+        List<Class<? extends Component>> classes = component.requiredComponents();
+        if(classes!=null){
+            for(Class<? extends Component> requiredComponent : classes){
+                ComponentManager componentManager = components.get(requiredComponent);
+                if(componentManager == null || !componentManager.hasComponent(entityId)){
+                    log.severe("Component %s was attempted to be added onto an entity without a %s component", new RuntimeException("Missing component"), component.getClass().getName(), requiredComponent.getName());
+                }
             }
         }
         if(components.containsKey(component.getClass())){

@@ -34,6 +34,7 @@ public class Client{
     private ApplicationClient applicationClient;
     
     private int tickInSecond;
+    @Getter
     private Renderer renderer;
     private ResourceManager resourceManager;
     private TextureManager textureManager;
@@ -96,7 +97,7 @@ public class Client{
             log.severe("No fragment shader found at %s", new RuntimeException("No shaders found"), fragmentShader);
             return;
         }
-        renderer.init(resource, resource1);
+        renderer.init(resource, resource1, window);
         applicationClient.init(this);
     }
     

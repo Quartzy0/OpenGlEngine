@@ -36,7 +36,6 @@ public class Game implements ApplicationClient{
             ecsManager.addComponentToEntity(entity, new TransformComponent(transform));
             ecsManager.addComponentToEntity(entity, new AudioSourceComponent());
             ecsManager.addComponentToEntity(entity, new LightSourceComponent(new Vector3f(1.0f, 0.0f, 0.0f), 50.0f));
-            ecsManager.addComponentToEntity(entity, new BehaviourComponent(TestBehaviour.class));
         }
         {
             short entity = ecsManager.createBlankObject();
@@ -45,6 +44,11 @@ public class Game implements ApplicationClient{
             ecsManager.addComponentToEntity(entity, new TransformComponent(transform));
             Particle defaultParticle = new Particle(flame, 1000, 50, new Vector2f(-1f, 0f), new Vector2f(16f, 16f));
             ecsManager.addComponentToEntity(entity, new ParticleEmitterComponent(defaultParticle, 20, 5, 2, 3, 50));
+        }
+        {
+            short entity = ecsManager.createBlankObject();
+            ecsManager.addComponentToEntity(entity, new CameraComponent(true));
+            ecsManager.addComponentToEntity(entity, new BehaviourComponent(TestCameraBehaviour.class));
         }
     
         for(int i = 0; i < 6; i++){

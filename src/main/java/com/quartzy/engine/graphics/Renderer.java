@@ -1,10 +1,13 @@
 package com.quartzy.engine.graphics;
 
+import com.quartzy.engine.ecs.components.CameraComponent;
 import com.quartzy.engine.math.Matrix4f;
 import com.quartzy.engine.utils.Resource;
 import lombok.CustomLog;
 import lombok.Getter;
+import lombok.Setter;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWWindowSizeCallbackI;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
@@ -13,6 +16,7 @@ import com.quartzy.engine.text.Font;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
@@ -36,15 +40,20 @@ public class Renderer{
     
     private Font font;
     
-    private long window;
+    private Window window;
     
     @Getter
     private int maxTextureSlots, maxLightsPerDrawCall;
     
+    @Getter
+    @Setter
+    private CameraComponent mainCamera;
+    private GLFWWindowSizeCallbackI sizeCallback;
+    
     /**
      * Initializes the renderer. It loads the default shaders from the default resource directory
      */
-    public void init(Resource vertex, Resource fragment){
+    public void init(Resource vertex, Resource fragment, Window window){
         maxLightsPerDrawCall = 10;
         log.info("Initializing renderer");
         try(MemoryStack stack = MemoryStack.stackPush()){
@@ -79,39 +88,57 @@ public class Renderer{
         
         program.compileShaders();
     
-        this.window = GLFW.glfwGetCurrentContext();
-        int width, height;
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer widthBuffer = stack.mallocInt(1);
-            IntBuffer heightBuffer = stack.mallocInt(1);
-            GLFW.glfwGetFramebufferSize(window, widthBuffer, heightBuffer);
-            width = widthBuffer.get();
-            height = heightBuffer.get();
-        }
+        this.window = window;
+    
+        sizeCallback = (window1, width, height) -> {
+            glViewport(0, 0, width, height);
+            getMainCamera().updateViewport(width, height);
+            this.window.updateViewport(width, height);
+        };
+        glfwSetWindowSizeCallback(window.getId(), sizeCallback);
         
         specifyVertexAttributes();
         
         Matrix4f model = new Matrix4f();
         Matrix4f view = new Matrix4f();
-        Matrix4f projection = Matrix4f.orthographic(0f, width, 0f, height, -1f, 1f);
-    
-        Matrix4f model1 = new Matrix4f();
-        Matrix4f view1 = new Matrix4f();
-        Matrix4f projection1 = Matrix4f.orthographic(0f, width, 0f, height, -1f, 1f);
+        Matrix4f projection = Matrix4f.orthographic(0f, window.getWidth(), 0f, window.getHeight(), -1f, 1f);
     
         uiProgram.bind();
-        uiProgram.setUniform("model", model1);
-        uiProgram.setUniform("view", view1);
-        uiProgram.setUniform("projection", projection1);
-        uiProgram.setUniform("textures", new int[]{0, 1});
+        uiProgram.setUniform("model", model);
+        uiProgram.setUniform("view", view);
+        uiProgram.setUniform("projection", projection);
+        int[] texturesArray = new int[maxTextureSlots];
+        for(int i = 0; i < texturesArray.length; i++){
+            texturesArray[i] = i;
+        }
+        uiProgram.setUniform("textures", texturesArray);
         
         program.bind();
         program.setUniform("model", model);
         program.setUniform("view", view);
         program.setUniform("projection", projection);
-        program.setUniform("textures", new int[]{0, 1});
+        program.setUniform("textures", texturesArray);
     
         font = new Font(new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.PLAIN, 16));
+    }
+    
+    public void setUniforms(Matrix4f model, Matrix4f view, Matrix4f projection){
+//        uiProgram.bind();
+//        uiProgram.setUniform("model", model);
+//        uiProgram.setUniform("view", view);
+//        uiProgram.setUniform("projection", projection);
+        
+        program.bind();
+        program.setUniform("model", model);
+        program.setUniform("view", view);
+        program.setUniform("projection", projection);
+    }
+    
+    public void setUniformsUI(Matrix4f model, Matrix4f view, Matrix4f projection){
+        uiProgram.bind();
+        uiProgram.setUniform("model", model);
+        uiProgram.setUniform("view", view);
+        uiProgram.setUniform("projection", projection);
     }
     
     /**

@@ -1,13 +1,10 @@
 package com.quartzy.engine.graphics;
 
 import com.quartzy.engine.math.*;
-import com.quartzy.engine.utils.Logger;
 import com.quartzy.engine.utils.Resource;
 import lombok.CustomLog;
-import org.dyn4j.geometry.Vector3;
 import org.lwjgl.system.MemoryStack;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
@@ -200,7 +197,8 @@ public class ShaderProgram{
     public void setUniform(String name, Vector4f value){
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(4);
-            value.toBuffer(buffer);
+            buffer.put(value.x).put(value.y).put(value.z).put(value.w);
+            buffer.flip();
             glUniform4fv(getUniformLocation(name), buffer);
         }
     }

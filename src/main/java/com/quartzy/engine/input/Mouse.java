@@ -1,6 +1,6 @@
 package com.quartzy.engine.input;
 
-import com.quartzy.engine.math.Vector2f;
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.system.MemoryStack;
 

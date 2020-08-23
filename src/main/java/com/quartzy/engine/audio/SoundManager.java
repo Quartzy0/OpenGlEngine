@@ -1,9 +1,6 @@
 package com.quartzy.engine.audio;
 
-import com.quartzy.engine.ecs.components.AudioListenerComponent;
 import lombok.CustomLog;
-import lombok.Getter;
-import lombok.Setter;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
