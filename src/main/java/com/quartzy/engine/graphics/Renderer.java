@@ -6,9 +6,10 @@ import com.quartzy.engine.utils.Resource;
 import lombok.CustomLog;
 import lombok.Getter;
 import lombok.Setter;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWWindowSizeCallbackI;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL45;
+import org.lwjgl.opengl.GLDebugMessageCallback;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import com.quartzy.engine.text.Font;
@@ -21,6 +22,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL20.GL_MAX_TEXTURE_IMAGE_UNITS;
+import static org.lwjgl.opengl.GL45.*;
 
 @CustomLog
 public class Renderer{
@@ -54,6 +56,15 @@ public class Renderer{
      * Initializes the renderer. It loads the default shaders from the default resource directory
      */
     public void init(Resource vertex, Resource fragment, Window window){
+        glEnable(GL_DEBUG_OUTPUT);
+        GL45.glDebugMessageCallback(new GLDebugMessageCallback(){
+            @Override
+            public void invoke(int source, int type, int id, int severity, int length, long message, long userParam){
+                String messageS = getMessage(length, message);
+                log.openGLLog(source, type, id, severity, messageS, userParam);
+            }
+        }, 0L);
+        
         maxLightsPerDrawCall = 10;
         log.info("Initializing renderer");
         try(MemoryStack stack = MemoryStack.stackPush()){

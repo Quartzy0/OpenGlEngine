@@ -65,8 +65,6 @@ public class Window{
     
         GL.createCapabilities();
         setClearColor(new Color(0.0f, 0.0f, 0.0f, 0.0f));
-        
-        
     }
     
     /**

@@ -10,6 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static org.lwjgl.opengl.GL43.*;
+
 public class Logger{
     
     private Level level;
@@ -36,8 +38,7 @@ public class Logger{
             methodName = stackTrace[stackOffset+2].getMethodName();
             className = stackTrace[stackOffset+2].getClassName();
         }
-        String finalMessage = "[" + dateString + "]" + "[" + Thread.currentThread().getName() + "] " + className + ":" + methodName + " : " + String.format(message, args);
-        return finalMessage;
+        return "[" + dateString + "]" + "[" + Thread.currentThread().getName() + "] " + className + ":" + methodName + " : " + String.format(message, args);
     }
     
     private String constructMessage(String message, Object... args){
@@ -139,6 +140,89 @@ public class Logger{
         StringBuilder sb = new StringBuilder();
         sb.color16(StringBuilder.Color16.FG_LIGHT_GREEN, finalMessage);
         System.out.println(sb.toString());
+    }
+    
+    public void openGLLog(int source, int type, int id, int severity, String message, long userParam){
+        String sourceString = "GL_DEBUG_SOURCE_OTHER";
+        String typeString = "GL_DEBUG_TYPE_OTHER";
+        switch(source){
+            case GL_DEBUG_SOURCE_API:
+                sourceString = "GL_DEBUG_SOURCE_API";
+                break;
+            case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+                sourceString = "GL_DEBUG_SOURCE_WINDOW_SYSTEM";
+                break;
+            case GL_DEBUG_SOURCE_SHADER_COMPILER:
+                sourceString = "GL_DEBUG_SOURCE_SHADER_COMPILER";
+                break;
+            case GL_DEBUG_SOURCE_THIRD_PARTY:
+                sourceString = "GL_DEBUG_SOURCE_THIRD_PARTY";
+                break;
+            case GL_DEBUG_SOURCE_APPLICATION:
+                sourceString = "GL_DEBUG_SOURCE_APPLICATION";
+                break;
+            case GL_DEBUG_SOURCE_OTHER:
+                sourceString = "GL_DEBUG_SOURCE_OTHER";
+                break;
+        }
+        switch(type){
+            case GL_DEBUG_TYPE_ERROR:
+                typeString = "GL_DEBUG_TYPE_ERROR";
+                break;
+            case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+                typeString = "GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR";
+                break;
+            case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+                typeString = "GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR";
+                break;
+            case GL_DEBUG_TYPE_PORTABILITY:
+                typeString = "GL_DEBUG_TYPE_PORTABILITY";
+                break;
+            case GL_DEBUG_TYPE_PERFORMANCE:
+                typeString = "GL_DEBUG_TYPE_PERFORMANCE";
+                break;
+            case GL_DEBUG_TYPE_OTHER:
+                typeString = "GL_DEBUG_TYPE_OTHER";
+                break;
+            case GL_DEBUG_TYPE_MARKER:
+                typeString = "GL_DEBUG_TYPE_MARKER";
+                break;
+        }
+        String dateString = FORMATTER.format(LocalDateTime.now());
+        StringBuilder sb;
+        String finalMessage;
+        switch(severity){
+            case GL_DEBUG_SEVERITY_LOW:
+                finalMessage = "[" + dateString + "]" + ": " + String.format("OpenGL Log: Severity: LOW, Type: %s, Source: %s, Message: %s", typeString, sourceString, message);
+                sb = new StringBuilder();
+                sb.color16(StringBuilder.Color16.FG_YELLOW, finalMessage);
+                System.out.println(sb.toString());
+                break;
+            case GL_DEBUG_SEVERITY_MEDIUM:
+                finalMessage = "[" + dateString + "]" + ": " + String.format("OpenGL Log: Severity: MEDIUM, Type: %s, Source: %s, Message: %s", typeString, sourceString, message);
+                sb = new StringBuilder();
+                sb.color16(StringBuilder.Color16.FG_YELLOW, finalMessage);
+                System.out.println(sb.toString());
+                break;
+            case GL_DEBUG_SEVERITY_HIGH:
+                finalMessage = "[" + dateString + "]" + ": " + String.format("OpenGL Log: Severity: HIGH, Type: %s, Source: %s, Message: %s", typeString, sourceString, message);
+                sb = new StringBuilder();
+                sb.color16(StringBuilder.Color16.FG_RED, finalMessage);
+                System.out.println(sb.toString());
+                break;
+            case GL_DEBUG_SEVERITY_NOTIFICATION:
+                finalMessage = "[" + dateString + "]" + ": " + String.format("OpenGL Log: Severity: NOTIFICATION, Type: %s, Source: %s, Message: %s", typeString, sourceString, message);
+                sb = new StringBuilder();
+                sb.color16(StringBuilder.Color16.FG_LIGHT_GREEN, finalMessage);
+                System.out.println(sb.toString());
+                break;
+            default:
+                finalMessage = "[" + dateString + "]" + ": " + String.format("OpenGL Log: Severity: DONT_CARE, Type: %s, Source: %s, Message: %s", typeString, sourceString, message);
+                sb = new StringBuilder();
+                sb.color16(StringBuilder.Color16.FG_GREEN, finalMessage);
+                System.out.println(sb.toString());
+                break;
+        }
     }
     
     /**
