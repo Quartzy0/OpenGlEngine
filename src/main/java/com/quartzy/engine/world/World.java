@@ -1,14 +1,28 @@
 package com.quartzy.engine.world;
 
+import com.quartzy.engine.ecs.Component;
+import com.quartzy.engine.ecs.ComponentManager;
 import com.quartzy.engine.ecs.ECSManager;
 import com.quartzy.engine.ecs.Particle;
 import com.quartzy.engine.ecs.components.*;
 import com.quartzy.engine.graphics.Renderer;
 import com.quartzy.engine.graphics.Texture;
+import com.quartzy.engine.math.Vector2f;
+import com.quartzy.engine.math.Vector3f;
+import com.quartzy.engine.utils.Resource;
+import com.quartzy.engine.utils.ResourceType;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import lombok.Getter;
 import lombok.Setter;
-import com.quartzy.engine.math.*;
+import lombok.SneakyThrows;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class World{
@@ -148,5 +162,115 @@ public class World{
                 emitter.update(delta);
             }
         }
+    }
+    
+    @SneakyThrows
+    public static Resource saveToFile(String folderPath, World world){
+        String name = world.name;
+        Path path = Paths.get(folderPath, name + ".wrld");
+        File file = path.toFile();
+        if(!file.exists()){
+            file.createNewFile();
+        }
+        ByteBuf bytes = Unpooled.buffer();
+        bytes.writeByte(name.length());
+        bytes.writeCharSequence(name, StandardCharsets.US_ASCII);
+    
+        HashMap<Class<? extends Component>, ComponentManager> components = world.ecsManager.getComponents();
+        bytes.writeShort(components.size());
+        for(ComponentManager value : components.values()){
+            
+            String name1 = value.getType().getName();
+            bytes.writeByte(name1.length());
+            bytes.writeCharSequence(name1, StandardCharsets.US_ASCII);
+    
+            Set<Map.Entry<Short, Component>> set = value.getComponents().entrySet();
+            bytes.writeInt(set.size());
+            for(Map.Entry<Short, Component> entry : set){
+                
+                bytes.writeShort(entry.getKey());
+    
+                entry.getValue().toBytes(bytes);
+            }
+        }
+    
+        HashMap<Integer, List<Short>> layers = world.getEcsManager().getLayers();
+        bytes.writeShort(layers.size());
+        for(Map.Entry<Integer, List<Short>> entry : layers.entrySet()){
+            bytes.writeShort(entry.getKey());
+            bytes.writeInt(entry.getValue().size());
+    
+            for(Short aShort : entry.getValue()){
+                bytes.writeShort(aShort);
+            }
+        }
+    
+        HashMap<String, Short> tags = world.getEcsManager().getTags();
+        bytes.writeInt(tags.size());
+        for(Map.Entry<String, Short> entry : tags.entrySet()){
+            bytes.writeByte(entry.getKey().length());
+            bytes.writeCharSequence(entry.getKey(), StandardCharsets.US_ASCII);
+            bytes.writeShort(entry.getValue());
+        }
+    
+        byte[] compBytes = new byte[bytes.readableBytes()];
+        bytes.readBytes(compBytes);
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(compBytes);
+        }
+        
+        return new Resource(file, world.name, ResourceType.WORLD_FILE);
+    }
+    
+    @SneakyThrows
+    public static World loadWorld(String pathname){
+        File file = Paths.get(pathname).toFile();
+        if(!file.exists())return null;
+        byte[] bytes = Files.readAllBytes(file.toPath());
+        if(bytes.length == 0)return null;
+        ByteBuf in = Unpooled.wrappedBuffer(bytes);
+    
+        byte worldNameLen = in.readByte();
+        String worldName = in.readCharSequence(worldNameLen, StandardCharsets.US_ASCII).toString();
+        World world = new World(worldName);
+        
+        short componentCount = in.readShort();
+    
+        ECSManager ecsManager = world.getEcsManager();
+        for(int i = 0; i < componentCount; i++){
+            byte componentNameLen = in.readByte();
+            String componentName = in.readCharSequence(componentNameLen, StandardCharsets.US_ASCII).toString();
+    
+            Class<? extends Component> componentClass = (Class<? extends Component>) Class.forName(componentName);
+            
+            int valAmount = in.readInt();
+            for(int j = 0; j < valAmount; j++){
+                Component component = componentClass.newInstance();
+                short entityId = in.readShort();
+                component.fromBytes(in);
+                ecsManager.addComponentToEntityNoCheck(entityId, component);
+            }
+        }
+    
+        short layerAmount = in.readShort();
+        for(int i = 0; i < layerAmount; i++){
+            short layerId = in.readShort();
+    
+            int layerEntityCount = in.readInt();
+            for(int i1 = 0; i1 < layerEntityCount; i1++){
+                short entityId = in.readShort();
+                ecsManager.addEntityToLayer(entityId, layerId);
+            }
+        }
+    
+        int tayAmount = in.readInt();
+        for(int i = 0; i < tayAmount; i++){
+            byte tagNameLen = in.readByte();
+            String tagName = in.readCharSequence(tagNameLen, StandardCharsets.US_ASCII).toString();
+            short entityId = in.readShort();
+            ecsManager.setEntityTag(entityId, tagName);
+        }
+    
+        return world;
     }
 }

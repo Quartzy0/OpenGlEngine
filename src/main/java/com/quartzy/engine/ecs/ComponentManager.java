@@ -2,6 +2,7 @@ package com.quartzy.engine.ecs;
 
 import com.quartzy.engine.world.World;
 import lombok.CustomLog;
+import lombok.Getter;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -10,8 +11,11 @@ import java.util.HashMap;
 public class ComponentManager<T extends Component>{
     
     private HashMap<Short, T> components = new HashMap<>();
+    @Getter
+    private Class<? extends Component> type;
     
-    public ComponentManager(){
+    public ComponentManager(Class<? extends Component> type){
+        this.type = type;
     }
     
     public void addComponent(T component, short entity, World worldIn){

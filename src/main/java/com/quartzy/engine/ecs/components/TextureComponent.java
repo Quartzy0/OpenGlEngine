@@ -35,6 +35,9 @@ public class TextureComponent extends Component{
         this.color = Color.WHITE;
     }
     
+    public TextureComponent(){
+    }
+    
     @Override
     public void init(){
     

@@ -17,6 +17,9 @@ public class AudioSourceComponent extends Component{
     private TransformComponent transformComponent;
     private RigidBodyComponent rigidBodyComponent;
     
+    public AudioSourceComponent(){
+    }
+    
     @Override
     public void init(){
         this.transformComponent = world.getEcsManager().getComponent(entityId, TransformComponent.class);

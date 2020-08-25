@@ -5,6 +5,7 @@ import com.quartzy.engine.ecs.Component;
 import com.quartzy.engine.graphics.Renderer;
 import com.quartzy.engine.graphics.Window;
 import com.quartzy.engine.math.Matrix4f;
+import com.quartzy.engine.math.Vector3f;
 import com.quartzy.engine.network.NetworkManager;
 import com.quartzy.engine.network.Side;
 import io.netty.buffer.ByteBuf;
@@ -18,6 +19,8 @@ public class CameraComponent extends Component{
     @Setter
     private Matrix4f modelMatrix, viewMatrix, projectionMatrix;
     
+    private Vector3f cameraPos;
+    
     private boolean mainOnStartup;
     private boolean changed;
     
@@ -25,23 +28,27 @@ public class CameraComponent extends Component{
         this.projectionMatrix = projectionMatrix;
         this.viewMatrix = new Matrix4f();
         this.modelMatrix = new Matrix4f();
+        this.cameraPos = new Vector3f();
     }
     
     public CameraComponent(Matrix4f viewMatrix, Matrix4f projectionMatrix){
         this.viewMatrix = viewMatrix;
         this.projectionMatrix = projectionMatrix;
         this.modelMatrix = new Matrix4f();
+        this.cameraPos = new Vector3f();
     }
     
     public CameraComponent(Matrix4f modelMatrix, Matrix4f viewMatrix, Matrix4f projectionMatrix){
         this.modelMatrix = modelMatrix;
         this.viewMatrix = viewMatrix;
         this.projectionMatrix = projectionMatrix;
+        this.cameraPos = new Vector3f();
     }
     
     public CameraComponent(){
         this.viewMatrix = new Matrix4f();
         this.modelMatrix = new Matrix4f();
+        this.cameraPos = new Vector3f();
     }
     
     
@@ -50,6 +57,7 @@ public class CameraComponent extends Component{
         this.viewMatrix = new Matrix4f();
         this.modelMatrix = new Matrix4f();
         this.mainOnStartup = main;
+        this.cameraPos = new Vector3f();
     }
     
     public CameraComponent(Matrix4f viewMatrix, Matrix4f projectionMatrix, boolean main){
@@ -57,6 +65,7 @@ public class CameraComponent extends Component{
         this.projectionMatrix = projectionMatrix;
         this.modelMatrix = new Matrix4f();
         this.mainOnStartup = main;
+        this.cameraPos = new Vector3f();
     }
     
     public CameraComponent(Matrix4f modelMatrix, Matrix4f viewMatrix, Matrix4f projectionMatrix, boolean main){
@@ -64,12 +73,14 @@ public class CameraComponent extends Component{
         this.viewMatrix = viewMatrix;
         this.projectionMatrix = projectionMatrix;
         this.mainOnStartup = main;
+        this.cameraPos = new Vector3f();
     }
     
     public CameraComponent(boolean main){
         this.viewMatrix = new Matrix4f();
         this.modelMatrix = new Matrix4f();
         this.mainOnStartup = main;
+        this.cameraPos = new Vector3f();
     }
     
     @Override
@@ -105,6 +116,7 @@ public class CameraComponent extends Component{
     
     public void translateView(float x, float y, float z){
         this.viewMatrix = this.viewMatrix.multiply(Matrix4f.translate(x, y, z));
+        cameraPos = cameraPos.add(new Vector3f(x, y, z));
         changed = true;
     }
     
@@ -115,11 +127,20 @@ public class CameraComponent extends Component{
     
     @Override
     public void toBytes(ByteBuf out){
-    
+        out.writeFloat(cameraPos.x);
+        out.writeFloat(cameraPos.y);
+        out.writeFloat(cameraPos.z);
+        out.writeBoolean(mainOnStartup);
     }
     
     @Override
     public void fromBytes(ByteBuf in){
-    
+        float x = in.readFloat();
+        float y = in.readFloat();
+        float z = in.readFloat();
+        boolean b = in.readBoolean();
+        this.cameraPos = new Vector3f(x, y, z);
+        this.mainOnStartup = b;
+        this.changed = true;
     }
 }

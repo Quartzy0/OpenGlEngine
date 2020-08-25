@@ -28,6 +28,10 @@ public class LightSourceComponent extends Component{
         this(color, 50.0f);
     }
     
+    public LightSourceComponent(){
+        this(new Vector3f(1, 1, 1));
+    }
+    
     @Override
     public void init(){
         this.transform = world.getEcsManager().getComponent(entityId, TransformComponent.class);
@@ -41,12 +45,20 @@ public class LightSourceComponent extends Component{
     
     @Override
     public void toBytes(ByteBuf out){
-    
+        out.writeFloat(color.x);
+        out.writeFloat(color.y);
+        out.writeFloat(color.z);
+        
+        out.writeFloat(z);
     }
     
     @Override
     public void fromBytes(ByteBuf in){
-    
+        float x = in.readFloat();
+        float y = in.readFloat();
+        float z = in.readFloat();
+        this.color = new Vector3f(x, y, z);
+        this.z = in.readFloat();
     }
     
     public Vector3f getPosition(){

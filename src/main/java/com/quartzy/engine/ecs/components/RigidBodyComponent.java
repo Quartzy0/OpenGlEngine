@@ -23,6 +23,9 @@ public class RigidBodyComponent extends Component{
         this.height = height;
     }
     
+    public RigidBodyComponent(){
+    }
+    
     @Override
     public void init(){
         TransformComponent component = world.getEcsManager().getComponent(entityId, TransformComponent.class);

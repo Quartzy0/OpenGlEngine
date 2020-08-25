@@ -4,6 +4,7 @@ import com.quartzy.engine.ecs.Component;
 import io.netty.buffer.ByteBuf;
 import lombok.CustomLog;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Field;
@@ -17,16 +18,26 @@ public class BehaviourComponent extends Component{
     @Getter
     private Behaviour behaviour;
     
+    @Getter
+    @Setter
+    private boolean active;
+    
     public BehaviourComponent(Class<? extends Behaviour> behaviour){
         try{
             this.behaviour = behaviour.newInstance();
         } catch(InstantiationException | IllegalAccessException e){
             log.warning("Can't create new instance of behaviour script %s", e, behaviour.getName());
         }
+        this.active = true;
+    }
+    
+    public BehaviourComponent(){
     }
     
     public void update(float delta){
-        behaviour.update(delta);
+        if(active){
+            behaviour.update(delta);
+        }
     }
     
     @Override
@@ -49,6 +60,7 @@ public class BehaviourComponent extends Component{
     
     @Override
     public void toBytes(ByteBuf out){
+        out.writeBoolean(active);
         String name = behaviour.getClass().getName();
         out.writeInt(name.length());
         out.writeCharSequence(name, StandardCharsets.US_ASCII);
@@ -56,6 +68,7 @@ public class BehaviourComponent extends Component{
     
     @Override
     public void fromBytes(ByteBuf in){
+        this.active = in.readBoolean();
         int len = in.readInt();
         String className = in.readCharSequence(len, StandardCharsets.US_ASCII).toString();
         try{

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.dyn4j.geometry.Rotation;
 import org.dyn4j.geometry.Transform;
+import org.dyn4j.geometry.Vector2;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +22,9 @@ public class TransformComponent extends Component{
     
     public TransformComponent(Transform transform){
         this.transform = transform;
+    }
+    
+    public TransformComponent(){
     }
     
     @Override
@@ -92,11 +96,14 @@ public class TransformComponent extends Component{
     
     @Override
     public void toBytes(ByteBuf out){
-    
+        out.writeDouble(this.getX());
+        out.writeDouble(this.getY());
     }
     
     @Override
     public void fromBytes(ByteBuf in){
-    
+        this.transform = new Transform();
+        this.transform.translate(in.readDouble(), in.readDouble());
+        anyChanged = true;
     }
 }

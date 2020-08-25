@@ -13,6 +13,9 @@ public abstract class Component{
     @Getter
     protected World world;
     
+    public Component(){
+    }
+    
     public abstract void init();
     
     public abstract List<Class<? extends Component>> requiredComponents();

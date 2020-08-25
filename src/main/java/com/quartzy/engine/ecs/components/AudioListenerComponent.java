@@ -4,7 +4,6 @@ import com.quartzy.engine.ecs.Component;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.Setter;
-import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
 import org.dyn4j.geometry.Vector3;
@@ -63,12 +62,30 @@ public class AudioListenerComponent extends Component{
     
     @Override
     public void toBytes(ByteBuf out){
+        out.writeFloat((float) up.x);
+        out.writeFloat((float) up.y);
+        out.writeFloat((float) up.z);
     
+        out.writeFloat((float) at.x);
+        out.writeFloat((float) at.y);
+        out.writeFloat((float) at.z);
+        
+        out.writeBoolean(mainAtStartup);
     }
     
     @Override
     public void fromBytes(ByteBuf in){
+        float upX = in.readFloat();
+        float upY = in.readFloat();
+        float upZ = in.readFloat();
     
+        float atX = in.readFloat();
+        float atY = in.readFloat();
+        float atZ = in.readFloat();
+        
+        this.mainAtStartup = in.readBoolean();
+        this.at = new Vector3(atX, atY, atZ);
+        this.up = new Vector3(upX, upY, upZ);
     }
     
     public void setAt(double x, double y, double z){
