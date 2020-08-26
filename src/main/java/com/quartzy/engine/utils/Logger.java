@@ -143,6 +143,7 @@ public class Logger{
     }
     
     public void openGLLog(int source, int type, int id, int severity, String message, long userParam){
+        if(!enabled)return;
         String sourceString = "GL_DEBUG_SOURCE_OTHER";
         String typeString = "GL_DEBUG_TYPE_OTHER";
         switch(source){
