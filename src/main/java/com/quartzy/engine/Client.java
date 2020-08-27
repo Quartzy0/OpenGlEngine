@@ -1,6 +1,7 @@
 package com.quartzy.engine;
 
 import com.quartzy.engine.audio.SoundManager;
+import com.quartzy.engine.ecs.components.CustomRenderComponent;
 import com.quartzy.engine.input.Input;
 import com.quartzy.engine.input.KeyPressed;
 import com.quartzy.engine.input.Mods;
@@ -21,6 +22,7 @@ import lombok.Setter;
 import org.atteo.classindex.ClassIndex;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -125,6 +127,14 @@ public class Client{
      */
     public void dispose(){
         running = false;
+        if(NetworkManager.INSTANCE.getSide()==Side.CLIENT && World.getCurrentWorld()!=null){
+            HashMap<Short, CustomRenderComponent> allCustomRenderers = World.getCurrentWorld().getEcsManager().getAllEntitiesWithComponent(CustomRenderComponent.class);
+            if(allCustomRenderers != null && !allCustomRenderers.isEmpty()){
+                for(CustomRenderComponent value : allCustomRenderers.values()){
+                    value.dispose();
+                }
+            }
+        }
         applicationClient.dispose(this);
         networkManager.close();
         SoundManager.getInstance().dispose();

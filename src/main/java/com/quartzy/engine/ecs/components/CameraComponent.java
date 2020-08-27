@@ -106,8 +106,8 @@ public class CameraComponent extends Component{
         }
     }
     
-    public void updateViewport(int newWidth, int newHeight){
-        this.projectionMatrix = Matrix4f.orthographic(0f, newWidth, 0f, newHeight, -1f, 1f);
+    public void updateViewport(int newWidth, int newHeight, int x, int y){
+        this.projectionMatrix = Matrix4f.orthographic(x, newWidth, y, newHeight, -1f, 1f);
         if(NetworkManager.INSTANCE.getSide()== Side.CLIENT){
             Client.getInstance().getRenderer().setUniformsUI(new Matrix4f(), new Matrix4f(), this.projectionMatrix);
         }

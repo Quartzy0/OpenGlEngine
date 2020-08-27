@@ -140,7 +140,7 @@ public class ECSManager{
     }
     
     public <T extends Component> HashMap<Short, T> getAllEntitiesWithComponent(Class<T> clazz){
-        if(!components.containsKey(clazz))return null;
+        if(!components.containsKey(clazz))return new HashMap<>();
         return components.get(clazz).getComponents();
     }
     

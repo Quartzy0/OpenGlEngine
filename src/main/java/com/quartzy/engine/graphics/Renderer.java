@@ -1,8 +1,14 @@
 package com.quartzy.engine.graphics;
 
+import com.quartzy.engine.Client;
 import com.quartzy.engine.ecs.components.CameraComponent;
+import com.quartzy.engine.ecs.components.CustomRenderComponent;
 import com.quartzy.engine.math.Matrix4f;
+import com.quartzy.engine.math.Vector2f;
+import com.quartzy.engine.network.NetworkManager;
+import com.quartzy.engine.network.Side;
 import com.quartzy.engine.utils.Resource;
+import com.quartzy.engine.world.World;
 import lombok.CustomLog;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +22,7 @@ import com.quartzy.engine.text.Font;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.HashMap;
 
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
 import static org.lwjgl.opengl.GL11.*;
@@ -51,6 +58,10 @@ public class Renderer{
     @Setter
     private CameraComponent mainCamera;
     private GLFWWindowSizeCallbackI sizeCallback;
+    
+    @Getter
+    @Setter
+    private Vector2f viewportPosition, viewportDimensions;
     
     /**
      * Initializes the renderer. It loads the default shaders from the default resource directory
@@ -100,13 +111,27 @@ public class Renderer{
         program.compileShaders();
     
         this.window = window;
+        
+        if(this.viewportDimensions==null){
+            this.viewportDimensions = new Vector2f(1, 1);
+        }
+        if(this.viewportPosition==null){
+            this.viewportPosition = new Vector2f(0, 0);
+        }
     
         sizeCallback = (window1, width, height) -> {
-            glViewport(0, 0, width, height);
-            getMainCamera().updateViewport(width, height);
-            this.window.updateViewport(width, height);
+            updateViewport(width, height);
+            if(NetworkManager.INSTANCE.getSide()==Side.CLIENT && World.getCurrentWorld()!=null){
+                HashMap<Short, CustomRenderComponent> allCustomRenderers = World.getCurrentWorld().getEcsManager().getAllEntitiesWithComponent(CustomRenderComponent.class);
+                if(allCustomRenderers != null && !allCustomRenderers.isEmpty()){
+                    for(CustomRenderComponent value : allCustomRenderers.values()){
+                        value.resizeWindow(width, height);
+                    }
+                }
+            }
         };
         glfwSetWindowSizeCallback(window.getId(), sizeCallback);
+        updateViewport(window.getWidth(), window.getHeight());
         
         specifyVertexAttributes();
         
@@ -131,6 +156,30 @@ public class Renderer{
         program.setUniform("textures", texturesArray);
     
         font = new Font(new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.PLAIN, 16));
+    }
+    
+    private void updateViewport(int windowWidth, int windowHeight){
+        int newWidth = (int) (windowWidth * this.viewportDimensions.x);
+        int newHeight = (int) (windowHeight * this.viewportDimensions.y);
+        int x = (int) (this.viewportPosition.x * windowWidth);
+        int y = (int) (this.viewportPosition.y * windowHeight);
+        glViewport(x, y, newWidth, newHeight);
+        CameraComponent mainCamera = getMainCamera();
+        if(mainCamera!=null){
+            mainCamera.updateViewport(newWidth, newHeight, 0, 0);
+        }
+        else{
+            Matrix4f projectionMatrix = Matrix4f.orthographic(0, newWidth, 0, newHeight, -1f, 1f);
+            if(NetworkManager.INSTANCE.getSide()== Side.CLIENT){
+                Client.getInstance().getRenderer().setUniformsUI(new Matrix4f(), new Matrix4f(), projectionMatrix);
+                Client.getInstance().getRenderer().setUniforms(new Matrix4f(), new Matrix4f(), projectionMatrix);
+            }
+        }
+        this.window.updateViewport(windowWidth, windowHeight);
+    }
+    
+    public void refreshViewport(){
+        this.updateViewport(this.window.getWidth(), this.window.getHeight());
     }
     
     public void setUniforms(Matrix4f model, Matrix4f view, Matrix4f projection){

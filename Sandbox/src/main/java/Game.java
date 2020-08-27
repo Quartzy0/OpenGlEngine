@@ -23,13 +23,23 @@ public class Game implements ApplicationClient{
     @Override
     public void init(Client client){
 //        World world = new World("Tester_man");
-        client.getResourceManager().addResource("textures/tiles/stone.png");
-        client.getResourceManager().addResource("textures/particles/flame.png");
-        client.getResourceManager().addResource("audio/explosion.ogg");
+//        client.getResourceManager().addResource("textures/tiles/stone.png");
+//        client.getResourceManager().addResource("textures/particles/flame.png");
+//        client.getResourceManager().addResource("audio/explosion.ogg");
         World world = World.loadWorld("worlds/Tester_man.wrld");
         World.setCurrentWorld(world);
+        
+        client.getRenderer().setViewportDimensions(new Vector2f(0.5f, 0.5f));
+        client.getRenderer().refreshViewport();
     
 //        ECSManager ecsManager = world.getEcsManager();
+//        {
+//            short entity = ecsManager.createBlankObject();
+//            Transform transform = new Transform();
+//            transform.setTranslation(232, 232);
+//            ecsManager.addComponentToEntity(entity, new TransformComponent(transform));
+//            ecsManager.addComponentToEntity(entity, new CustomRenderComponent(ImGuiRenderer.class));
+//        }
 //        Texture stone = client.getTextureManager().getTexture("stone");
 //        Texture flame = client.getTextureManager().getTexture("flame");
 //        {

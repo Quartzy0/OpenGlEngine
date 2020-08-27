@@ -56,13 +56,12 @@ public class World{
     public void render(Renderer renderer){
         CameraComponent mainCamera = renderer.getMainCamera();
         if(mainCamera!=null)mainCamera.update();
-        HashMap<Short, TextureComponent> allEntitiesWithComponent = ecsManager.getAllEntitiesWithComponent(TextureComponent.class);
-        if(allEntitiesWithComponent==null || allEntitiesWithComponent.isEmpty())return;
-        {
+        HashMap<Short, TextureComponent> allTextures = ecsManager.getAllEntitiesWithComponent(TextureComponent.class);
+        if(allTextures!=null && !allTextures.isEmpty()){
             int k = 0;
             Texture prevTexture = null;
             renderer.begin();
-            for(Map.Entry<Short, TextureComponent> shortComponentEntry : allEntitiesWithComponent.entrySet()){
+            for(Map.Entry<Short, TextureComponent> shortComponentEntry : allTextures.entrySet()){
                 TransformComponent component = ecsManager.getComponent(shortComponentEntry.getKey(), TransformComponent.class);
                 if(component == null) continue;
                 TextureComponent textureComponent = shortComponentEntry.getValue();
@@ -77,7 +76,7 @@ public class World{
                         renderer.begin();
                     }
                 }
-                renderer.drawTextureRegion((float) component.getTransform().getTranslationX(), (float) component.getTransform().getTranslationY(), textureComponent.getTexture().getWidth(), textureComponent.getTexture().getHeight(), k-1);
+                renderer.drawTextureRegion((float) component.getTransform().getTranslationX(), (float) component.getTransform().getTranslationY(), textureComponent.getTexture().getWidth(), textureComponent.getTexture().getHeight(), k - 1);
             }
             renderer.end();
         }
@@ -132,6 +131,13 @@ public class World{
                 renderer.getProgram().setUniform("lightColors", colors);
             }
         }
+    
+        HashMap<Short, CustomRenderComponent> allCustomRenderers = ecsManager.getAllEntitiesWithComponent(CustomRenderComponent.class);
+        if(allCustomRenderers!=null && !allCustomRenderers.isEmpty()){
+            for(CustomRenderComponent value : allCustomRenderers.values()){
+                value.render(renderer);
+            }
+        }
     }
     
     /**
@@ -143,8 +149,11 @@ public class World{
             ecsManager.initComponents();
             this.firstRun = false;
         }else {
-            for(BehaviourComponent value : ecsManager.getAllEntitiesWithComponent(BehaviourComponent.class).values()){
-                value.update(delta);
+            HashMap<Short, BehaviourComponent> allBehaviours = ecsManager.getAllEntitiesWithComponent(BehaviourComponent.class);
+            if(allBehaviours!=null && !allBehaviours.isEmpty()){
+                for(BehaviourComponent value : allBehaviours.values()){
+                    value.update(delta);
+                }
             }
         }
         this.physicsWorld.update(delta);
@@ -159,6 +168,12 @@ public class World{
         if(allParticleEmitters!=null && !allParticleEmitters.isEmpty()){
             for(ParticleEmitterComponent emitter : allParticleEmitters.values()){
                 emitter.update(delta);
+            }
+        }
+        HashMap<Short, CustomRenderComponent> allCustomRenderers = ecsManager.getAllEntitiesWithComponent(CustomRenderComponent.class);
+        if(allCustomRenderers!=null && !allCustomRenderers.isEmpty()){
+            for(CustomRenderComponent value : allCustomRenderers.values()){
+                value.update(delta);
             }
         }
     }
