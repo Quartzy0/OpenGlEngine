@@ -28,17 +28,6 @@ public class TestBehaviour extends Behaviour{
         if(keyboard.isKeyDown(GLFW.GLFW_KEY_I)){
             getComponent(TransformComponent.class).setPosition(200, 200);
         }
-        if(keyboard.isKeyDown(GLFW.GLFW_KEY_L)){
-            Transform transform = getComponent(TransformComponent.class).getTransform();
-            log.debug("Transform x: %f, y: %f", transform.getTranslationX(), transform.getTranslationY());
-            Transform transform1 = getComponent(RigidBodyComponent.class).getBody().getTransform();
-            log.debug("Body x: %f, y: %f", transform1.getTranslationX(), transform1.getTranslationY());
-        }
-        if(keyboard.isKeyDown(GLFW.GLFW_KEY_O)){
-            AudioSourceComponent component = getComponent(AudioSourceComponent.class);
-            Sound explosion = SoundManager.getInstance().getSound("explosion");
-            component.play(explosion);
-        }
     
         if(keyboard.isKeyPressed(GLFW.GLFW_KEY_W)){
             this.transform.translate(0, speed*delta);
@@ -51,6 +40,13 @@ public class TestBehaviour extends Behaviour{
         }
         if(keyboard.isKeyPressed(GLFW.GLFW_KEY_D)){
             this.transform.translate(speed*delta, 0);
+        }
+        
+        if(keyboard.isKeyPressed(GLFW.GLFW_KEY_UP)){
+            Client.getInstance().getWindow().setWidth(Client.getInstance().getWindow().getWidth()+1);
+        }
+        if(keyboard.isKeyPressed(GLFW.GLFW_KEY_DOWN)){
+            Client.getInstance().getWindow().setWidth(Client.getInstance().getWindow().getWidth()-1);
         }
     }
 }

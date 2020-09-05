@@ -175,6 +175,7 @@ public class Renderer{
                 Client.getInstance().getRenderer().setUniforms(new Matrix4f(), new Matrix4f(), projectionMatrix);
             }
         }
+        
         this.window.updateViewport(windowWidth, windowHeight);
     }
     

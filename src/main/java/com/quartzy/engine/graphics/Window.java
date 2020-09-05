@@ -1,6 +1,7 @@
 package com.quartzy.engine.graphics;
 
 import lombok.CustomLog;
+import lombok.Getter;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallbackI;
 import org.lwjgl.opengl.GL;
@@ -16,9 +17,15 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 @CustomLog
 public class Window{
     
+    @Getter
     private long id;
+    @Getter
     private String title;
+    @Getter
     private int width, height;
+    
+    @Getter
+    private float aspectRatio;
     
     /**
      * @param title Title of the window
@@ -29,6 +36,7 @@ public class Window{
         this.title = title;
         this.width = width;
         this.height = height;
+        this.aspectRatio = ((float) this.width)/((float) this.height);
         init();
     }
     
@@ -48,6 +56,7 @@ public class Window{
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
         id = glfwCreateWindow(width, height, title, NULL, NULL);
     
         if (id == NULL) {
@@ -95,19 +104,15 @@ public class Window{
         glClearColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
     
-    public long getId(){
-        return id;
+    public void setWidth(int width){
+        this.width = width;
+        this.height = (int) (this.width/this.aspectRatio);
+        glfwSetWindowSize(this.id, this.width, this.height);
     }
     
-    public String getTitle(){
-        return title;
-    }
-    
-    public int getWidth(){
-        return width;
-    }
-    
-    public int getHeight(){
-        return height;
+    public void setHeight(int height){
+        this.height = height;
+        this.width = (int) (this.height*this.aspectRatio);
+        glfwSetWindowSize(this.id, this.width, this.height);
     }
 }

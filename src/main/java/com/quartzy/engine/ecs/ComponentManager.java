@@ -1,5 +1,6 @@
 package com.quartzy.engine.ecs;
 
+import com.quartzy.engine.ecs.components.CustomRenderComponent;
 import com.quartzy.engine.world.World;
 import lombok.CustomLog;
 import lombok.Getter;
@@ -16,6 +17,19 @@ public class ComponentManager<T extends Component>{
     
     public ComponentManager(Class<? extends Component> type){
         this.type = type;
+    }
+    
+    public ComponentManager(HashMap<Short, T> components, Class<? extends Component> type){
+        this.components = components;
+        this.type = type;
+    }
+    
+    public T removeComponent(short entityId){
+        T remove = this.components.remove(entityId);
+        if(remove!=null && type.equals(CustomRenderComponent.class)){
+            ((CustomRenderComponent) remove).dispose();
+        }
+        return remove;
     }
     
     public void addComponent(T component, short entity, World worldIn){

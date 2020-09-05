@@ -178,29 +178,67 @@ public class World{
         }
     }
     
-    @SneakyThrows
-    public static Resource saveToFile(String folderPath, World world){
+    public static Resource saveToFile(String folderPath, World world, short... entityBlacklist){
         String name = world.name;
         Path path = Paths.get(folderPath, name + ".wrld");
         File file = path.toFile();
+        return saveToFile(file, world, entityBlacklist);
+    }
+    
+    @SneakyThrows
+    public static Resource saveToFile(File file, World world, short... entityBlacklist){
         if(!file.exists()){
             file.createNewFile();
         }
+        String name = world.getName();
         ByteBuf bytes = Unpooled.buffer();
         bytes.writeByte(name.length());
         bytes.writeCharSequence(name, StandardCharsets.US_ASCII);
     
         HashMap<Class<? extends Component>, ComponentManager> components = world.ecsManager.getComponents();
-        bytes.writeShort(components.size());
+        int actualAmount5 = 0;
         for(ComponentManager value : components.values()){
-            
+            HashMap<Short, Component> components1 = value.getComponents();
+            int left = components1.size();
+            for(Short aShort : components1.keySet()){
+                for(int i = 0; i < entityBlacklist.length; i++){
+                    if(entityBlacklist[i] == aShort){
+                        left--;
+                        break;
+                    }
+                }
+            }
+            if(left!=0)actualAmount5++;
+        }
+        bytes.writeShort(actualAmount5);
+        for(ComponentManager value : components.values()){
+    
+            Set<Map.Entry<Short, Component>> set = value.getComponents().entrySet();
+            int actualAmount = 0;
+            for(Map.Entry<Short, Component> entry : set){
+                for(int i = 0; i < entityBlacklist.length; i++){
+                    if(entityBlacklist[i] == entry.getKey())break;
+                    if(i== entityBlacklist.length-1){
+                        actualAmount++;
+                    }
+                }
+            }
+            if(actualAmount==0)continue;
             String name1 = value.getType().getName();
             bytes.writeByte(name1.length());
             bytes.writeCharSequence(name1, StandardCharsets.US_ASCII);
-    
-            Set<Map.Entry<Short, Component>> set = value.getComponents().entrySet();
-            bytes.writeInt(set.size());
+            bytes.writeInt(actualAmount);
+            
             for(Map.Entry<Short, Component> entry : set){
+    
+                boolean canPass = true;
+                for(int i = 0; i < entityBlacklist.length; i++){
+                    if(entityBlacklist[i] == entry.getKey()){
+                        canPass = false;
+                    }
+                    if(!canPass)break;
+                }
+                if(!canPass)continue;
                 
                 bytes.writeShort(entry.getKey());
     
@@ -209,19 +247,68 @@ public class World{
         }
     
         HashMap<Integer, List<Short>> layers = world.getEcsManager().getLayers();
-        bytes.writeShort(layers.size());
+        int actualAmount1 = 0;
         for(Map.Entry<Integer, List<Short>> entry : layers.entrySet()){
+            for(Short entry1 : entry.getValue()){
+                boolean next = false;
+                for(int i = 0; i < entityBlacklist.length; i++){
+                    if(entityBlacklist[i] != entry1){
+                        actualAmount1++;
+                        next = true;
+                        break;
+                    }
+                }
+                if(next)break;
+            }
+        }
+        bytes.writeShort(actualAmount1);
+        for(Map.Entry<Integer, List<Short>> entry : layers.entrySet()){
+            int actualAmount = 0;
+            for(Short entry1 : entry.getValue()){
+                for(int i = 0; i < entityBlacklist.length; i++){
+                    if(entityBlacklist[i] == entry1)break;
+                    if(i == entityBlacklist.length-1){
+                        actualAmount++;
+                    }
+                }
+            }
             bytes.writeShort(entry.getKey());
-            bytes.writeInt(entry.getValue().size());
+            bytes.writeInt(actualAmount);
     
             for(Short aShort : entry.getValue()){
+                boolean canContinue = true;
+                for(int i = 0; i < entityBlacklist.length; i++){
+                    if(entityBlacklist[i] == aShort){
+                        canContinue = false;
+                        break;
+                    }
+                }
+                if(!canContinue)continue;
                 bytes.writeShort(aShort);
             }
         }
     
         HashMap<String, Short> tags = world.getEcsManager().getTags();
-        bytes.writeInt(tags.size());
+        int actualAmount2 = 0;
+        for(Short entry1 : tags.values()){
+            for(int i = 0; i < entityBlacklist.length; i++){
+                if(entityBlacklist[i] == entry1)break;
+                if(i == entityBlacklist.length-1){
+                    actualAmount2++;
+                }
+            }
+        }
+        bytes.writeInt(actualAmount2);
         for(Map.Entry<String, Short> entry : tags.entrySet()){
+            boolean canPass = true;
+            for(int i = 0; i < entityBlacklist.length; i++){
+                if(entityBlacklist[i] == entry.getValue()){
+                    canPass = false;
+                }
+                if(!canPass)break;
+            }
+            if(!canPass)continue;
+            
             bytes.writeByte(entry.getKey().length());
             bytes.writeCharSequence(entry.getKey(), StandardCharsets.US_ASCII);
             bytes.writeShort(entry.getValue());
@@ -236,55 +323,70 @@ public class World{
         return new Resource(file, world.name, ResourceType.WORLD_FILE);
     }
     
-    @SneakyThrows
+    
     public static World loadWorld(String pathname){
-        File file = Paths.get(pathname).toFile();
+        return loadWorld(Paths.get(pathname).toFile());
+    }
+    
+    public static World loadWorld(File file){
         if(!file.exists())return null;
-        byte[] bytes = Files.readAllBytes(file.toPath());
+        byte[] bytes;
+        try{
+            bytes = Files.readAllBytes(file.toPath());
+        } catch(IOException e){
+            return null;
+        }
         if(bytes.length == 0)return null;
-        ByteBuf in = Unpooled.wrappedBuffer(bytes);
+        try{
+            ByteBuf in = Unpooled.wrappedBuffer(bytes);
     
-        byte worldNameLen = in.readByte();
-        String worldName = in.readCharSequence(worldNameLen, StandardCharsets.US_ASCII).toString();
-        World world = new World(worldName);
+            byte worldNameLen = in.readByte();
+            String worldName = in.readCharSequence(worldNameLen, StandardCharsets.US_ASCII).toString();
+            World world = new World(worldName);
+    
+            short componentCount = in.readShort();
+    
+            ECSManager ecsManager = world.getEcsManager();
+            for(int i = 0; i < componentCount; i++){
+                byte componentNameLen = in.readByte();
+                String componentName = in.readCharSequence(componentNameLen, StandardCharsets.US_ASCII).toString();
         
-        short componentCount = in.readShort();
-    
-        ECSManager ecsManager = world.getEcsManager();
-        for(int i = 0; i < componentCount; i++){
-            byte componentNameLen = in.readByte();
-            String componentName = in.readCharSequence(componentNameLen, StandardCharsets.US_ASCII).toString();
-    
-            Class<? extends Component> componentClass = (Class<? extends Component>) Class.forName(componentName);
-            
-            int valAmount = in.readInt();
-            for(int j = 0; j < valAmount; j++){
-                Component component = componentClass.newInstance();
-                short entityId = in.readShort();
-                component.fromBytes(in);
-                ecsManager.addComponentToEntityNoCheck(entityId, component);
+                Class<? extends Component> componentClass = (Class<? extends Component>) Class.forName(componentName);
+        
+                int valAmount = in.readInt();
+                for(int j = 0; j < valAmount; j++){
+                    Component component = componentClass.newInstance();
+                    short entityId = in.readShort();
+                    component.fromBytes(in);
+                    ecsManager.addComponentToEntityNoCheck(entityId, component);
+                }
             }
-        }
     
-        short layerAmount = in.readShort();
-        for(int i = 0; i < layerAmount; i++){
-            short layerId = in.readShort();
-    
-            int layerEntityCount = in.readInt();
-            for(int i1 = 0; i1 < layerEntityCount; i1++){
-                short entityId = in.readShort();
-                ecsManager.addEntityToLayer(entityId, layerId);
+            short layerAmount = in.readShort();
+            for(int i = 0; i < layerAmount; i++){
+                short layerId = in.readShort();
+        
+                int layerEntityCount = in.readInt();
+                for(int i1 = 0; i1 < layerEntityCount; i1++){
+                    short entityId = in.readShort();
+                    ecsManager.addEntityToLayer(entityId, layerId);
+                }
             }
-        }
     
-        int tayAmount = in.readInt();
-        for(int i = 0; i < tayAmount; i++){
-            byte tagNameLen = in.readByte();
-            String tagName = in.readCharSequence(tagNameLen, StandardCharsets.US_ASCII).toString();
-            short entityId = in.readShort();
-            ecsManager.setEntityTag(entityId, tagName);
-        }
+            int tayAmount = in.readInt();
+            for(int i = 0; i < tayAmount; i++){
+                byte tagNameLen = in.readByte();
+                String tagName = in.readCharSequence(tagNameLen, StandardCharsets.US_ASCII).toString();
+                short entityId = in.readShort();
+                ecsManager.setEntityTag(entityId, tagName);
+            }
     
-        return world;
+            return world;
+        }catch(IndexOutOfBoundsException e){
+            return null;
+        } catch(IllegalAccessException | InstantiationException | ClassNotFoundException e){
+            e.printStackTrace();
+        }
+        return null;
     }
 }

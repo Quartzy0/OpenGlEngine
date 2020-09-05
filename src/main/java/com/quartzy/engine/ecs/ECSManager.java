@@ -23,11 +23,13 @@ public class ECSManager{
     
     private World parent;
     
+    private boolean inited = false;
+    
     public ECSManager(World parent){
         this.parent = parent;
     }
     
-    public <T extends Component> void addComponentToEntityNoCheck(short entityId, T component, int layerId, String tag){
+    public <T extends Component> void addComponentToEntityNoCheck(short entityId, T component){
         if(components.containsKey(component.getClass())){
             components.get(component.getClass()).addComponent(component, entityId, parent);
         }else {
@@ -35,15 +37,12 @@ public class ECSManager{
             value.addComponent(component, entityId, parent);
             components.put(component.getClass(), value);
         }
-        if(layers.containsKey(layerId)){
-            layers.get(layerId).add(entityId);
-        }else {
-            layers.put(layerId, new ArrayList<>(Collections.singleton(entityId)));
+        if(inited){
+            component.init();
         }
-        if(tag!=null && !tag.isEmpty()) tags.putIfAbsent(tag, entityId);
     }
     
-    public <T extends Component> void addComponentToEntity(short entityId, T component, int layerId, String tag){
+    public <T extends Component> void addComponentToEntity(short entityId, T component){
         List<Class<? extends Component>> classes = component.requiredComponents();
         if(classes!=null){
             for(Class<? extends Component> requiredComponent : classes){
@@ -60,36 +59,9 @@ public class ECSManager{
             value.addComponent(component, entityId, parent);
             components.put(component.getClass(), value);
         }
-        if(layers.containsKey(layerId)){
-            layers.get(layerId).add(entityId);
-        }else {
-            layers.put(layerId, new ArrayList<>(Collections.singleton(entityId)));
+        if(inited){
+            component.init();
         }
-        if(tag!=null && !tag.isEmpty()) tags.putIfAbsent(tag, entityId);
-    }
-    
-    public <T extends Component> void addComponentToEntityNoCheck(short entityId, T component){
-        addComponentToEntityNoCheck(entityId, component, 0, null);
-    }
-    
-    public <T extends Component> void addComponentToEntity(short entityId, T component){
-        addComponentToEntity(entityId, component, 0, null);
-    }
-    
-    public <T extends Component> void addComponentToEntityNoCheck(short entityId, T component, int layerId){
-        addComponentToEntityNoCheck(entityId, component, layerId, null);
-    }
-    
-    public <T extends Component> void addComponentToEntity(short entityId, T component, int layerId){
-        addComponentToEntity(entityId, component, layerId, null);
-    }
-    
-    public <T extends Component> void addComponentToEntityNoCheck(short entityId, T component, String tag){
-        addComponentToEntityNoCheck(entityId, component, 0, tag);
-    }
-    
-    public <T extends Component> void addComponentToEntity(short entityId, T component, String tag){
-        addComponentToEntity(entityId, component, 0, tag);
     }
     
     public void initComponents(){
@@ -99,6 +71,7 @@ public class ECSManager{
                 component.init();
             }
         }
+        this.inited = true;
     }
     
     public <T extends Component> T getComponent(short entityId, Class<T> clazz){
@@ -139,26 +112,42 @@ public class ECSManager{
         }
     }
     
+    public void removeEntity(short entityId){
+        for(ComponentManager value : this.components.values()){
+            value.removeComponent(entityId);
+        }
+    }
+    
     public <T extends Component> HashMap<Short, T> getAllEntitiesWithComponent(Class<T> clazz){
         if(!components.containsKey(clazz))return new HashMap<>();
         return components.get(clazz).getComponents();
     }
     
-    public short createEntity(){
+    public short createObject(String tag, int layer){
         short s = (short) r.nextInt(Short.MAX_VALUE + 1);
         while(hasEntity(s)){
             s = (short) r.nextInt(Short.MAX_VALUE + 1);
         }
-        TransformComponent transformComponent = new TransformComponent(new Transform());
-        addComponentToEntity(s, transformComponent);
+        if(tag!=null){
+            this.tags.put(tag, s);
+        }
+        if(this.layers.containsKey(layer)){
+            this.layers.get(layer).add(s);
+        }else {
+            this.layers.put(layer, new ArrayList<>(s));
+        }
         return s;
     }
     
-    public short createBlankObject(){
-        short s = (short) r.nextInt(Short.MAX_VALUE + 1);
-        while(hasEntity(s)){
-            s = (short) r.nextInt(Short.MAX_VALUE + 1);
-        }
-        return s;
+    public short createObject(){
+        return this.createObject(null, 0);
+    }
+    
+    public short createObject(String tag){
+        return this.createObject(tag, 0);
+    }
+    
+    public short createObject(int layer){
+        return this.createObject(null, layer);
     }
 }

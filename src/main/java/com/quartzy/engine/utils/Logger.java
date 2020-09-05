@@ -1,6 +1,9 @@
 package com.quartzy.engine.utils;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
+import org.lwjgl.opengl.GL43;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,6 +18,9 @@ import static org.lwjgl.opengl.GL43.*;
 public class Logger{
     
     private Level level;
+    @Getter
+    @Setter
+    private int openGlLogLevel;
     private static boolean enabled;
     
     private DateTimeFormatter FORMATTER;
@@ -144,6 +150,10 @@ public class Logger{
     
     public void openGLLog(int source, int type, int id, int severity, String message, long userParam){
         if(!enabled)return;
+        if(this.openGlLogLevel != GL_DEBUG_SEVERITY_NOTIFICATION){
+            if(severity > this.openGlLogLevel) return;
+        }
+        if(severity == GL_DEBUG_SEVERITY_NOTIFICATION && this.openGlLogLevel!=GL_DEBUG_SEVERITY_NOTIFICATION)return;
         String sourceString = "GL_DEBUG_SOURCE_OTHER";
         String typeString = "GL_DEBUG_TYPE_OTHER";
         switch(source){
