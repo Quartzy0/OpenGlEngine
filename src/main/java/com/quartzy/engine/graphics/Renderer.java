@@ -63,6 +63,10 @@ public class Renderer{
     @Setter
     private Vector2f viewportPosition, viewportDimensions;
     
+    @Getter
+    @Setter
+    private Framebuffer framebuffer;
+    
     /**
      * Initializes the renderer. It loads the default shaders from the default resource directory
      */
@@ -184,11 +188,6 @@ public class Renderer{
     }
     
     public void setUniforms(Matrix4f model, Matrix4f view, Matrix4f projection){
-//        uiProgram.bind();
-//        uiProgram.setUniform("model", model);
-//        uiProgram.setUniform("view", view);
-//        uiProgram.setUniform("projection", projection);
-        
         program.bind();
         program.setUniform("model", model);
         program.setUniform("view", view);
@@ -250,6 +249,8 @@ public class Renderer{
             }else {
                 program.bind();
             }
+            if(this.framebuffer!=null)
+                this.framebuffer.bind();
         
             /* Upload the new vertex data */
             vbo.bind(GL_ARRAY_BUFFER);
@@ -257,6 +258,9 @@ public class Renderer{
         
             /* Draw batch */
             glDrawArrays(GL_TRIANGLES, 0, numVertices);
+    
+            if(this.framebuffer!=null)
+                this.framebuffer.unbind();
         
             /* Clear vertex data for next batch */
             vertices.clear();

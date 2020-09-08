@@ -324,11 +324,11 @@ public class World{
     }
     
     
-    public static World loadWorld(String pathname){
-        return loadWorld(Paths.get(pathname).toFile());
+    public static World loadWorld(String pathname, short... entitiesToAdd){
+        return loadWorld(Paths.get(pathname).toFile(), entitiesToAdd);
     }
     
-    public static World loadWorld(File file){
+    public static World loadWorld(File file, short... entitiesToAdd){
         if(!file.exists())return null;
         byte[] bytes;
         try{
@@ -379,6 +379,47 @@ public class World{
                 String tagName = in.readCharSequence(tagNameLen, StandardCharsets.US_ASCII).toString();
                 short entityId = in.readShort();
                 ecsManager.setEntityTag(entityId, tagName);
+            }
+    
+            if(entitiesToAdd!=null && entitiesToAdd.length!=0){
+                World currentWorld = World.getCurrentWorld();
+                if(currentWorld != null){
+                    HashMap<Class<? extends Component>, ComponentManager> components = currentWorld.getEcsManager().getComponents();
+                    if(components != null && !components.isEmpty()){
+                        Collection<ComponentManager> values = components.values();
+                        if(values != null && !values.isEmpty()){
+                            for(ComponentManager value : values){
+                                for(int i = 0; i < entitiesToAdd.length; i++){
+                                    Component component = value.getComponent(entitiesToAdd[i]);
+                                    if(component != null){
+                                        world.getEcsManager().addComponentToEntityNoCheck(entitiesToAdd[i], component);
+                                        world.getEcsManager().addEntityToInitBlacklist(entitiesToAdd[i]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    HashMap<String, Short> tags = currentWorld.getEcsManager().getTags();
+                    if(tags != null && !tags.isEmpty()){
+                        for(Map.Entry<String, Short> entry : tags.entrySet()){
+                            for(int i = 0; i < entitiesToAdd.length; i++){
+                                if(entitiesToAdd[i] == entry.getValue())
+                                    world.getEcsManager().setEntityTag(entitiesToAdd[i], entry.getKey());
+                            }
+                        }
+                    }
+                    HashMap<Integer, List<Short>> layers = currentWorld.getEcsManager().getLayers();
+                    if(layers != null && !layers.isEmpty()){
+                        for(Map.Entry<Integer, List<Short>> entry : layers.entrySet()){
+                            for(Short aShort : entry.getValue()){
+                                for(int i = 0; i < entitiesToAdd.length; i++){
+                                    if(aShort == entitiesToAdd[i])
+                                        world.getEcsManager().addEntityToLayer(entitiesToAdd[i], entry.getKey());
+                                }
+                            }
+                        }
+                    }
+                }
             }
     
             return world;

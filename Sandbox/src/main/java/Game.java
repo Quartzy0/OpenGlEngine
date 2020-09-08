@@ -2,6 +2,7 @@ import com.quartzy.engine.ApplicationClient;
 import com.quartzy.engine.Client;
 import com.quartzy.engine.ecs.ECSManager;
 import com.quartzy.engine.ecs.components.*;
+import com.quartzy.engine.graphics.Framebuffer;
 import com.quartzy.engine.graphics.Window;
 import com.quartzy.engine.world.World;
 import lombok.CustomLog;
@@ -9,6 +10,8 @@ import org.dyn4j.geometry.Transform;
 
 @CustomLog
 public class Game implements ApplicationClient{
+    public static short yes;
+    
     @Override
     public Window preInit(String[] args, Client client){
         client.setFragmentShader("shaders/fragment.glsl");
@@ -27,21 +30,23 @@ public class Game implements ApplicationClient{
         transform.translate(200, 200);
         ecsManager.addComponentToEntity(blankObject, new TransformComponent(transform));
         ecsManager.addComponentToEntity(blankObject, new TextureComponent(client.getTextureManager().getTexture("stone")));
+        ecsManager.addComponentToEntity(blankObject, new BehaviourComponent(TestBehaviour.class));
     
-        short objectToIgnore = ecsManager.createObject();
+        yes = ecsManager.createObject();
         Transform transform1 = new Transform();
         transform1.translate(300, 300);
-        ecsManager.addComponentToEntity(objectToIgnore, new TransformComponent(transform1));
-        ecsManager.addComponentToEntity(objectToIgnore, new AudioSourceComponent());
-        ecsManager.setEntityTag(objectToIgnore, "tag#1");
-        ecsManager.addEntityToLayer(objectToIgnore, 20);
+        ecsManager.addComponentToEntity(yes, new TransformComponent(transform1));
+        ecsManager.addComponentToEntity(yes, new AudioSourceComponent());
+        ecsManager.addComponentToEntity(yes, new BehaviourComponent(SaveTestBehaviour.class));
+        ecsManager.setEntityTag(yes, "tag#1");
+        ecsManager.addEntityToLayer(yes, 20);
         
-        World.saveToFile("worlds/testing", world, objectToIgnore);
+        World.setCurrentWorld(world);
+        
+        World.saveToFile("worlds/testing", world, yes);
     
-        World world1 = World.loadWorld("worlds/testing/Tester_man.wrld");
-        System.out.println(world);
-        System.out.println(world1);
-        World.setCurrentWorld(world1);
+        Framebuffer framebuffer = new Framebuffer(client.getWindow().getWidth(), client.getWindow().getHeight());
+        client.getRenderer().setFramebuffer(framebuffer);
     }
     
     @Override

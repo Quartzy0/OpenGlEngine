@@ -22,6 +22,24 @@ public class Texture{
     @Getter
     private Resource resource;
     
+    public Texture(){
+        this.resource = null;
+        this.id = -1;
+        this.width = -1;
+        this.height = -1;
+    }
+    
+    //Used by framebuffer
+    public Texture(int width, int height){
+        this.width = width;
+        this.height = height;
+        
+        this.id = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, this.id);
+        
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    }
+    
     /**
      * Initializes the texture and loads it from the resource file
      * @param resource The resource for the texture file

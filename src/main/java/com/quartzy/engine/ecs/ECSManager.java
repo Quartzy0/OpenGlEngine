@@ -1,10 +1,8 @@
 package com.quartzy.engine.ecs;
 
-import com.quartzy.engine.ecs.components.TransformComponent;
 import com.quartzy.engine.world.World;
 import lombok.CustomLog;
 import lombok.Getter;
-import org.dyn4j.geometry.Transform;
 
 import java.util.*;
 
@@ -21,6 +19,9 @@ public class ECSManager{
     @Getter
     private HashMap<String, Short> tags = new HashMap<>();
     
+    @Getter
+    private List<Short> initBlacklist = new ArrayList<>();
+    
     private World parent;
     
     private boolean inited = false;
@@ -36,9 +37,6 @@ public class ECSManager{
             ComponentManager<T> value = new ComponentManager<>(component.getClass());
             value.addComponent(component, entityId, parent);
             components.put(component.getClass(), value);
-        }
-        if(inited){
-            component.init();
         }
     }
     
@@ -68,6 +66,7 @@ public class ECSManager{
         for(ComponentManager value : components.values()){
             for(Object o : value.getComponents().values()){
                 Component component = (Component) o;
+                if(initBlacklist.contains(component.entityId))continue;
                 component.init();
             }
         }
@@ -134,7 +133,7 @@ public class ECSManager{
         if(this.layers.containsKey(layer)){
             this.layers.get(layer).add(s);
         }else {
-            this.layers.put(layer, new ArrayList<>(s));
+            this.layers.put(layer, new ArrayList<>(Collections.singleton(s)));
         }
         return s;
     }
@@ -149,5 +148,10 @@ public class ECSManager{
     
     public short createObject(int layer){
         return this.createObject(null, layer);
+    }
+    
+    public void addEntityToInitBlacklist(short entity){
+        if(initBlacklist.contains(entity))return;
+        initBlacklist.add(entity);
     }
 }

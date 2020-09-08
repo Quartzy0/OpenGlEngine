@@ -172,7 +172,6 @@ public class Client{
         if(World.getCurrentWorld()!=null){
             World.getCurrentWorld().render(renderer);
         }
-        renderer.drawString("FPS: " + fps, 10, window.getHeight()-30, Color.GREEN);
     }
     
     private void update(float delta){
