@@ -205,7 +205,11 @@ public class Renderer{
      * Clears the screen with the options GL_COLOR_BUFFER_BIT and GL_DEPTH_BUFFER_BIT
      */
     public void clear(){
+        if(this.framebuffer!=null)
+            this.framebuffer.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        if(this.framebuffer!=null)
+            this.framebuffer.unbind();
     }
     
     /**
