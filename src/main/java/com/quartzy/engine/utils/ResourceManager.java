@@ -97,7 +97,7 @@ public class ResourceManager{
             File file1 = new File(dir);
             if(!file1.exists()) file1.mkdirs();
         }
-        Resource value = new Resource(file, name, type);
+        Resource value = new Resource(file, name, type, resource);
         resources.put(name, value);
         if(autoLoadSounds && value.getType()==ResourceType.SOUND){
             soundManager.loadSound(value);

@@ -320,7 +320,7 @@ public class World{
             fos.write(compBytes);
         }
         
-        return new Resource(file, world.name, ResourceType.WORLD_FILE);
+        return new Resource(file, world.name, ResourceType.WORLD_FILE, world.getName());
     }
     
     
