@@ -93,9 +93,7 @@ public class ResourceManager{
         }
         File file = new File(this.gameDir.getAbsolutePath() + File.separator + resource);
         if(!file.exists()){
-            String dir = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf(File.separator));
-            File file1 = new File(dir);
-            if(!file1.exists()) file1.mkdirs();
+            return null;
         }
         Resource value = new Resource(file, name, type, resource);
         resources.put(name, value);

@@ -23,4 +23,8 @@ public abstract class Component{
     public abstract void toBytes(ByteBuf out);
     
     public abstract void fromBytes(ByteBuf in);
+    
+    public abstract boolean equals(Object obj);
+    
+    public abstract int hashCode();
 }

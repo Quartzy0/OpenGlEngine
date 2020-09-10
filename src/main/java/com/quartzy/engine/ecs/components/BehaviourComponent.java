@@ -91,4 +91,19 @@ public class BehaviourComponent extends Component{
             log.warning("Cannot find behaviour class by the name %s", e, className);
         }
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        BehaviourComponent that = (BehaviourComponent) o;
+    
+        return behaviour != null ? behaviour.equals(that.behaviour) : that.behaviour == null;
+    }
+    
+    @Override
+    public int hashCode(){
+        return behaviour != null ? behaviour.hashCode() : 0;
+    }
 }

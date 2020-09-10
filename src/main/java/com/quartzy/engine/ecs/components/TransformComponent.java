@@ -106,4 +106,19 @@ public class TransformComponent extends Component{
         this.transform.translate(in.readDouble(), in.readDouble());
         anyChanged = true;
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        TransformComponent that = (TransformComponent) o;
+    
+        return transform != null ? transform.equals(that.transform) : that.transform == null;
+    }
+    
+    @Override
+    public int hashCode(){
+        return transform != null ? transform.hashCode() : 0;
+    }
 }

@@ -78,4 +78,22 @@ public class LightSourceComponent extends Component{
     public static boolean isAnyChanged(){
         return anyChanged || TransformComponent.anyChanged;
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        LightSourceComponent that = (LightSourceComponent) o;
+        
+        if(Float.compare(that.z, z) != 0) return false;
+        return color != null ? color.equals(that.color) : that.color == null;
+    }
+    
+    @Override
+    public int hashCode(){
+        int result = color != null ? color.hashCode() : 0;
+        result = 31 * result + (z != +0.0f ? Float.floatToIntBits(z) : 0);
+        return result;
+    }
 }

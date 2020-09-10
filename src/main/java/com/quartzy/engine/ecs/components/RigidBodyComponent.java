@@ -71,4 +71,28 @@ public class RigidBodyComponent extends Component{
         this.body.getTransform().setTranslation(x, y);
         this.body.getTransform().setRotation(new Rotation(rotAngle));
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        RigidBodyComponent that = (RigidBodyComponent) o;
+        
+        if(Double.compare(that.width, width) != 0) return false;
+        if(Double.compare(that.height, height) != 0) return false;
+        return body != null ? body.equals(that.body) : that.body == null;
+    }
+    
+    @Override
+    public int hashCode(){
+        int result;
+        long temp;
+        result = body != null ? body.hashCode() : 0;
+        temp = Double.doubleToLongBits(width);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(height);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
 }

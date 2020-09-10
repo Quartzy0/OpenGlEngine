@@ -22,4 +22,19 @@ public class Behaviour{
     protected final <T extends Component> T getComponent(short entityId, Class<T> component){
         return World.getCurrentWorld().getEcsManager().getComponent(entityId, component);
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        Behaviour behaviour = (Behaviour) o;
+    
+        return entityId == behaviour.entityId;
+    }
+    
+    @Override
+    public int hashCode(){
+        return entityId;
+    }
 }

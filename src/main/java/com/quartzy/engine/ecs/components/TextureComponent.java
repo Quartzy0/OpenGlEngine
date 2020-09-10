@@ -78,4 +78,22 @@ public class TextureComponent extends Component{
         }
         this.texture = Client.getInstance().getTextureManager().getTexture(s);
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        TextureComponent that = (TextureComponent) o;
+        
+        if(texture != null ? !texture.equals(that.texture) : that.texture != null) return false;
+        return color != null ? color.equals(that.color) : that.color == null;
+    }
+    
+    @Override
+    public int hashCode(){
+        int result = texture != null ? texture.hashCode() : 0;
+        result = 31 * result + (color != null ? color.hashCode() : 0);
+        return result;
+    }
 }

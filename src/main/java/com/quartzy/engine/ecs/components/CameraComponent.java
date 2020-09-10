@@ -143,4 +143,27 @@ public class CameraComponent extends Component{
         this.mainOnStartup = b;
         this.changed = true;
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        CameraComponent that = (CameraComponent) o;
+        
+        if(modelMatrix != null ? !modelMatrix.equals(that.modelMatrix) : that.modelMatrix != null) return false;
+        if(viewMatrix != null ? !viewMatrix.equals(that.viewMatrix) : that.viewMatrix != null) return false;
+        if(projectionMatrix != null ? !projectionMatrix.equals(that.projectionMatrix) : that.projectionMatrix != null)
+            return false;
+        return cameraPos != null ? cameraPos.equals(that.cameraPos) : that.cameraPos == null;
+    }
+    
+    @Override
+    public int hashCode(){
+        int result = modelMatrix != null ? modelMatrix.hashCode() : 0;
+        result = 31 * result + (viewMatrix != null ? viewMatrix.hashCode() : 0);
+        result = 31 * result + (projectionMatrix != null ? projectionMatrix.hashCode() : 0);
+        result = 31 * result + (cameraPos != null ? cameraPos.hashCode() : 0);
+        return result;
+    }
 }

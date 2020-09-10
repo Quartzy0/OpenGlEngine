@@ -100,4 +100,19 @@ public class CustomRenderComponent extends Component{
             log.warning("Cannot find behaviour class by the name %s", e, className);
         }
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        CustomRenderComponent that = (CustomRenderComponent) o;
+    
+        return renderer != null ? renderer.equals(that.renderer) : that.renderer == null;
+    }
+    
+    @Override
+    public int hashCode(){
+        return renderer != null ? renderer.hashCode() : 0;
+    }
 }

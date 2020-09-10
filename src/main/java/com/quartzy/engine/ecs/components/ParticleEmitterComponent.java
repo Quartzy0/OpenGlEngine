@@ -164,4 +164,33 @@ public class ParticleEmitterComponent extends Component{
         Texture texture = Client.getInstance().getTextureManager().getTexture(textureName);
         this.defaultParticle = new Particle(texture, lifetime, speed, new Vector2f(directionX, directionY), new Vector2f(sizeX, sizeY));
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        ParticleEmitterComponent that = (ParticleEmitterComponent) o;
+        
+        if(maxParticles != that.maxParticles) return false;
+        if(Float.compare(that.speedRange, speedRange) != 0) return false;
+        if(Float.compare(that.positionRange, positionRange) != 0) return false;
+        if(Float.compare(that.scaleRange, scaleRange) != 0) return false;
+        if(particleCreationPeriod != that.particleCreationPeriod) return false;
+        if(defaultParticle != null ? !defaultParticle.equals(that.defaultParticle) : that.defaultParticle != null)
+            return false;
+        return positionOffset != null ? positionOffset.equals(that.positionOffset) : that.positionOffset == null;
+    }
+    
+    @Override
+    public int hashCode(){
+        int result = defaultParticle != null ? defaultParticle.hashCode() : 0;
+        result = 31 * result + maxParticles;
+        result = 31 * result + (speedRange != +0.0f ? Float.floatToIntBits(speedRange) : 0);
+        result = 31 * result + (positionRange != +0.0f ? Float.floatToIntBits(positionRange) : 0);
+        result = 31 * result + (scaleRange != +0.0f ? Float.floatToIntBits(scaleRange) : 0);
+        result = 31 * result + (int) (particleCreationPeriod ^ (particleCreationPeriod >>> 32));
+        result = 31 * result + (positionOffset != null ? positionOffset.hashCode() : 0);
+        return result;
+    }
 }

@@ -54,4 +54,19 @@ public class AudioSourceComponent extends Component{
     public void fromBytes(ByteBuf in){
     
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        AudioSourceComponent that = (AudioSourceComponent) o;
+    
+        return sourcePointer == that.sourcePointer;
+    }
+    
+    @Override
+    public int hashCode(){
+        return sourcePointer;
+    }
 }

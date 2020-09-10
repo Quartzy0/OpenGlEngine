@@ -95,4 +95,22 @@ public class AudioListenerComponent extends Component{
     public void setUp(double x, double y, double z){
         this.up.set(x, y, z);
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        AudioListenerComponent that = (AudioListenerComponent) o;
+        
+        if(up != null ? !up.equals(that.up) : that.up != null) return false;
+        return at != null ? at.equals(that.at) : that.at == null;
+    }
+    
+    @Override
+    public int hashCode(){
+        int result = up != null ? up.hashCode() : 0;
+        result = 31 * result + (at != null ? at.hashCode() : 0);
+        return result;
+    }
 }
