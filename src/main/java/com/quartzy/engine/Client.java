@@ -89,16 +89,6 @@ public class Client{
         renderer = new Renderer();
         Resource resource = resourceManager.addResource(vertexShader);
         Resource resource1 = resourceManager.addResource(fragmentShader);
-        if(resource==null && resource1==null){
-            log.severe("No shaders were found at locations %s for vertex and %s for fragment", new RuntimeException("No shaders found"), vertexShader, fragmentShader);
-            return;
-        }else if(resource==null){
-            log.severe("No vertex shader found at %s", new RuntimeException("No shaders found"), vertexShader);
-            return;
-        }else if(resource1==null){
-            log.severe("No fragment shader found at %s", new RuntimeException("No shaders found"), fragmentShader);
-            return;
-        }
         renderer.init(resource, resource1, window);
         applicationClient.init(this);
     }

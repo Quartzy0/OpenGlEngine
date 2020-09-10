@@ -5,6 +5,7 @@ import com.quartzy.engine.utils.Resource;
 import lombok.CustomLog;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
@@ -17,6 +18,98 @@ import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 
 @CustomLog
 public class ShaderProgram{
+    
+    public static final String DEFAULT_VERTEX = "#version 150 core\n" +
+            "\n" +
+            "#ifndef MAX_LIGHTS\n" +
+            "#define MAX_LIGHTS 10\n" +
+            "#endif\n" +
+            "\n" +
+            "in vec2 position;\n" +
+            "in vec4 color;\n" +
+            "in vec2 texcoord;\n" +
+            "in float textureIndex;\n" +
+            "#ifdef LIGHTING_ENABLED\n" +
+            "in vec3 normal;\n" +
+            "#endif\n" +
+            "\n" +
+            "out vec4 vertexColor;\n" +
+            "out vec2 textureCoord;\n" +
+            "out float v_textureIndex;\n" +
+            "#ifdef LIGHTING_ENABLED\n" +
+            "out vec3 surfaceNormal;\n" +
+            "out vec3 toLightVector[MAX_LIGHTS];\n" +
+            "#endif\n" +
+            "\n" +
+            "uniform mat4 model;\n" +
+            "uniform mat4 view;\n" +
+            "uniform mat4 projection;\n" +
+            "#ifdef LIGHTING_ENABLED\n" +
+            "uniform vec3 lightPosition[MAX_LIGHTS];\n" +
+            "#endif\n" +
+            "\n" +
+            "void main() {\n" +
+            "    vec4 worldPosition = model * vec4(position, 0.0, 1.0);\n" +
+            "    vertexColor = color;\n" +
+            "    textureCoord = texcoord;\n" +
+            "    v_textureIndex = textureIndex;\n" +
+            "    gl_Position = projection * view * worldPosition;\n" +
+            "\n" +
+            "    #ifdef LIGHTING_ENABLED\n" +
+            "    surfaceNormal = normalize((model * vec4(normal, 1.0f)).xyz);\n" +
+            "    for(int i = 0;i<MAX_LIGHTS;i++){\n" +
+            "        toLightVector[i] = normalize(lightPosition[i] - worldPosition.xyz);\n" +
+            "    }\n" +
+            "    #endif\n" +
+            "}";
+    public static final String DEFAULT_FRAGMENT = "#version 150 core\n" +
+            "\n" +
+            "#ifndef MAX_TEXTURES\n" +
+            "#define MAX_TEXTURES 8\n" +
+            "#endif\n" +
+            "\n" +
+            "#ifndef MAX_LIGHTS\n" +
+            "#define MAX_LIGHTS 10\n" +
+            "#endif\n" +
+            "\n" +
+            "in vec4 vertexColor;\n" +
+            "in vec2 textureCoord;\n" +
+            "in float v_textureIndex;\n" +
+            "#ifdef LIGHTING_ENABLED\n" +
+            "in vec3 surfaceNormal;\n" +
+            "in vec3 toLightVector[MAX_LIGHTS];\n" +
+            "#endif\n" +
+            "\n" +
+            "out vec4 fragColor;\n" +
+            "\n" +
+            "uniform sampler2D textures[MAX_TEXTURES];\n" +
+            "#ifdef LIGHTING_ENABLED\n" +
+            "uniform vec3 lightColors[MAX_LIGHTS];\n" +
+            "#endif\n" +
+            "\n" +
+            "void main() {\n" +
+            "    #ifdef LIGHTING_ENABLED\n" +
+            "    vec3 unitNormal = surfaceNormal;\n" +
+            "\n" +
+            "    vec3 diffuse = vec3(0.0);\n" +
+            "\n" +
+            "    for(int i = 0;i<MAX_LIGHTS;i++){\n" +
+            "        vec3 unitLightVector = toLightVector[i];\n" +
+            "        float nDotl = dot(unitNormal, unitLightVector);\n" +
+            "        float brightness = max(nDotl, 0.0);\n" +
+            "        diffuse = diffuse + brightness * lightColors[i];\n" +
+            "    }\n" +
+            "\n" +
+            "    diffuse = max(diffuse, 0.2);\n" +
+            "    #endif\n" +
+            "    #ifndef LIGHTING_ENABLED\n" +
+            "    vec3 diffuse = vec3(1.0);\n" +
+            "    #endif\n" +
+            "\n" +
+            "    int index = int(v_textureIndex);\n" +
+            "    vec4 textureColor = texture(textures[index], textureCoord);\n" +
+            "    fragColor = (textureColor * vertexColor) * vec4(diffuse, 1.0);\n" +
+            "}\n";
     
     private int vertexShader;
     private int fragmentShader;
@@ -63,23 +156,15 @@ public class ShaderProgram{
      */
     public void compileShaders(){
         log.info("Initializing shader program");
-        String vertexSource = null;
-        String fragmentSource = null;
-        try{
-            vertexSource = new String(Files.readAllBytes(this.vertexName.getFile().toPath()));
-            fragmentSource = new String(Files.readAllBytes(this.fragmentName.getFile().toPath()));
-        } catch(IOException e){
-            log.severe("Error while loading shader files");
-            e.printStackTrace();
-        }
-        
-        if(vertexSource==null){
-            log.severe("Couldn't load vertex shader file");
-            return;
-        }
-        if(fragmentSource==null){
-            log.severe("Couldn't load fragment shader file");
-            return;
+        String vertexSource = DEFAULT_VERTEX;
+        String fragmentSource = DEFAULT_FRAGMENT;
+        if(this.fragmentName != null || this.vertexName != null){
+            try{
+                vertexSource = new String(Files.readAllBytes(this.vertexName.getFile().toPath()));
+                fragmentSource = new String(Files.readAllBytes(this.fragmentName.getFile().toPath()));
+            } catch(IOException e){
+                log.crash("Error while loading shader files", e);
+            }
         }
         
         vertexSource = vertexSource.replace("\r\n", "\n");
@@ -113,7 +198,7 @@ public class ShaderProgram{
         
         status = glGetShaderi(fragmentShader, GL_COMPILE_STATUS);
         if (status != GL_TRUE) {
-            log.severe("Error while compiling shader files: " + glGetShaderInfoLog(fragmentShader));
+            log.crash("Error while compiling shader files: " + glGetShaderInfoLog(fragmentShader), new RuntimeException("Couldn't compile shader"));
             return;
         }
         
@@ -125,7 +210,7 @@ public class ShaderProgram{
         
         status = glGetProgrami(programId, GL_LINK_STATUS);
         if (status != GL_TRUE) {
-            log.severe("Error while creating shader program: " + glGetProgramInfoLog(programId));
+            log.crash("Error while creating shader program: " + glGetProgramInfoLog(programId), new RuntimeException("Couldn't create shader program"));
         }
         
         this.bind();

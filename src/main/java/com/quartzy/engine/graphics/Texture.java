@@ -69,7 +69,7 @@ public class Texture{
             stbi_set_flip_vertically_on_load(true);
             ByteBuffer image = stbi_load(resource.getFile().getAbsolutePath(), w, h, comp, 4);
             if (image == null) {
-                log.severe("Failed to load a texture file: " + stbi_failure_reason());
+                log.severe("Failed to load a texture file %s: " + stbi_failure_reason(), resource.getName());
                 return;
             }
     

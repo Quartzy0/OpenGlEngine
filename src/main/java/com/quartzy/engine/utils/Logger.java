@@ -70,6 +70,14 @@ public class Logger{
         return s;
     }
     
+    public void crash(String message, Exception cause, Object... args){
+        String finalMessage = constructMessage(message, cause, args);
+        StringBuilder sb = new StringBuilder();
+        sb.color16(StringBuilder.Color16.FG_RED, "!!! " + finalMessage);
+        System.out.println(sb.toString());
+        System.exit(-1);
+    }
+    
     /**
      * @param message Message to be logged
      * @param args Arguments for formatting
