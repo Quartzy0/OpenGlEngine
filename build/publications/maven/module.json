@@ -1,0 +1,588 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.quartzy",
+    "module": "OpenGlEngine",
+    "version": "1.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "6.6.1",
+      "buildId": "olup5swu4zemjddy5juh5w4fbi"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.atteo.classindex",
+          "module": "classindex",
+          "version": {
+            "requires": "3.4"
+          }
+        },
+        {
+          "group": "org.dyn4j",
+          "module": "dyn4j",
+          "version": {
+            "requires": "3.4.0"
+          }
+        },
+        {
+          "group": "org.projectlombok",
+          "module": "lombok",
+          "version": {
+            "requires": "1.18.12"
+          }
+        },
+        {
+          "group": "org.slf4j",
+          "module": "slf4j-nop",
+          "version": {
+            "requires": "1.7.30"
+          }
+        },
+        {
+          "group": "io.netty",
+          "module": "netty-all",
+          "version": {
+            "requires": "4.1.50.Final"
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-bgfx"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-cuda"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-egl"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-glfw"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-jawt"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-jemalloc"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-nanovg"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-nfd"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-nuklear"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-odbc"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-openal"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-opencl"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-opengl"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-opengles"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-opus"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-shaderc"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-stb"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-tinyexr"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-tinyfd"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-tootle"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-vma"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-vulkan"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-xxhash"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-zstd"
+        },
+        {
+          "group": "org.joml",
+          "module": "joml",
+          "version": {
+            "requires": "1.9.25"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "OpenGlEngine-1.0-SNAPSHOT.jar",
+          "url": "OpenGlEngine-1.0-SNAPSHOT.jar",
+          "size": 275330,
+          "sha512": "ba42a22d47f944e0b10878d24c9e65c952d8dcdace09c76898f06359498ae81fc236383465384646617b378c98e10f61463f00b72403751c627be63c4e9bbd66",
+          "sha256": "a99e6659083b421ff84702c5aa4440ba59a1632a694283d680582f801d97612d",
+          "sha1": "c93f8c9b9a8076dc9ceffbf3b042537e66a30165",
+          "md5": "abc7a93c99d5b54c664742e26ac33178"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-bom",
+          "version": {
+            "requires": "3.2.3"
+          },
+          "attributes": {
+            "org.gradle.category": "platform"
+          },
+          "endorseStrictVersions": true
+        },
+        {
+          "group": "org.atteo.classindex",
+          "module": "classindex",
+          "version": {
+            "requires": "3.4"
+          }
+        },
+        {
+          "group": "org.dyn4j",
+          "module": "dyn4j",
+          "version": {
+            "requires": "3.4.0"
+          }
+        },
+        {
+          "group": "org.projectlombok",
+          "module": "lombok",
+          "version": {
+            "requires": "1.18.12"
+          }
+        },
+        {
+          "group": "org.slf4j",
+          "module": "slf4j-nop",
+          "version": {
+            "requires": "1.7.30"
+          }
+        },
+        {
+          "group": "io.netty",
+          "module": "netty-all",
+          "version": {
+            "requires": "4.1.50.Final"
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-bgfx"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-cuda"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-egl"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-glfw"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-jawt"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-jemalloc"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-nanovg"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-nfd"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-nuklear"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-odbc"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-openal"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-opencl"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-opengl"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-opengles"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-opus"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-shaderc"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-stb"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-tinyexr"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-tinyfd"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-tootle"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-vma"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-vulkan"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-xxhash"
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-zstd"
+        },
+        {
+          "group": "org.joml",
+          "module": "joml",
+          "version": {
+            "requires": "1.9.25"
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-bgfx",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-bgfx",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-glfw",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-glfw",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-jemalloc",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-jemalloc",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-nanovg",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-nanovg",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-nfd",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-nfd",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-nuklear",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-nuklear",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-openal",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-openal",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-opengl",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-opengl",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-opengles",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-opengles",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-opus",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-opus",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-shaderc",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-shaderc",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-stb",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-stb",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-tinyexr",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-tinyexr",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-tinyfd",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-tinyfd",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-tootle",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-tootle",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-vma",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-vma",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-xxhash",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-xxhash",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        },
+        {
+          "group": "org.lwjgl",
+          "module": "lwjgl-zstd",
+          "thirdPartyCompatibility": {
+            "artifactSelector": {
+              "name": "lwjgl-zstd",
+              "type": "jar",
+              "extension": "jar",
+              "classifier": "natives-windows"
+            }
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "OpenGlEngine-1.0-SNAPSHOT.jar",
+          "url": "OpenGlEngine-1.0-SNAPSHOT.jar",
+          "size": 275330,
+          "sha512": "ba42a22d47f944e0b10878d24c9e65c952d8dcdace09c76898f06359498ae81fc236383465384646617b378c98e10f61463f00b72403751c627be63c4e9bbd66",
+          "sha256": "a99e6659083b421ff84702c5aa4440ba59a1632a694283d680582f801d97612d",
+          "sha1": "c93f8c9b9a8076dc9ceffbf3b042537e66a30165",
+          "md5": "abc7a93c99d5b54c664742e26ac33178"
+        }
+      ]
+    }
+  ]
+}

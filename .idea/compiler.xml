@@ -3,13 +3,19 @@
   <component name="CompilerConfiguration">
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
-      <profile name="Maven default annotation processors profile" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+      <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
-        <module name="Sandbox" />
-        <module name="OpenGlEngine" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/atteo/classindex/classindex/3.4/classindex-3.4.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.12/lombok-1.18.12.jar" />
+        </processorPath>
+        <module name="OpenGlEngine.main" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="IdeaProjects.Sandbox" target="1.8" />
+      <module name="IdeaProjects.Sandbox.main" target="1.8" />
+      <module name="IdeaProjects.Sandbox.test" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

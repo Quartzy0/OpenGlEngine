@@ -87,8 +87,12 @@ public class Client{
             }
         });
         renderer = new Renderer();
-        Resource resource = resourceManager.addResource(vertexShader);
-        Resource resource1 = resourceManager.addResource(fragmentShader);
+        Resource resource = null;
+        Resource resource1 = null;
+        if(vertexShader!=null && fragmentShader!=null){
+            resource = resourceManager.addResource(vertexShader);
+            resource1 = resourceManager.addResource(fragmentShader);
+        }
         renderer.init(resource, resource1, window);
         applicationClient.init(this);
     }
