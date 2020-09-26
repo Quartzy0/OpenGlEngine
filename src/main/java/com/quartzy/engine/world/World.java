@@ -195,8 +195,6 @@ public class World{
         bytes.writeByte(name.length());
         bytes.writeCharSequence(name, StandardCharsets.US_ASCII);
     
-        System.out.println("Writer index: " + bytes.writerIndex());
-    
         HashMap<Class<? extends Component>, ComponentManager> components = world.ecsManager.getComponents();
         int actualAmount5 = 0;
         for(ComponentManager value : components.values()){
@@ -213,7 +211,6 @@ public class World{
             if(left!=0)actualAmount5++;
         }
         bytes.writeShort(actualAmount5);
-        System.out.println("Writer index: " + bytes.writerIndex());
         for(ComponentManager value : components.values()){
     
             Set<Map.Entry<Short, Component>> set = value.getComponents().entrySet();
@@ -248,51 +245,37 @@ public class World{
                 entry.getValue().toBytes(bytes);
             }
         }
-        System.out.println("Writer index: " + bytes.writerIndex());
     
-        HashMap<Integer, List<Short>> layers = world.getEcsManager().getLayers();
-        int actualAmount1 = 0;
-        for(Map.Entry<Integer, List<Short>> entry : layers.entrySet()){
-            for(Short entry1 : entry.getValue()){
-                boolean next = false;
+        HashMap<Integer, List<Short>> layers1 = world.getEcsManager().getLayers();
+        HashMap<Integer, List<Short>> layersToUse = world.getEcsManager().getLayers();
+        for(Map.Entry<Integer, List<Short>> entry : layers1.entrySet()){
+            List<Short> value = entry.getValue();
+            List<Short> newValue = new ArrayList<>();
+            for(Short aShort : value){
+                boolean isOk = true;
                 for(int i = 0; i < entityBlacklist.length; i++){
-                    if(entityBlacklist[i] != entry1){
-                        actualAmount1++;
-                        next = true;
+                    if(entityBlacklist[i]==aShort){
+                        isOk = false;
                         break;
                     }
                 }
-                if(next)break;
+                if(isOk){
+                    newValue.add(aShort);
+                }
+            }
+            if(!newValue.isEmpty()){
+                layersToUse.put(entry.getKey(), newValue);
             }
         }
-        bytes.writeShort(actualAmount1);
-        System.out.println("Writer index: " + bytes.writerIndex());
-        for(Map.Entry<Integer, List<Short>> entry : layers.entrySet()){
-            int actualAmount = 0;
-            for(Short entry1 : entry.getValue()){
-                for(int i = 0; i < entityBlacklist.length; i++){
-                    if(entityBlacklist[i] == entry1)break;
-                    if(i == entityBlacklist.length-1){
-                        actualAmount++;
-                    }
-                }
-            }
+        bytes.writeShort(layersToUse.size());
+        for(Map.Entry<Integer, List<Short>> entry : layersToUse.entrySet()){
             bytes.writeShort(entry.getKey());
-            bytes.writeInt(actualAmount);
+            bytes.writeInt(entry.getValue().size());
     
             for(Short aShort : entry.getValue()){
-                boolean canContinue = true;
-                for(int i = 0; i < entityBlacklist.length; i++){
-                    if(entityBlacklist[i] == aShort){
-                        canContinue = false;
-                        break;
-                    }
-                }
-                if(!canContinue)continue;
                 bytes.writeShort(aShort);
             }
         }
-        System.out.println("Writer index: " + bytes.writerIndex());
     
         HashMap<String, Short> tags = world.getEcsManager().getTags();
         int actualAmount2 = 0;
@@ -305,7 +288,6 @@ public class World{
             }
         }
         bytes.writeInt(actualAmount2);
-        System.out.println("Writer index: " + bytes.writerIndex());
         for(Map.Entry<String, Short> entry : tags.entrySet()){
             boolean canPass = true;
             for(int i = 0; i < entityBlacklist.length; i++){
@@ -320,7 +302,6 @@ public class World{
             bytes.writeCharSequence(entry.getKey(), StandardCharsets.US_ASCII);
             bytes.writeShort(entry.getValue());
         }
-        System.out.println("Writer index: " + bytes.writerIndex());
     
         byte[] compBytes = new byte[bytes.readableBytes()];
         bytes.readBytes(compBytes);
@@ -352,11 +333,7 @@ public class World{
             String worldName = in.readCharSequence(worldNameLen, StandardCharsets.US_ASCII).toString();
             World world = new World(worldName);
     
-            System.out.println("Reader index: " + in.readerIndex());
-    
             short componentCount = in.readShort();
-    
-            System.out.println("Reader index: " + in.readerIndex());
     
             ECSManager ecsManager = world.getEcsManager();
             for(int i = 0; i < componentCount; i++){
@@ -373,7 +350,6 @@ public class World{
                     ecsManager.addComponentToEntityNoCheck(entityId, component);
                 }
             }
-            System.out.println("Reader index: " + in.readerIndex());
     
             short layerAmount = in.readShort();
             for(int i = 0; i < layerAmount; i++){
@@ -386,8 +362,6 @@ public class World{
                 }
             }
     
-            System.out.println("Reader index: " + in.readerIndex());
-    
             int tayAmount = in.readInt();
             for(int i = 0; i < tayAmount; i++){
                 byte tagNameLen = in.readByte();
@@ -395,8 +369,6 @@ public class World{
                 short entityId = in.readShort();
                 ecsManager.setEntityTag(entityId, tagName);
             }
-    
-            System.out.println("Reader index: " + in.readerIndex());
     
             if(entitiesToAdd!=null && entitiesToAdd.length!=0){
                 World currentWorld = World.getCurrentWorld();

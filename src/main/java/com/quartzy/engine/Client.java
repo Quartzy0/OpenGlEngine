@@ -81,11 +81,6 @@ public class Client{
         Input.init(window.getId());
         textureManager = new TextureManager();
         resourceManager = new ResourceManager(true, true, SoundManager.getInstance(), textureManager);
-        Input.getKeyboard().addListener(GLFW_KEY_ESCAPE, (scancode, action, mods) -> {
-            if(action==GLFW_PRESS){
-                running = false;
-            }
-        });
         renderer = new Renderer();
         Resource resource = null;
         Resource resource1 = null;

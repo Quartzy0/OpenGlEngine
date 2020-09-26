@@ -1,3 +1,4 @@
 # Project exclude paths
-/Sandbox/target/
 /target/
+/build/
+/.gradle/
