@@ -22,8 +22,9 @@ repositories {
 }
 
 dependencies {
-    compile('org.atteo.classindex:classindex:3.4')
-    annotationProcessor('org.atteo.classindex:classindex:3.4')
+    compile 'org.atteo.classindex:classindex-transformer:3.9'
+    compile 'org.atteo.classindex:classindex:3.9'
+    annotationProcessor 'org.atteo.classindex:classindex:3.9'
     compile 'org.dyn4j:dyn4j:3.4.0'
     compile 'org.projectlombok:lombok:1.18.12'
     compileOnly 'org.projectlombok:lombok:1.18.12'
@@ -33,31 +34,31 @@ dependencies {
 
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
-    compile "org.lwjgl:lwjgl"
-    compile "org.lwjgl:lwjgl-bgfx"
-    compile "org.lwjgl:lwjgl-cuda"
-    compile "org.lwjgl:lwjgl-egl"
-    compile "org.lwjgl:lwjgl-glfw"
-    compile "org.lwjgl:lwjgl-jawt"
-    compile "org.lwjgl:lwjgl-jemalloc"
-    compile "org.lwjgl:lwjgl-nanovg"
-    compile "org.lwjgl:lwjgl-nfd"
-    compile "org.lwjgl:lwjgl-nuklear"
-    compile "org.lwjgl:lwjgl-odbc"
-    compile "org.lwjgl:lwjgl-openal"
-    compile "org.lwjgl:lwjgl-opencl"
-    compile "org.lwjgl:lwjgl-opengl"
-    compile "org.lwjgl:lwjgl-opengles"
-    compile "org.lwjgl:lwjgl-opus"
-    compile "org.lwjgl:lwjgl-shaderc"
-    compile "org.lwjgl:lwjgl-stb"
-    compile "org.lwjgl:lwjgl-tinyexr"
-    compile "org.lwjgl:lwjgl-tinyfd"
-    compile "org.lwjgl:lwjgl-tootle"
-    compile "org.lwjgl:lwjgl-vma"
-    compile "org.lwjgl:lwjgl-vulkan"
-    compile "org.lwjgl:lwjgl-xxhash"
-    compile "org.lwjgl:lwjgl-zstd"
+    compile "org.lwjgl:lwjgl:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-bgfx:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-cuda:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-egl:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-glfw:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-jawt:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-jemalloc:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-nfd:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-nuklear:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-odbc:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-openal:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-opencl:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-opengl:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-opengles:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-opus:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-shaderc:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-stb:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-tinyexr:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-tinyfd:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-tootle:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-vma:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-vulkan:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-xxhash:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-zstd:$lwjglVersion"
     runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-bgfx::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"

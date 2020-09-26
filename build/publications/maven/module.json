@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.6.1",
-      "buildId": "olup5swu4zemjddy5juh5w4fbi"
+      "buildId": "khs2rg6yjjgfvphgwheaycst6e"
     }
   },
   "variants": [
@@ -27,9 +27,16 @@
       "dependencies": [
         {
           "group": "org.atteo.classindex",
+          "module": "classindex-transformer",
+          "version": {
+            "requires": "3.9"
+          }
+        },
+        {
+          "group": "org.atteo.classindex",
           "module": "classindex",
           "version": {
-            "requires": "3.4"
+            "requires": "3.9"
           }
         },
         {
@@ -62,103 +69,178 @@
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl"
+          "module": "lwjgl",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-bgfx"
+          "module": "lwjgl-bgfx",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-cuda"
+          "module": "lwjgl-cuda",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-egl"
+          "module": "lwjgl-egl",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-glfw"
+          "module": "lwjgl-glfw",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-jawt"
+          "module": "lwjgl-jawt",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-jemalloc"
+          "module": "lwjgl-jemalloc",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-nanovg"
+          "module": "lwjgl-nanovg",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-nfd"
+          "module": "lwjgl-nfd",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-nuklear"
+          "module": "lwjgl-nuklear",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-odbc"
+          "module": "lwjgl-odbc",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-openal"
+          "module": "lwjgl-openal",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-opencl"
+          "module": "lwjgl-opencl",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-opengl"
+          "module": "lwjgl-opengl",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-opengles"
+          "module": "lwjgl-opengles",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-opus"
+          "module": "lwjgl-opus",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-shaderc"
+          "module": "lwjgl-shaderc",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-stb"
+          "module": "lwjgl-stb",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-tinyexr"
+          "module": "lwjgl-tinyexr",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-tinyfd"
+          "module": "lwjgl-tinyfd",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-tootle"
+          "module": "lwjgl-tootle",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-vma"
+          "module": "lwjgl-vma",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-vulkan"
+          "module": "lwjgl-vulkan",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-xxhash"
+          "module": "lwjgl-xxhash",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-zstd"
+          "module": "lwjgl-zstd",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.joml",
@@ -203,9 +285,16 @@
         },
         {
           "group": "org.atteo.classindex",
+          "module": "classindex-transformer",
+          "version": {
+            "requires": "3.9"
+          }
+        },
+        {
+          "group": "org.atteo.classindex",
           "module": "classindex",
           "version": {
-            "requires": "3.4"
+            "requires": "3.9"
           }
         },
         {
@@ -238,103 +327,178 @@
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl"
+          "module": "lwjgl",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-bgfx"
+          "module": "lwjgl-bgfx",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-cuda"
+          "module": "lwjgl-cuda",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-egl"
+          "module": "lwjgl-egl",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-glfw"
+          "module": "lwjgl-glfw",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-jawt"
+          "module": "lwjgl-jawt",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-jemalloc"
+          "module": "lwjgl-jemalloc",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-nanovg"
+          "module": "lwjgl-nanovg",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-nfd"
+          "module": "lwjgl-nfd",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-nuklear"
+          "module": "lwjgl-nuklear",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-odbc"
+          "module": "lwjgl-odbc",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-openal"
+          "module": "lwjgl-openal",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-opencl"
+          "module": "lwjgl-opencl",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-opengl"
+          "module": "lwjgl-opengl",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-opengles"
+          "module": "lwjgl-opengles",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-opus"
+          "module": "lwjgl-opus",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-shaderc"
+          "module": "lwjgl-shaderc",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-stb"
+          "module": "lwjgl-stb",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-tinyexr"
+          "module": "lwjgl-tinyexr",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-tinyfd"
+          "module": "lwjgl-tinyfd",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-tootle"
+          "module": "lwjgl-tootle",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-vma"
+          "module": "lwjgl-vma",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-vulkan"
+          "module": "lwjgl-vulkan",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-xxhash"
+          "module": "lwjgl-xxhash",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.lwjgl",
-          "module": "lwjgl-zstd"
+          "module": "lwjgl-zstd",
+          "version": {
+            "requires": "3.2.3"
+          }
         },
         {
           "group": "org.joml",
