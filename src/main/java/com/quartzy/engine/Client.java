@@ -2,10 +2,9 @@ package com.quartzy.engine;
 
 import com.quartzy.engine.audio.SoundManager;
 import com.quartzy.engine.ecs.components.CustomRenderComponent;
+import com.quartzy.engine.events.EventManager;
+import com.quartzy.engine.events.layerimpl.ClientLayer;
 import com.quartzy.engine.input.Input;
-import com.quartzy.engine.input.KeyPressed;
-import com.quartzy.engine.input.Mods;
-import com.quartzy.engine.graphics.Color;
 import com.quartzy.engine.graphics.Renderer;
 import com.quartzy.engine.graphics.TextureManager;
 import com.quartzy.engine.graphics.Window;
@@ -40,8 +39,14 @@ public class Client{
     private Renderer renderer;
     private ResourceManager resourceManager;
     private TextureManager textureManager;
+    @Getter
+    @Setter
     private boolean running;
+    @Getter
     private int fps;
+    
+    @Getter
+    private EventManager eventManager;
     
     private Window window;
     private NetworkManager networkManager;
@@ -79,6 +84,8 @@ public class Client{
             networkManager = new NetworkManager(Side.CLIENT);
         }
         Input.init(window.getId());
+        eventManager = new EventManager();
+        eventManager.addLayer(new ClientLayer());
         textureManager = new TextureManager();
         resourceManager = new ResourceManager(true, true, SoundManager.getInstance(), textureManager);
         renderer = new Renderer();
@@ -175,14 +182,6 @@ public class Client{
     
     public Window getWindow(){
         return window;
-    }
-    
-    public boolean isRunning(){
-        return running;
-    }
-    
-    public int getFps(){
-        return fps;
     }
     
     public TextureManager getTextureManager(){

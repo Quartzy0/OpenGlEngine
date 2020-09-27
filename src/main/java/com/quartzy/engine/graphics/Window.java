@@ -1,13 +1,14 @@
 package com.quartzy.engine.graphics;
 
+import com.quartzy.engine.Client;
+import com.quartzy.engine.events.impl.*;
+import com.quartzy.engine.input.Mods;
 import lombok.CustomLog;
 import lombok.Getter;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWWindowSizeCallbackI;
+import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.File;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
@@ -74,6 +75,85 @@ public class Window{
     
         GL.createCapabilities();
         setClearColor(new Color(0.5f, 0.5f, 0.5f, 1.0f));
+        
+        glfwSetWindowPosCallback(id, new GLFWWindowPosCallback(){
+            @Override
+            public void invoke(long window, int xpos, int ypos){
+                Client.getInstance().getEventManager().triggerEvent(new WindowMoveEvent(xpos, ypos));
+            }
+        });
+        
+        glfwSetDropCallback(id, new GLFWDropCallback(){
+            @Override
+            public void invoke(long window, int count, long names){
+                File[] files = new File[count];
+                for(int i = 0; i < files.length; i++){
+                    files[i] = new File(getName(names, i));
+                }
+                Client.getInstance().getEventManager().triggerEvent(new FileDropEvent(files));
+            }
+        });
+        
+        glfwSetCursorEnterCallback(id, new GLFWCursorEnterCallback(){
+            @Override
+            public void invoke(long window, boolean entered){
+                if(entered){
+                    Client.getInstance().getEventManager().triggerEvent(new CursorEnterEvent());
+                }else {
+                    Client.getInstance().getEventManager().triggerEvent(new CursorLeaveEvent());
+                }
+            }
+        });
+    
+        glfwSetKeyCallback(id, new GLFWKeyCallback(){
+            @Override
+            public void invoke(long window, int key, int scancode, int action, int mods){
+                Mods mods1 = new Mods((mods & GLFW_MOD_CONTROL)==GLFW_MOD_CONTROL, (mods & GLFW_MOD_ALT)==GLFW_MOD_ALT, (mods & GLFW_MOD_SHIFT)==GLFW_MOD_SHIFT, (mods & GLFW_MOD_NUM_LOCK)==GLFW_MOD_NUM_LOCK, (mods & GLFW_MOD_SUPER)==GLFW_MOD_SUPER, (mods & GLFW_MOD_CAPS_LOCK)==GLFW_MOD_CAPS_LOCK);
+                if(action == GLFW_PRESS){
+                    Client.getInstance().getEventManager().triggerEvent(new KeyPressedEvent(key, mods1));
+                }else if(action == GLFW_RELEASE){
+                    Client.getInstance().getEventManager().triggerEvent(new KeyReleasedEvent(key, mods1));
+                }
+            }
+        });
+        glfwSetCharCallback(id, new GLFWCharCallback(){
+            @Override
+            public void invoke(long window, int codepoint){
+                Client.getInstance().getEventManager().triggerEvent(new KeyTypedEvent(codepoint));
+            }
+        });
+    
+        glfwSetMouseButtonCallback(id, new GLFWMouseButtonCallback(){
+            @Override
+            public void invoke(long window, int button, int action, int mods){
+                Mods mods1 = new Mods((mods & GLFW_MOD_CONTROL)==GLFW_MOD_CONTROL, (mods & GLFW_MOD_ALT)==GLFW_MOD_ALT, (mods & GLFW_MOD_SHIFT)==GLFW_MOD_SHIFT, (mods & GLFW_MOD_NUM_LOCK)==GLFW_MOD_NUM_LOCK, (mods & GLFW_MOD_SUPER)==GLFW_MOD_SUPER, (mods & GLFW_MOD_CAPS_LOCK)==GLFW_MOD_CAPS_LOCK);
+                if(action==GLFW_PRESS){
+                    Client.getInstance().getEventManager().triggerEvent(new MouseButtonPressedEvent(button, mods1));
+                }else if(action==GLFW_RELEASE){
+                    Client.getInstance().getEventManager().triggerEvent(new MouseButtonReleasedEvent(button, mods1));
+                }
+            }
+        });
+        glfwSetCursorPosCallback(id, new GLFWCursorPosCallback(){
+            @Override
+            public void invoke(long window, double xpos, double ypos){
+                Client.getInstance().getEventManager().triggerEvent(new CursorMoveEvent(xpos, ypos));
+            }
+        });
+    
+        glfwSetScrollCallback(id, new GLFWScrollCallback(){
+            @Override
+            public void invoke(long window, double xoffset, double yoffset){
+                Client.getInstance().getEventManager().triggerEvent(new MouseScrollEvent(xoffset, yoffset));
+            }
+        });
+        
+        glfwSetWindowSizeCallback(id, new GLFWWindowSizeCallback(){
+            @Override
+            public void invoke(long window, int width1, int height1){
+                Client.getInstance().getEventManager().triggerEvent(new WindowResizeEvent(width1, height1, width, height));
+            }
+        });
     }
     
     /**

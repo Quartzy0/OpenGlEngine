@@ -24,4 +24,42 @@ public class Mods{
         Super = aSuper;
         this.capsLock = capsLock;
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        Mods mods = (Mods) o;
+        
+        if(ctrl != mods.ctrl) return false;
+        if(alt != mods.alt) return false;
+        if(shift != mods.shift) return false;
+        if(numLock != mods.numLock) return false;
+        if(Super != mods.Super) return false;
+        return capsLock == mods.capsLock;
+    }
+    
+    @Override
+    public int hashCode(){
+        int result = (ctrl ? 1 : 0);
+        result = 31 * result + (alt ? 1 : 0);
+        result = 31 * result + (shift ? 1 : 0);
+        result = 31 * result + (numLock ? 1 : 0);
+        result = 31 * result + (Super ? 1 : 0);
+        result = 31 * result + (capsLock ? 1 : 0);
+        return result;
+    }
+    
+    @Override
+    public String toString(){
+        return "Mods{" +
+                "ctrl=" + ctrl +
+                ", alt=" + alt +
+                ", shift=" + shift +
+                ", numLock=" + numLock +
+                ", super=" + Super +
+                ", capsLock=" + capsLock +
+                '}';
+    }
 }

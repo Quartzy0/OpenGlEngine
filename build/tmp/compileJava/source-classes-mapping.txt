@@ -13,6 +13,10 @@ com/quartzy/engine/utils/ResourceType.java
  com.quartzy.engine.utils.ResourceType
 com/quartzy/engine/network/server/UDPServerHandler.java
  com.quartzy.engine.network.server.UDPServerHandler
+com/quartzy/engine/events/impl/MouseButtonReleasedEvent.java
+ com.quartzy.engine.events.impl.MouseButtonReleasedEvent
+com/quartzy/engine/events/impl/KeyTypedEvent.java
+ com.quartzy.engine.events.impl.KeyTypedEvent
 com/quartzy/engine/network/client/ClientTCP.java
  com.quartzy.engine.network.client.ClientTCP
  com.quartzy.engine.network.client.ClientTCP$1
@@ -25,10 +29,25 @@ com/quartzy/engine/ecs/components/ParticleEmitterComponent.java
  com.quartzy.engine.ecs.components.ParticleEmitterComponent
 com/quartzy/engine/utils/ResourceManager.java
  com.quartzy.engine.utils.ResourceManager
+com/quartzy/engine/events/impl/MouseScrollEvent.java
+ com.quartzy.engine.events.impl.MouseScrollEvent
+com/quartzy/engine/events/impl/WindowMoveEvent.java
+ com.quartzy.engine.events.impl.WindowMoveEvent
+com/quartzy/engine/events/impl/FileDropEvent.java
+ com.quartzy.engine.events.impl.FileDropEvent
 com/quartzy/engine/network/NetworkManager.java
  com.quartzy.engine.network.NetworkManager
 com/quartzy/engine/graphics/Window.java
  com.quartzy.engine.graphics.Window
+ com.quartzy.engine.graphics.Window$1
+ com.quartzy.engine.graphics.Window$2
+ com.quartzy.engine.graphics.Window$3
+ com.quartzy.engine.graphics.Window$4
+ com.quartzy.engine.graphics.Window$5
+ com.quartzy.engine.graphics.Window$6
+ com.quartzy.engine.graphics.Window$7
+ com.quartzy.engine.graphics.Window$8
+ com.quartzy.engine.graphics.Window$9
 com/quartzy/engine/graphics/VertexArray.java
  com.quartzy.engine.graphics.VertexArray
 com/quartzy/engine/network/server/ServerUDP.java
@@ -48,11 +67,8 @@ com/quartzy/engine/network/server/TCPServerHandler.java
 com/quartzy/engine/network/server/ServerTCP.java
  com.quartzy.engine.network.server.ServerTCP
  com.quartzy.engine.network.server.ServerTCP$1
-com/quartzy/engine/input/KeyPressed.java
- com.quartzy.engine.input.KeyPressed
-com/quartzy/engine/input/Keyboard.java
- com.quartzy.engine.input.Keyboard
- com.quartzy.engine.input.Keyboard$1
+com/quartzy/engine/events/layerimpl/ClientLayer.java
+ com.quartzy.engine.events.layerimpl.ClientLayer
 com/quartzy/engine/Server.java
  com.quartzy.engine.Server
 com/quartzy/engine/utils/StringBuilder.java
@@ -62,8 +78,12 @@ com/quartzy/engine/audio/SoundManager.java
  com.quartzy.engine.audio.SoundManager
 com/quartzy/engine/network/client/UDPClientHandler.java
  com.quartzy.engine.network.client.UDPClientHandler
+com/quartzy/engine/events/impl/CursorLeaveEvent.java
+ com.quartzy.engine.events.impl.CursorLeaveEvent
 com/quartzy/engine/ecs/components/CustomRenderer.java
  com.quartzy.engine.ecs.components.CustomRenderer
+com/quartzy/engine/events/impl/WindowResizeEvent.java
+ com.quartzy.engine.events.impl.WindowResizeEvent
 com/quartzy/engine/ecs/components/AudioSourceComponent.java
  com.quartzy.engine.ecs.components.AudioSourceComponent
 com/quartzy/engine/ecs/components/CustomRenderComponent.java
@@ -86,17 +106,24 @@ com/quartzy/engine/ecs/ComponentManager.java
  com.quartzy.engine.ecs.ComponentManager
 com/quartzy/engine/network/client/ClientUDP.java
  com.quartzy.engine.network.client.ClientUDP
-com/quartzy/engine/input/Mouse.java
- com.quartzy.engine.input.Mouse
- com.quartzy.engine.input.Mouse$1
 com/quartzy/engine/network/server/DecoderServer.java
  com.quartzy.engine.network.server.DecoderServer
 com/quartzy/engine/network/server/NetworkManagerServer.java
  com.quartzy.engine.network.server.NetworkManagerServer
+com/quartzy/engine/events/impl/CursorEnterEvent.java
+ com.quartzy.engine.events.impl.CursorEnterEvent
+com/quartzy/engine/events/EventManager.java
+ com.quartzy.engine.events.EventManager
 com/quartzy/engine/ecs/components/BehaviourComponent.java
  com.quartzy.engine.ecs.components.BehaviourComponent
+com/quartzy/engine/events/impl/KeyReleasedEvent.java
+ com.quartzy.engine.events.impl.KeyReleasedEvent
 com/quartzy/engine/graphics/Framebuffer.java
  com.quartzy.engine.graphics.Framebuffer
+com/quartzy/engine/events/impl/CursorMoveEvent.java
+ com.quartzy.engine.events.impl.CursorMoveEvent
+com/quartzy/engine/events/impl/KeyPressedEvent.java
+ com.quartzy.engine.events.impl.KeyPressedEvent
 com/quartzy/engine/graphics/Color.java
  com.quartzy.engine.graphics.Color
 com/quartzy/engine/utils/Logger.java
@@ -107,6 +134,8 @@ com/quartzy/engine/Client.java
  com.quartzy.engine.Client
 com/quartzy/engine/math/Vector4f.java
  com.quartzy.engine.math.Vector4f
+com/quartzy/engine/events/Layer.java
+ com.quartzy.engine.events.Layer
 com/quartzy/engine/ecs/components/TextureComponent.java
  com.quartzy.engine.ecs.components.TextureComponent
 com/quartzy/engine/utils/Level.java
@@ -121,8 +150,8 @@ com/quartzy/engine/ApplicationClient.java
  com.quartzy.engine.ApplicationClient
 com/quartzy/engine/ecs/components/LightSourceComponent.java
  com.quartzy.engine.ecs.components.LightSourceComponent
-com/quartzy/engine/input/ButtonPressed.java
- com.quartzy.engine.input.ButtonPressed
+com/quartzy/engine/events/impl/MouseButtonPressedEvent.java
+ com.quartzy.engine.events.impl.MouseButtonPressedEvent
 com/quartzy/engine/ecs/ECSManager.java
  com.quartzy.engine.ecs.ECSManager
 com/quartzy/engine/math/Vector3f.java
@@ -141,5 +170,10 @@ com/quartzy/engine/ecs/components/AudioListenerComponent.java
  com.quartzy.engine.ecs.components.AudioListenerComponent
 com/quartzy/engine/network/client/NetworkManagerClient.java
  com.quartzy.engine.network.client.NetworkManagerClient
+com/quartzy/engine/events/Event.java
+ com.quartzy.engine.events.Event
+ com.quartzy.engine.events.Event$EventType
 com/quartzy/engine/ecs/components/Behaviour.java
  com.quartzy.engine.ecs.components.Behaviour
+com/quartzy/engine/events/SubscribeEvent.java
+ com.quartzy.engine.events.SubscribeEvent

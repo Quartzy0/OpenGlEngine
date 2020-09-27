@@ -3,6 +3,7 @@ package com.quartzy.engine.graphics;
 import com.quartzy.engine.Client;
 import com.quartzy.engine.ecs.components.CameraComponent;
 import com.quartzy.engine.ecs.components.CustomRenderComponent;
+import com.quartzy.engine.events.impl.WindowResizeEvent;
 import com.quartzy.engine.math.Matrix4f;
 import com.quartzy.engine.math.Vector2f;
 import com.quartzy.engine.network.NetworkManager;
@@ -57,7 +58,6 @@ public class Renderer{
     @Getter
     @Setter
     private CameraComponent mainCamera;
-    private GLFWWindowSizeCallbackI sizeCallback;
     
     @Getter
     @Setter
@@ -122,19 +122,6 @@ public class Renderer{
         if(this.viewportPosition==null){
             this.viewportPosition = new Vector2f(0, 0);
         }
-    
-        sizeCallback = (window1, width, height) -> {
-            updateViewport(width, height);
-            if(NetworkManager.INSTANCE.getSide()==Side.CLIENT && World.getCurrentWorld()!=null){
-                HashMap<Short, CustomRenderComponent> allCustomRenderers = World.getCurrentWorld().getEcsManager().getAllEntitiesWithComponent(CustomRenderComponent.class);
-                if(allCustomRenderers != null && !allCustomRenderers.isEmpty()){
-                    for(CustomRenderComponent value : allCustomRenderers.values()){
-                        value.resizeWindow(width, height);
-                    }
-                }
-            }
-        };
-        glfwSetWindowSizeCallback(window.getId(), sizeCallback);
         updateViewport(window.getWidth(), window.getHeight());
         
         specifyVertexAttributes();
@@ -162,7 +149,7 @@ public class Renderer{
         font = new Font(new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.PLAIN, 16));
     }
     
-    private void updateViewport(int windowWidth, int windowHeight){
+    public void updateViewport(int windowWidth, int windowHeight){
         int newWidth = (int) (windowWidth * this.viewportDimensions.x);
         int newHeight = (int) (windowHeight * this.viewportDimensions.y);
         int x = (int) (this.viewportPosition.x * windowWidth);
