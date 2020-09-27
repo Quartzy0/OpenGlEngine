@@ -11,6 +11,12 @@ public class MouseButtonReleasedEvent extends Event{
     @Getter
     private Mods mods;
     
+    public MouseButtonReleasedEvent(int button, Mods mods, long windowId){
+        super(EventType.MOUSE, windowId);
+        this.button = button;
+        this.mods = mods;
+    }
+    
     @Override
     public boolean equals(Object o){
         if(this == o) return true;
@@ -39,9 +45,4 @@ public class MouseButtonReleasedEvent extends Event{
                 "} " + super.toString();
     }
     
-    public MouseButtonReleasedEvent(int button, Mods mods){
-        super(EventType.MOUSE);
-        this.button = button;
-        this.mods = mods;
-    }
 }

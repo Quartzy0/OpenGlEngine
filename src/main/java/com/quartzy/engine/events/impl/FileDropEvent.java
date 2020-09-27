@@ -11,8 +11,8 @@ public class FileDropEvent extends Event{
     @Getter
     private File[] files;
     
-    public FileDropEvent(File[] files){
-        super(EventType.WINDOW);
+    public FileDropEvent(File[] files, long windowId){
+        super(EventType.WINDOW, windowId);
         this.files = files;
     }
     

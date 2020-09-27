@@ -8,8 +8,8 @@ public class CursorMoveEvent extends Event{
     @Getter
     public double x,y;
     
-    public CursorMoveEvent(double x, double y){
-        super(EventType.MOUSE);
+    public CursorMoveEvent(double x, double y, long windowId){
+        super(EventType.MOUSE, windowId);
         this.x = x;
         this.y = y;
     }

@@ -12,8 +12,8 @@ public class KeyReleasedEvent extends Event{
     @Getter
     private Mods mods;
     
-    public KeyReleasedEvent(int keyCode, Mods mods){
-        super(EventType.KEYBOARD);
+    public KeyReleasedEvent(int keyCode, Mods mods, long windowId){
+        super(EventType.KEYBOARD, windowId);
         this.keyCode = keyCode;
         this.mods = mods;
     }

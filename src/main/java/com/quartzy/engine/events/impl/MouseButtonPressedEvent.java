@@ -11,8 +11,8 @@ public class MouseButtonPressedEvent extends Event{
     @Getter
     private Mods mods;
     
-    public MouseButtonPressedEvent(int button, Mods mods){
-        super(EventType.MOUSE);
+    public MouseButtonPressedEvent(int button, Mods mods, long windowId){
+        super(EventType.MOUSE, windowId);
         this.button = button;
         this.mods = mods;
     }

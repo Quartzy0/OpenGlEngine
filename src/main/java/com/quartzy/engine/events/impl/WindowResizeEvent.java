@@ -7,8 +7,8 @@ public class WindowResizeEvent extends Event{
     @Getter
     private int newWidth, newHeight, oldWidth, oldHeight;
     
-    public WindowResizeEvent(int newWidth, int newHeight, int oldWidth, int oldHeight){
-        super(EventType.WINDOW);
+    public WindowResizeEvent(int newWidth, int newHeight, int oldWidth, int oldHeight, long windowId){
+        super(EventType.WINDOW, windowId);
         this.newWidth = newWidth;
         this.newHeight = newHeight;
         this.oldWidth = oldWidth;

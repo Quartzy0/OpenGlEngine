@@ -8,6 +8,12 @@ public class MouseScrollEvent extends Event{
     @Getter
     private double xOffset, yOffset;
     
+    public MouseScrollEvent(double xOffset, double yOffset, long windowId){
+        super(EventType.MOUSE, windowId);
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
+    }
+    
     @Override
     public boolean equals(Object o){
         if(this == o) return true;
@@ -39,9 +45,4 @@ public class MouseScrollEvent extends Event{
                 "} " + super.toString();
     }
     
-    public MouseScrollEvent(double xOffset, double yOffset){
-        super(EventType.MOUSE);
-        this.xOffset = xOffset;
-        this.yOffset = yOffset;
-    }
 }

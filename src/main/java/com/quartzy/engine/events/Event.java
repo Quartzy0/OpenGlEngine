@@ -11,9 +11,13 @@ public class Event{
     @Getter
     private EventType type;
     
-    public Event(EventType type){
+    @Getter
+    private long windowId;
+    
+    public Event(EventType type, long windowId){
         this.handled = false;
         this.type = type;
+        this.windowId = windowId;
     }
     
     @Override
@@ -22,13 +26,16 @@ public class Event{
         if(o == null || getClass() != o.getClass()) return false;
         
         Event event = (Event) o;
-    
+        
+        if(windowId != event.windowId) return false;
         return type == event.type;
     }
     
     @Override
     public int hashCode(){
-        return type != null ? type.hashCode() : 0;
+        int result = type != null ? type.hashCode() : 0;
+        result = 31 * result + (int) (windowId ^ (windowId >>> 32));
+        return result;
     }
     
     @Override
@@ -36,6 +43,7 @@ public class Event{
         return "Event{" +
                 "handled=" + handled +
                 ", type=" + type.toString() +
+                ", windowId=" + windowId +
                 '}';
     }
     

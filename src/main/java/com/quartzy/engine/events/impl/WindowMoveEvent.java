@@ -8,8 +8,8 @@ public class WindowMoveEvent extends Event{
     @Getter
     private int newX, newY;
     
-    public WindowMoveEvent(int newX, int newY){
-        super(EventType.WINDOW);
+    public WindowMoveEvent(int newX, int newY, long windowId){
+        super(EventType.WINDOW, windowId);
         this.newX = newX;
         this.newY = newY;
     }

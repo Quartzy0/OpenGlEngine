@@ -8,8 +8,8 @@ public class KeyTypedEvent extends Event{
     @Getter
     private int codepoint;
     
-    public KeyTypedEvent(int codepoint){
-        super(EventType.KEYBOARD);
+    public KeyTypedEvent(int codepoint, long windowId){
+        super(EventType.KEYBOARD, windowId);
         this.codepoint = codepoint;
     }
     
