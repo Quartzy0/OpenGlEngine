@@ -30,7 +30,22 @@ public class EventManager{
         }
     }
     
-    public void addLayer(Layer layer){
+    public Layer popLayer(){
+        Layer[] layers = layerStack.keySet().toArray(new Layer[layerStack.size()]);
+        Layer layerToRemove = layers[layers.length-1];
+        HashMap<Class<? extends Event>, Method> remove = layerStack.remove(layerToRemove);
+        return remove!=null ? layerToRemove : null;
+    }
+    
+    public Layer popLayer(int index){
+        Layer[] layers = layerStack.keySet().toArray(new Layer[layerStack.size()]);
+        if(index>=layers.length)return null;
+        Layer layerToRemove = layers[index];
+        HashMap<Class<? extends Event>, Method> remove = layerStack.remove(layerToRemove);
+        return remove!=null ? layerToRemove : null;
+    }
+    
+    public void pushLayer(Layer layer){
         Class<? extends Layer> clazz = layer.getClass();
         Method[] declaredMethods = clazz.getDeclaredMethods();
         
@@ -44,7 +59,9 @@ public class EventManager{
                     if(Event.class.isAssignableFrom(type)){
                         Class<? extends Event> type1 = (Class<? extends Event>) type;
                         methodMap.put(type1, declaredMethods[i]);
-                        usedEvents.add(type1);
+                        if(!usedEvents.contains(type1)){
+                            usedEvents.add(type1);
+                        }
                     }
                 }
             }

@@ -8,6 +8,8 @@ public class Mods{
     public final boolean Super;
     public final boolean capsLock;
     
+    public final int originalMods;
+    
     /**
      * @param ctrl Is Ctrl pressed
      * @param alt Is Alt pressed
@@ -16,8 +18,9 @@ public class Mods{
      * @param aSuper Is Super active
      * @param capsLock Is Caps Lock active
      */
-    public Mods(boolean ctrl, boolean alt, boolean shift, boolean numLock, boolean aSuper, boolean capsLock){
+    public Mods(boolean ctrl, boolean alt, boolean shift, boolean numLock, boolean aSuper, boolean capsLock, int originalMods){
         this.ctrl = ctrl;
+        this.originalMods = originalMods;
         this.alt = alt;
         this.shift = shift;
         this.numLock = numLock;

@@ -85,7 +85,7 @@ public class Client{
         }
         Input.init(window.getId());
         eventManager = new EventManager();
-        eventManager.addLayer(new ClientLayer());
+        eventManager.pushLayer(new ClientLayer());
         textureManager = new TextureManager();
         resourceManager = new ResourceManager(true, true, SoundManager.getInstance(), textureManager);
         renderer = new Renderer();
