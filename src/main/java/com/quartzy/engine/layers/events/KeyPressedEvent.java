@@ -1,18 +1,17 @@
-package com.quartzy.engine.events.impl;
+package com.quartzy.engine.layers.events;
 
-import com.quartzy.engine.events.Event;
+import com.quartzy.engine.layers.Event;
 import com.quartzy.engine.input.Mods;
 import lombok.Getter;
 
-public class KeyReleasedEvent extends Event{
+public class KeyPressedEvent extends Event{
     
     @Getter
     private int keyCode;
-    
     @Getter
     private Mods mods;
     
-    public KeyReleasedEvent(int keyCode, Mods mods, long windowId){
+    public KeyPressedEvent(int keyCode, Mods mods, long windowId){
         super(EventType.KEYBOARD, windowId);
         this.keyCode = keyCode;
         this.mods = mods;
@@ -20,7 +19,7 @@ public class KeyReleasedEvent extends Event{
     
     @Override
     public String toString(){
-        return "KeyReleasedEvent{" +
+        return "KeyPressedEvent{" +
                 "keyCode=" + keyCode +
                 ", mods=" + mods +
                 "} " + super.toString();
@@ -32,7 +31,7 @@ public class KeyReleasedEvent extends Event{
         if(o == null || getClass() != o.getClass()) return false;
         if(!super.equals(o)) return false;
         
-        KeyReleasedEvent that = (KeyReleasedEvent) o;
+        KeyPressedEvent that = (KeyPressedEvent) o;
         
         if(keyCode != that.keyCode) return false;
         return mods != null ? mods.equals(that.mods) : that.mods == null;

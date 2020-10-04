@@ -2,8 +2,10 @@ package com.quartzy.engine;
 
 import com.quartzy.engine.audio.SoundManager;
 import com.quartzy.engine.ecs.components.CustomRenderComponent;
-import com.quartzy.engine.events.EventManager;
-import com.quartzy.engine.events.layerimpl.ClientLayer;
+import com.quartzy.engine.layers.LayerStack;
+import com.quartzy.engine.layers.events.RenderEvent;
+import com.quartzy.engine.layers.events.TickEvent;
+import com.quartzy.engine.layers.layerimpl.WorldLayer;
 import com.quartzy.engine.input.Input;
 import com.quartzy.engine.graphics.Renderer;
 import com.quartzy.engine.graphics.TextureManager;
@@ -46,7 +48,7 @@ public class Client{
     private int fps;
     
     @Getter
-    private EventManager eventManager;
+    private LayerStack layerStack;
     
     private Window window;
     private NetworkManager networkManager;
@@ -83,9 +85,10 @@ public class Client{
         }else {
             networkManager = new NetworkManager(Side.CLIENT);
         }
-        Input.init(window.getId());
-        eventManager = new EventManager();
-        eventManager.pushLayer(new ClientLayer());
+        WorldLayer layer = new WorldLayer();
+        Input.init(window.getId(), layer);
+        layerStack = new LayerStack();
+        layerStack.pushLayer(layer);
         textureManager = new TextureManager();
         resourceManager = new ResourceManager(true, true, SoundManager.getInstance(), textureManager);
         renderer = new Renderer();
@@ -165,15 +168,11 @@ public class Client{
     private void render(){
         renderer.clear();
     
-        if(World.getCurrentWorld()!=null){
-            World.getCurrentWorld().render(renderer);
-        }
+        layerStack.triggerEvent(new RenderEvent(window.getId(), renderer));
     }
     
     private void update(float delta){
-        if(World.getCurrentWorld()!=null){
-            World.getCurrentWorld().update(delta);
-        }
+        layerStack.triggerEvent(new TickEvent(window.getId(), delta));
     }
     
     public ResourceManager getResourceManager(){

@@ -1,12 +1,12 @@
-package com.quartzy.engine.events.impl;
+package com.quartzy.engine.layers.events;
 
-import com.quartzy.engine.events.Event;
+import com.quartzy.engine.layers.Event;
 import lombok.Getter;
 
 public class CursorMoveEvent extends Event{
     
     @Getter
-    public double x,y;
+    private double x,y;
     
     public CursorMoveEvent(double x, double y, long windowId){
         super(EventType.MOUSE, windowId);

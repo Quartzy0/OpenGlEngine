@@ -1,6 +1,6 @@
-package com.quartzy.engine.events.impl;
+package com.quartzy.engine.layers.events;
 
-import com.quartzy.engine.events.Event;
+import com.quartzy.engine.layers.Event;
 import com.quartzy.engine.input.Mods;
 import lombok.Getter;
 

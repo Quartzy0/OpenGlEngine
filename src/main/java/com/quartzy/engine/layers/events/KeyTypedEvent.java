@@ -1,6 +1,6 @@
-package com.quartzy.engine.events.impl;
+package com.quartzy.engine.layers.events;
 
-import com.quartzy.engine.events.Event;
+import com.quartzy.engine.layers.Event;
 import lombok.Getter;
 
 public class KeyTypedEvent extends Event{

@@ -2,18 +2,14 @@ package com.quartzy.engine.graphics;
 
 import com.quartzy.engine.Client;
 import com.quartzy.engine.ecs.components.CameraComponent;
-import com.quartzy.engine.ecs.components.CustomRenderComponent;
-import com.quartzy.engine.events.impl.WindowResizeEvent;
 import com.quartzy.engine.math.Matrix4f;
 import com.quartzy.engine.math.Vector2f;
 import com.quartzy.engine.network.NetworkManager;
 import com.quartzy.engine.network.Side;
 import com.quartzy.engine.utils.Resource;
-import com.quartzy.engine.world.World;
 import lombok.CustomLog;
 import lombok.Getter;
 import lombok.Setter;
-import org.lwjgl.glfw.GLFWWindowSizeCallbackI;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL45;
 import org.lwjgl.opengl.GLDebugMessageCallback;
@@ -23,9 +19,7 @@ import com.quartzy.engine.text.Font;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.HashMap;
 
-import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;

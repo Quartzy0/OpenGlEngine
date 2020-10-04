@@ -1,8 +1,6 @@
 package com.quartzy.engine.input;
 
-import com.quartzy.engine.graphics.Window;
-import lombok.Getter;
-import lombok.Setter;
+import com.quartzy.engine.layers.layerimpl.WorldLayer;
 import org.joml.Vector2f;
 import org.lwjgl.system.MemoryStack;
 
@@ -15,13 +13,15 @@ public class Input{
     private static final HashMap<Integer, Boolean> prevKeyStates = new HashMap<>();
     
     private static long window;
+    private static WorldLayer worldLayer;
     
-    public static void init(long windowId){
+    public static void init(long windowId, WorldLayer layer){
         window = windowId;
+        worldLayer = layer;
     }
     
     public static boolean isKeyPressed(int key){
-        return glfwGetKey(window, key)==GLFW_PRESS;
+        return worldLayer.getKeyStates().getOrDefault(key, false);
     }
     
     public static boolean isKeyDown(int key){
@@ -32,15 +32,10 @@ public class Input{
     }
     
     public static boolean isButtonDown(int button){
-        return glfwGetMouseButton(window, button)==GLFW_PRESS;
+        return worldLayer.getMouseButtonStates().getOrDefault(button, false);
     }
     
     public static Vector2f getCursorPos(){
-        try(MemoryStack stack = MemoryStack.stackPush()){
-            DoubleBuffer xpos = stack.mallocDouble(1);
-            DoubleBuffer ypos = stack.mallocDouble(1);
-            glfwGetCursorPos(window, xpos, ypos);
-            return new Vector2f((float) xpos.get(), (float) ypos.get());
-        }
+        return new Vector2f(worldLayer.getMouseX(), worldLayer.getMouseY());
     }
 }
