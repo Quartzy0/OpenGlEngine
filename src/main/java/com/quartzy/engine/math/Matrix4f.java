@@ -443,5 +443,72 @@ public class Matrix4f {
 
         return scaling;
     }
-
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        Matrix4f matrix4f = (Matrix4f) o;
+        
+        if(Float.compare(matrix4f.m00, m00) != 0) return false;
+        if(Float.compare(matrix4f.m01, m01) != 0) return false;
+        if(Float.compare(matrix4f.m02, m02) != 0) return false;
+        if(Float.compare(matrix4f.m03, m03) != 0) return false;
+        if(Float.compare(matrix4f.m10, m10) != 0) return false;
+        if(Float.compare(matrix4f.m11, m11) != 0) return false;
+        if(Float.compare(matrix4f.m12, m12) != 0) return false;
+        if(Float.compare(matrix4f.m13, m13) != 0) return false;
+        if(Float.compare(matrix4f.m20, m20) != 0) return false;
+        if(Float.compare(matrix4f.m21, m21) != 0) return false;
+        if(Float.compare(matrix4f.m22, m22) != 0) return false;
+        if(Float.compare(matrix4f.m23, m23) != 0) return false;
+        if(Float.compare(matrix4f.m30, m30) != 0) return false;
+        if(Float.compare(matrix4f.m31, m31) != 0) return false;
+        if(Float.compare(matrix4f.m32, m32) != 0) return false;
+        return Float.compare(matrix4f.m33, m33) == 0;
+    }
+    
+    @Override
+    public int hashCode(){
+        int result = (m00 != +0.0f ? Float.floatToIntBits(m00) : 0);
+        result = 31 * result + (m01 != +0.0f ? Float.floatToIntBits(m01) : 0);
+        result = 31 * result + (m02 != +0.0f ? Float.floatToIntBits(m02) : 0);
+        result = 31 * result + (m03 != +0.0f ? Float.floatToIntBits(m03) : 0);
+        result = 31 * result + (m10 != +0.0f ? Float.floatToIntBits(m10) : 0);
+        result = 31 * result + (m11 != +0.0f ? Float.floatToIntBits(m11) : 0);
+        result = 31 * result + (m12 != +0.0f ? Float.floatToIntBits(m12) : 0);
+        result = 31 * result + (m13 != +0.0f ? Float.floatToIntBits(m13) : 0);
+        result = 31 * result + (m20 != +0.0f ? Float.floatToIntBits(m20) : 0);
+        result = 31 * result + (m21 != +0.0f ? Float.floatToIntBits(m21) : 0);
+        result = 31 * result + (m22 != +0.0f ? Float.floatToIntBits(m22) : 0);
+        result = 31 * result + (m23 != +0.0f ? Float.floatToIntBits(m23) : 0);
+        result = 31 * result + (m30 != +0.0f ? Float.floatToIntBits(m30) : 0);
+        result = 31 * result + (m31 != +0.0f ? Float.floatToIntBits(m31) : 0);
+        result = 31 * result + (m32 != +0.0f ? Float.floatToIntBits(m32) : 0);
+        result = 31 * result + (m33 != +0.0f ? Float.floatToIntBits(m33) : 0);
+        return result;
+    }
+    
+    @Override
+    public String toString(){
+        return "Matrix4f{" +
+                "m00=" + m00 +
+                ", m01=" + m01 +
+                ", m02=" + m02 +
+                ", m03=" + m03 +
+                ", m10=" + m10 +
+                ", m11=" + m11 +
+                ", m12=" + m12 +
+                ", m13=" + m13 +
+                ", m20=" + m20 +
+                ", m21=" + m21 +
+                ", m22=" + m22 +
+                ", m23=" + m23 +
+                ", m30=" + m30 +
+                ", m31=" + m31 +
+                ", m32=" + m32 +
+                ", m33=" + m33 +
+                '}';
+    }
 }

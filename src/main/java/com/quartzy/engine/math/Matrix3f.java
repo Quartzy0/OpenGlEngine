@@ -223,5 +223,51 @@ public class Matrix3f {
         buffer.put(m02).put(m12).put(m22);
         buffer.flip();
     }
-
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        Matrix3f matrix3f = (Matrix3f) o;
+        
+        if(Float.compare(matrix3f.m00, m00) != 0) return false;
+        if(Float.compare(matrix3f.m01, m01) != 0) return false;
+        if(Float.compare(matrix3f.m02, m02) != 0) return false;
+        if(Float.compare(matrix3f.m10, m10) != 0) return false;
+        if(Float.compare(matrix3f.m11, m11) != 0) return false;
+        if(Float.compare(matrix3f.m12, m12) != 0) return false;
+        if(Float.compare(matrix3f.m20, m20) != 0) return false;
+        if(Float.compare(matrix3f.m21, m21) != 0) return false;
+        return Float.compare(matrix3f.m22, m22) == 0;
+    }
+    
+    @Override
+    public int hashCode(){
+        int result = (m00 != +0.0f ? Float.floatToIntBits(m00) : 0);
+        result = 31 * result + (m01 != +0.0f ? Float.floatToIntBits(m01) : 0);
+        result = 31 * result + (m02 != +0.0f ? Float.floatToIntBits(m02) : 0);
+        result = 31 * result + (m10 != +0.0f ? Float.floatToIntBits(m10) : 0);
+        result = 31 * result + (m11 != +0.0f ? Float.floatToIntBits(m11) : 0);
+        result = 31 * result + (m12 != +0.0f ? Float.floatToIntBits(m12) : 0);
+        result = 31 * result + (m20 != +0.0f ? Float.floatToIntBits(m20) : 0);
+        result = 31 * result + (m21 != +0.0f ? Float.floatToIntBits(m21) : 0);
+        result = 31 * result + (m22 != +0.0f ? Float.floatToIntBits(m22) : 0);
+        return result;
+    }
+    
+    @Override
+    public String toString(){
+        return "Matrix3f{" +
+                "m00=" + m00 +
+                ", m01=" + m01 +
+                ", m02=" + m02 +
+                ", m10=" + m10 +
+                ", m11=" + m11 +
+                ", m12=" + m12 +
+                ", m20=" + m20 +
+                ", m21=" + m21 +
+                ", m22=" + m22 +
+                '}';
+    }
 }

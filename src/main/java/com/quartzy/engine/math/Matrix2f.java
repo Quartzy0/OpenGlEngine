@@ -184,5 +184,36 @@ public class Matrix2f {
         buffer.put(m01).put(m11);
         buffer.flip();
     }
-
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        Matrix2f matrix2f = (Matrix2f) o;
+        
+        if(Float.compare(matrix2f.m00, m00) != 0) return false;
+        if(Float.compare(matrix2f.m01, m01) != 0) return false;
+        if(Float.compare(matrix2f.m10, m10) != 0) return false;
+        return Float.compare(matrix2f.m11, m11) == 0;
+    }
+    
+    @Override
+    public int hashCode(){
+        int result = (m00 != +0.0f ? Float.floatToIntBits(m00) : 0);
+        result = 31 * result + (m01 != +0.0f ? Float.floatToIntBits(m01) : 0);
+        result = 31 * result + (m10 != +0.0f ? Float.floatToIntBits(m10) : 0);
+        result = 31 * result + (m11 != +0.0f ? Float.floatToIntBits(m11) : 0);
+        return result;
+    }
+    
+    @Override
+    public String toString(){
+        return "Matrix2f{" +
+                "m00=" + m00 +
+                ", m01=" + m01 +
+                ", m10=" + m10 +
+                ", m11=" + m11 +
+                '}';
+    }
 }

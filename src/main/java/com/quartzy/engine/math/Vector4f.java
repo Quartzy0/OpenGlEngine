@@ -184,5 +184,36 @@ public class Vector4f {
         buffer.put(x).put(y).put(z).put(w);
         buffer.flip();
     }
-
+    
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        Vector4f vector4f = (Vector4f) o;
+        
+        if(Float.compare(vector4f.x, x) != 0) return false;
+        if(Float.compare(vector4f.y, y) != 0) return false;
+        if(Float.compare(vector4f.z, z) != 0) return false;
+        return Float.compare(vector4f.w, w) == 0;
+    }
+    
+    @Override
+    public int hashCode(){
+        int result = (x != +0.0f ? Float.floatToIntBits(x) : 0);
+        result = 31 * result + (y != +0.0f ? Float.floatToIntBits(y) : 0);
+        result = 31 * result + (z != +0.0f ? Float.floatToIntBits(z) : 0);
+        result = 31 * result + (w != +0.0f ? Float.floatToIntBits(w) : 0);
+        return result;
+    }
+    
+    @Override
+    public String toString(){
+        return "Vector4f{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                ", w=" + w +
+                '}';
+    }
 }
