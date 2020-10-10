@@ -19,6 +19,7 @@ public class CameraComponent extends Component{
     @Setter
     private Matrix4f modelMatrix, viewMatrix, projectionMatrix;
     
+    @Getter
     private Vector3f cameraPos;
     
     private boolean mainOnStartup;
@@ -118,6 +119,16 @@ public class CameraComponent extends Component{
         this.viewMatrix = this.viewMatrix.multiply(Matrix4f.translate(x, y, z));
         cameraPos = cameraPos.add(new Vector3f(x, y, z));
         changed = true;
+    }
+    
+    public void setCameraPos(Vector3f newPos){
+        this.viewMatrix = this.viewMatrix.multiply(Matrix4f.translate(newPos.x, newPos.y, newPos.z));
+        cameraPos = newPos;
+        changed = true;
+    }
+    
+    public void setCameraPos(float x, float y, float z){
+        this.setCameraPos(new Vector3f(x, y ,z));
     }
     
     @Override

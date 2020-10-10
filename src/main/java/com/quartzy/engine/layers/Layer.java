@@ -1,5 +1,8 @@
 package com.quartzy.engine.layers;
 
-public abstract class Layer{
+import com.quartzy.engine.graphics.Renderer;
 
+public abstract class Layer{
+    public abstract void update(float delta);
+    public abstract void render(Renderer renderer);
 }

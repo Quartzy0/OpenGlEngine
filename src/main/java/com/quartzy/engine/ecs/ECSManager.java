@@ -17,7 +17,7 @@ public class ECSManager{
     @Getter
     private HashMap<Integer, List<Short>> layers = new HashMap<>();
     @Getter
-    private HashMap<String, Short> tags = new HashMap<>();
+    private HashMap<Short, String> tags = new HashMap<>();
     
     @Getter
     private List<Short> initBlacklist = new ArrayList<>();
@@ -92,7 +92,12 @@ public class ECSManager{
     }
     
     public short getEntityByTag(String tag){
-        return this.tags.get(tag);
+        for(Map.Entry<Short, String> entry : tags.entrySet()){
+            if(entry.getValue().equals(tag)){
+                return entry.getKey();
+            }
+        }
+        return 0;
     }
     
     public List<Short> getEntitiesOnLayer(int layerId){
@@ -100,7 +105,7 @@ public class ECSManager{
     }
     
     public void setEntityTag(short entityId, String tag){
-        this.tags.put(tag, entityId);
+        this.tags.put(entityId, tag);
     }
     
     public void addEntityToLayer(short entityId, int layerId){
@@ -109,6 +114,10 @@ public class ECSManager{
         }else {
             layers.put(layerId, new ArrayList<>(Collections.singleton(entityId)));
         }
+    }
+    
+    public String getTag(short entityId){
+        return tags.get(entityId);
     }
     
     public void removeEntity(short entityId){
@@ -128,7 +137,7 @@ public class ECSManager{
             s = (short) r.nextInt(Short.MAX_VALUE + 1);
         }
         if(tag!=null){
-            this.tags.put(tag, s);
+            this.tags.put(s, tag);
         }
         if(this.layers.containsKey(layer)){
             this.layers.get(layer).add(s);

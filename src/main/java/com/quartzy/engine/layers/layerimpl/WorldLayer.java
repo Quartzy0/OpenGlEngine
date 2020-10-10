@@ -1,5 +1,6 @@
 package com.quartzy.engine.layers.layerimpl;
 
+import com.quartzy.engine.graphics.Renderer;
 import com.quartzy.engine.layers.Layer;
 import com.quartzy.engine.layers.SubscribeEvent;
 import com.quartzy.engine.layers.events.*;
@@ -18,22 +19,6 @@ public class WorldLayer extends Layer{
     private final HashMap<Integer, Boolean> mouseButtonStates = new HashMap<>();
     @Getter
     private float mouseX = 0, mouseY = 0;
-    
-    @SubscribeEvent
-    public void tickEvent(TickEvent event){
-        World currentWorld = World.getCurrentWorld();
-        if(currentWorld!=null){
-            currentWorld.update(event.getDelta());
-        }
-    }
-    
-    @SubscribeEvent
-    public void renderEvent(RenderEvent event){
-        World currentWorld = World.getCurrentWorld();
-        if(currentWorld!=null && NetworkManager.INSTANCE.getSide()== Side.CLIENT){
-            currentWorld.render(event.getRenderer());
-        }
-    }
     
     @SubscribeEvent
     public void keyPressed(KeyPressedEvent event){
@@ -59,5 +44,21 @@ public class WorldLayer extends Layer{
     public void mouseMoved(CursorMoveEvent event){
         mouseX = (float) event.getX();
         mouseY = (float) event.getY();
+    }
+    
+    @Override
+    public void update(float delta){
+        World currentWorld = World.getCurrentWorld();
+        if(currentWorld!=null){
+            currentWorld.update(delta);
+        }
+    }
+    
+    @Override
+    public void render(Renderer renderer){
+        World currentWorld = World.getCurrentWorld();
+        if(currentWorld!=null && NetworkManager.INSTANCE.getSide()==Side.CLIENT){
+            currentWorld.render(renderer);
+        }
     }
 }

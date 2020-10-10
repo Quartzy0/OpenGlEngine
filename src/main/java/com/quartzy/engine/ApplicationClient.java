@@ -1,6 +1,7 @@
 package com.quartzy.engine;
 
 import com.quartzy.engine.graphics.Window;
+import com.quartzy.engine.utils.SystemInfo;
 import org.atteo.classindex.IndexSubclasses;
 
 @IndexSubclasses
@@ -11,7 +12,7 @@ public interface ApplicationClient{
      * @param client The client object
      * @return The {@link Window} object that will be used in the {@link Client} to render everything to and to listen for input
      */
-    Window preInit(String[] args, Client client);
+    Client preInit(String[] args, SystemInfo systemInfo);
     
     /**
      * Called after the {@link Client} object has been fully initialized. You can load all resources in this method

@@ -1,5 +1,6 @@
 package com.quartzy.engine.layers;
 
+import com.quartzy.engine.graphics.Renderer;
 import lombok.CustomLog;
 
 import java.lang.reflect.InvocationTargetException;
@@ -28,6 +29,20 @@ public class LayerStack{
                 log.severe("Could not invoke method %s in layer %s", e, method.getName(), layer.getClass().getName());
             }
             if(event.isHandled())break;
+        }
+    }
+    
+    public void update(float delta){
+        for(int i = 0; i < layerStack.size(); i++){
+            Layer layer = layerStack.get(i).getKey();
+            layer.update(delta);
+        }
+    }
+    
+    public void render(Renderer renderer){
+        for(int i = 0; i < layerStack.size(); i++){
+            Layer layer = layerStack.get(i).getKey();
+            layer.render(renderer);
         }
     }
     

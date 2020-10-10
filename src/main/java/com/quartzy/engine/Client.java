@@ -16,12 +16,14 @@ import com.quartzy.engine.network.client.NetworkManagerClient;
 import com.quartzy.engine.utils.Logger;
 import com.quartzy.engine.utils.Resource;
 import com.quartzy.engine.utils.ResourceManager;
+import com.quartzy.engine.utils.SystemInfo;
 import com.quartzy.engine.world.World;
 import lombok.CustomLog;
 import lombok.Getter;
 import lombok.Setter;
 import org.atteo.classindex.ClassIndex;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -67,9 +69,10 @@ public class Client{
     /**
      * Creates the game object
      */
-    public Client(ApplicationClient client){
+    public Client(ApplicationClient client, Window window){
         Client.instance = this;
         this.applicationClient = client;
+        this.window = window;
     }
     
     /**
@@ -78,8 +81,6 @@ public class Client{
      */
     public void init(String... args){
         Thread.currentThread().setName("Main game thread");
-        if(Arrays.asList(args).contains("debug"))Logger.setEnabled(true);
-        window = applicationClient.preInit(args, this);
         if(host!=null){
             networkManager = new NetworkManagerClient(port, host);
         }else {
@@ -168,11 +169,11 @@ public class Client{
     private void render(){
         renderer.clear();
     
-        layerStack.triggerEvent(new RenderEvent(window.getId(), renderer));
+        layerStack.render(renderer);
     }
     
     private void update(float delta){
-        layerStack.triggerEvent(new TickEvent(window.getId(), delta));
+        layerStack.update(delta);
     }
     
     public ResourceManager getResourceManager(){
@@ -192,6 +193,7 @@ public class Client{
     }
     
     public static void main(String[] args){
+        if(Arrays.asList(args).contains("debug"))Logger.setEnabled(true);
         Iterable<Class<? extends ApplicationClient>> subclasses = ClassIndex.getSubclasses(ApplicationClient.class);
         if(subclasses==null)return;
         Iterator<Class<? extends ApplicationClient>> iterator = subclasses.iterator();
@@ -199,11 +201,92 @@ public class Client{
         Class<? extends ApplicationClient> next = iterator.next();
         try{
             ApplicationClient client1 = next.newInstance();
-            Client client = new Client(client1);
+            Client client = client1.preInit(args, SystemInfo.getSystemInfo());
+            if(client==null) client = new Client.ClientBuilder().build(client1);
             client.init(args);
             client.startGame();
         } catch(InstantiationException | IllegalAccessException e){
             log.severe("Something went wrong while trying to get the application class", e);
+        }
+    }
+    
+    public static class ClientBuilder{
+        private int windowWidth, windowHeight;
+        private String windowTitle;
+        private String vertexShader, fragmentShader;
+        private String host;
+        private int port;
+    
+        public int getWindowWidth(){
+            return windowWidth==0 ? 1280 : windowWidth;
+        }
+    
+        public ClientBuilder setWindowWidth(int windowWidth){
+            this.windowWidth = windowWidth;
+            return this;
+        }
+    
+        public int getWindowHeight(){
+            return windowHeight==0 ? 720 : windowHeight;
+        }
+    
+        public ClientBuilder setWindowHeight(int windowHeight){
+            this.windowHeight = windowHeight;
+            return this;
+        }
+    
+        public String getWindowTitle(){
+            return windowTitle==null ? "Hello world" : windowTitle;
+        }
+    
+        public ClientBuilder setWindowTitle(String windowTitle){
+            this.windowTitle = windowTitle;
+            return this;
+        }
+    
+        public String getVertexShader(){
+            return vertexShader;
+        }
+    
+        public ClientBuilder setVertexShader(String vertexShader){
+            this.vertexShader = vertexShader;
+            return this;
+        }
+    
+        public String getFragmentShader(){
+            return fragmentShader;
+        }
+    
+        public ClientBuilder setFragmentShader(String fragmentShader){
+            this.fragmentShader = fragmentShader;
+            return this;
+        }
+    
+        public String getHost(){
+            return host;
+        }
+    
+        public ClientBuilder setHost(String host){
+            this.host = host;
+            return this;
+        }
+    
+        public int getPort(){
+            return port;
+        }
+    
+        public ClientBuilder setPort(int port){
+            this.port = port;
+            return this;
+        }
+        
+        public Client build(ApplicationClient application){
+            Client client = new Client(application, new Window(getWindowTitle(), getWindowWidth(), getWindowHeight()));
+            client.setVertexShader(vertexShader);
+            client.setFragmentShader(fragmentShader);
+            client.setHost(host);
+            client.setPort(port);
+            return client;
         }
     }
 }

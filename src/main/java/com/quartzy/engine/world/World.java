@@ -277,9 +277,9 @@ public class World{
             }
         }
     
-        HashMap<String, Short> tags = world.getEcsManager().getTags();
+        HashMap<Short, String> tags = world.getEcsManager().getTags();
         int actualAmount2 = 0;
-        for(Short entry1 : tags.values()){
+        for(Short entry1 : tags.keySet()){
             for(int i = 0; i < entityBlacklist.length; i++){
                 if(entityBlacklist[i] == entry1)break;
                 if(i == entityBlacklist.length-1){
@@ -288,19 +288,19 @@ public class World{
             }
         }
         bytes.writeInt(actualAmount2);
-        for(Map.Entry<String, Short> entry : tags.entrySet()){
+        for(Map.Entry<Short, String> entry : tags.entrySet()){
             boolean canPass = true;
             for(int i = 0; i < entityBlacklist.length; i++){
-                if(entityBlacklist[i] == entry.getValue()){
+                if(entityBlacklist[i] == entry.getKey()){
                     canPass = false;
                 }
                 if(!canPass)break;
             }
             if(!canPass)continue;
             
-            bytes.writeByte(entry.getKey().length());
-            bytes.writeCharSequence(entry.getKey(), StandardCharsets.US_ASCII);
-            bytes.writeShort(entry.getValue());
+            bytes.writeByte(entry.getValue().length());
+            bytes.writeCharSequence(entry.getValue(), StandardCharsets.US_ASCII);
+            bytes.writeShort(entry.getKey());
         }
     
         byte[] compBytes = new byte[bytes.readableBytes()];
@@ -388,12 +388,12 @@ public class World{
                             }
                         }
                     }
-                    HashMap<String, Short> tags = currentWorld.getEcsManager().getTags();
+                    HashMap<Short, String> tags = currentWorld.getEcsManager().getTags();
                     if(tags != null && !tags.isEmpty()){
-                        for(Map.Entry<String, Short> entry : tags.entrySet()){
+                        for(Map.Entry<Short, String> entry : tags.entrySet()){
                             for(int i = 0; i < entitiesToAdd.length; i++){
-                                if(entitiesToAdd[i] == entry.getValue())
-                                    world.getEcsManager().setEntityTag(entitiesToAdd[i], entry.getKey());
+                                if(entitiesToAdd[i] == entry.getKey())
+                                    world.getEcsManager().setEntityTag(entitiesToAdd[i], entry.getValue());
                             }
                         }
                     }
