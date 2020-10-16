@@ -49,6 +49,11 @@ public class TextureComponent extends Component{
     }
     
     @Override
+    public boolean canHaveMultiple(){
+        return true;
+    }
+    
+    @Override
     public void toBytes(ByteBuf out){
         if(texture.getResource()!=null){
             String name = texture.getResource().getName();

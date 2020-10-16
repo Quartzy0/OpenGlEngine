@@ -20,6 +20,8 @@ public abstract class Component{
     
     public abstract List<Class<? extends Component>> requiredComponents();
     
+    public abstract boolean canHaveMultiple();
+    
     public abstract void toBytes(ByteBuf out);
     
     public abstract void fromBytes(ByteBuf in);

@@ -56,39 +56,16 @@ public class World{
     public void render(Renderer renderer){
         CameraComponent mainCamera = renderer.getMainCamera();
         if(mainCamera!=null)mainCamera.update();
-        HashMap<Short, TextureComponent> allTextures = ecsManager.getAllEntitiesWithComponent(TextureComponent.class);
+        HashMap<Short, List<TextureComponent>> allTextures = ecsManager.getAllEntitiesWithComponent(TextureComponent.class);
         if(allTextures!=null && !allTextures.isEmpty()){
             int k = 0;
             Texture prevTexture = null;
             renderer.begin();
-            for(Map.Entry<Short, TextureComponent> shortComponentEntry : allTextures.entrySet()){
-                TransformComponent component = ecsManager.getComponent(shortComponentEntry.getKey(), TransformComponent.class);
-                if(component == null) continue;
-                TextureComponent textureComponent = shortComponentEntry.getValue();
-                Texture texture = textureComponent.getTexture();
-                if(!texture.equals(prevTexture)){
-                    prevTexture = texture;
-                    texture.bind(k);
-                    k++;
-                    if(k >= renderer.getMaxTextureSlots()){
-                        k = 0;
-                        renderer.end();
-                        renderer.begin();
-                    }
-                }
-                renderer.drawTextureRegion((float) component.getTransform().getTranslationX(), (float) component.getTransform().getTranslationY(), textureComponent.getTexture().getWidth(), textureComponent.getTexture().getHeight(), k - 1);
-            }
-            renderer.end();
-        }
-    
-        HashMap<Short, ParticleEmitterComponent> allParticleEmitters = this.ecsManager.getAllEntitiesWithComponent(ParticleEmitterComponent.class);
-        if(allParticleEmitters!=null && !allParticleEmitters.isEmpty()){
-            int k = 0;
-            Texture prevTexture = null;
-            renderer.begin();
-            for(ParticleEmitterComponent emitter : allParticleEmitters.values()){
-                for(Particle particle : emitter.getParticles()){
-                    Texture texture = particle.getTexture();
+            for(Map.Entry<Short, List<TextureComponent>> shortComponentEntry : allTextures.entrySet()){
+                for(TextureComponent textureComponent : shortComponentEntry.getValue()){
+                    TransformComponent component = ecsManager.getComponent(shortComponentEntry.getKey(), TransformComponent.class);
+                    if(component == null) continue;
+                    Texture texture = textureComponent.getTexture();
                     if(!texture.equals(prevTexture)){
                         prevTexture = texture;
                         texture.bind(k);
@@ -99,25 +76,54 @@ public class World{
                             renderer.begin();
                         }
                     }
-                    Vector2f size = particle.getBaseSize().add(new Vector2f(particle.getScale(), particle.getScale()));
-                    renderer.drawTextureRegion(particle.getPosition().x, particle.getPosition().y, size.x, size.y, k-1);
+                    renderer.drawTextureRegion((float) component.getTransform().getTranslationX(), (float) component.getTransform().getTranslationY(), textureComponent.getTexture().getWidth(), textureComponent.getTexture().getHeight(), k - 1);
+                }
+            }
+            renderer.end();
+        }
+    
+        HashMap<Short, List<ParticleEmitterComponent>> allParticleEmitters = this.ecsManager.getAllEntitiesWithComponent(ParticleEmitterComponent.class);
+        if(allParticleEmitters!=null && !allParticleEmitters.isEmpty()){
+            int k = 0;
+            Texture prevTexture = null;
+            renderer.begin();
+            for(List<ParticleEmitterComponent> emitters : allParticleEmitters.values()){
+                for(ParticleEmitterComponent emitter : emitters){
+                    for(Particle particle : emitter.getParticles()){
+                        Texture texture = particle.getTexture();
+                        if(!texture.equals(prevTexture)){
+                            prevTexture = texture;
+                            texture.bind(k);
+                            k++;
+                            if(k >= renderer.getMaxTextureSlots()){
+                                k = 0;
+                                renderer.end();
+                                renderer.begin();
+                            }
+                        }
+                        Vector2f size = particle.getBaseSize().add(new Vector2f(particle.getScale(), particle.getScale()));
+                        renderer.drawTextureRegion(particle.getPosition().x, particle.getPosition().y, size.x, size.y, k-1);
+                    }
                 }
             }
             renderer.end();
         }
         if(LightSourceComponent.isAnyChanged()){
-            HashMap<Short, LightSourceComponent> allLights = this.ecsManager.getAllEntitiesWithComponent(LightSourceComponent.class);
+            HashMap<Short, List<LightSourceComponent>> allLights = this.ecsManager.getAllEntitiesWithComponent(LightSourceComponent.class);
             if(allLights != null && !allLights.isEmpty()){
                 int i = 0;
                 Vector3f[] positions = new Vector3f[renderer.getMaxLightsPerDrawCall()];
                 Vector3f[] colors = new Vector3f[renderer.getMaxLightsPerDrawCall()];
-                for(LightSourceComponent light : allLights.values()){
-                    if(i < renderer.getMaxLightsPerDrawCall()){
-                        positions[i] = light.getPosition();
-                        colors[i] = light.getColor();
-                        i++;
-                    } else{
-                        break;
+                for(List<LightSourceComponent> lights : allLights.values()){
+                    for(LightSourceComponent light : lights){
+                        if(i < renderer.getMaxLightsPerDrawCall()){
+                            positions[i] = light.getPosition();
+                            colors[i] = light.getColor();
+                            i++;
+                        } else{
+                            break;
+                        }
+                        if(i >= renderer.getMaxLightsPerDrawCall())break;
                     }
                 }
                 if(i < renderer.getMaxLightsPerDrawCall()){
@@ -132,10 +138,12 @@ public class World{
             }
         }
     
-        HashMap<Short, CustomRenderComponent> allCustomRenderers = ecsManager.getAllEntitiesWithComponent(CustomRenderComponent.class);
+        HashMap<Short, List<CustomRenderComponent>> allCustomRenderers = ecsManager.getAllEntitiesWithComponent(CustomRenderComponent.class);
         if(allCustomRenderers!=null && !allCustomRenderers.isEmpty()){
-            for(CustomRenderComponent value : allCustomRenderers.values()){
-                value.render(renderer);
+            for(List<CustomRenderComponent> values : allCustomRenderers.values()){
+                for(CustomRenderComponent value : values){
+                    value.render(renderer);
+                }
             }
         }
     }
@@ -149,31 +157,38 @@ public class World{
             ecsManager.initComponents();
             this.firstRun = false;
         }else {
-            HashMap<Short, BehaviourComponent> allBehaviours = ecsManager.getAllEntitiesWithComponent(BehaviourComponent.class);
+            HashMap<Short, List<BehaviourComponent>> allBehaviours = ecsManager.getAllEntitiesWithComponent(BehaviourComponent.class);
             if(allBehaviours!=null && !allBehaviours.isEmpty()){
-                for(BehaviourComponent value : allBehaviours.values()){
-                    value.update(delta);
+                for(List<BehaviourComponent> values : allBehaviours.values()){
+                    for(BehaviourComponent value : values){
+                        value.update(delta);
+                    }
                 }
             }
         }
         this.physicsWorld.update(delta);
-        HashMap<Short, RigidBodyComponent> allEntitiesWithComponent = ecsManager.getAllEntitiesWithComponent(RigidBodyComponent.class);
+        HashMap<Short, List<RigidBodyComponent>> allEntitiesWithComponent = ecsManager.getAllEntitiesWithComponent(RigidBodyComponent.class);
         if(allEntitiesWithComponent!=null && !allEntitiesWithComponent.isEmpty()){
-            Collection<RigidBodyComponent> values = allEntitiesWithComponent.values();
-            for(RigidBodyComponent value : values){
-                value.updateTransform();
+            for(List<RigidBodyComponent> values : allEntitiesWithComponent.values()){
+                for(RigidBodyComponent value : values){
+                    value.updateTransform();
+                }
             }
         }
-        HashMap<Short, ParticleEmitterComponent> allParticleEmitters = this.ecsManager.getAllEntitiesWithComponent(ParticleEmitterComponent.class);
+        HashMap<Short, List<ParticleEmitterComponent>> allParticleEmitters = this.ecsManager.getAllEntitiesWithComponent(ParticleEmitterComponent.class);
         if(allParticleEmitters!=null && !allParticleEmitters.isEmpty()){
-            for(ParticleEmitterComponent emitter : allParticleEmitters.values()){
-                emitter.update(delta);
+            for(List<ParticleEmitterComponent> emitters : allParticleEmitters.values()){
+                for(ParticleEmitterComponent emitter : emitters){
+                    emitter.update(delta);
+                }
             }
         }
-        HashMap<Short, CustomRenderComponent> allCustomRenderers = ecsManager.getAllEntitiesWithComponent(CustomRenderComponent.class);
+        HashMap<Short, List<CustomRenderComponent>> allCustomRenderers = ecsManager.getAllEntitiesWithComponent(CustomRenderComponent.class);
         if(allCustomRenderers!=null && !allCustomRenderers.isEmpty()){
-            for(CustomRenderComponent value : allCustomRenderers.values()){
-                value.update(delta);
+            for(List<CustomRenderComponent> values : allCustomRenderers.values()){
+                for(CustomRenderComponent value : values){
+                    value.update(delta);
+                }
             }
         }
     }
@@ -197,31 +212,39 @@ public class World{
     
         HashMap<Class<? extends Component>, ComponentManager> components = world.ecsManager.getComponents();
         int actualAmount5 = 0;
+        
         for(ComponentManager value : components.values()){
-            HashMap<Short, Component> components1 = value.getComponents();
-            int left = components1.size();
-            for(Short aShort : components1.keySet()){
-                for(int i = 0; i < entityBlacklist.length; i++){
-                    if(entityBlacklist[i] == aShort){
-                        left--;
-                        break;
+            HashMap<Short, List<Component>> components1 = value.getComponents();
+            for(Map.Entry<Short, List<Component>> entry : components1.entrySet()){
+                boolean die = false;
+                if(entityBlacklist!=null && entityBlacklist.length!=0){
+                    for(int i = 0; i < entityBlacklist.length; i++){
+                        if(entityBlacklist[i]==entry.getKey()){
+                            die = true;
+                            break;
+                        }
                     }
                 }
+                if(!die)actualAmount5++;
             }
-            if(left!=0)actualAmount5++;
         }
         bytes.writeShort(actualAmount5);
         for(ComponentManager value : components.values()){
     
-            Set<Map.Entry<Short, Component>> set = value.getComponents().entrySet();
+            Set<Map.Entry<Short, List<Component>>> set = value.getComponents().entrySet();
             int actualAmount = 0;
-            for(Map.Entry<Short, Component> entry : set){
-                for(int i = 0; i < entityBlacklist.length; i++){
-                    if(entityBlacklist[i] == entry.getKey())break;
-                    if(i== entityBlacklist.length-1){
-                        actualAmount++;
+            for(Map.Entry<Short, List<Component>> entry : set){
+                if(entityBlacklist!=null && entityBlacklist.length!=0){
+                    boolean die = false;
+                    for(int i = 0; i < entityBlacklist.length; i++){
+                        if(entityBlacklist[i]==entry.getKey()){
+                            die = true;
+                            break;
+                        }
                     }
+                    if(die)continue;
                 }
+                actualAmount+=entry.getValue().size();
             }
             if(actualAmount==0)continue;
             String name1 = value.getType().getName();
@@ -229,44 +252,49 @@ public class World{
             bytes.writeCharSequence(name1, StandardCharsets.US_ASCII);
             bytes.writeInt(actualAmount);
             
-            for(Map.Entry<Short, Component> entry : set){
-    
-                boolean canPass = true;
-                for(int i = 0; i < entityBlacklist.length; i++){
-                    if(entityBlacklist[i] == entry.getKey()){
-                        canPass = false;
+            for(Map.Entry<Short, List<Component>> entry : set){
+                if(entityBlacklist!=null && entityBlacklist.length!=0){
+                    boolean canPass = true;
+                    for(int i = 0; i < entityBlacklist.length; i++){
+                        if(entityBlacklist[i] == entry.getKey()){
+                            canPass = false;
+                        }
+                        if(!canPass) break;
                     }
-                    if(!canPass)break;
+                    if(!canPass) continue;
                 }
-                if(!canPass)continue;
-                
-                bytes.writeShort(entry.getKey());
     
-                entry.getValue().toBytes(bytes);
+                for(Component component : entry.getValue()){
+                    bytes.writeShort(entry.getKey());
+                    
+                    component.toBytes(bytes);
+                }
             }
         }
     
         HashMap<Integer, List<Short>> layers1 = world.getEcsManager().getLayers();
         HashMap<Integer, List<Short>> layersToUse = world.getEcsManager().getLayers();
-        for(Map.Entry<Integer, List<Short>> entry : layers1.entrySet()){
-            List<Short> value = entry.getValue();
-            List<Short> newValue = new ArrayList<>();
-            for(Short aShort : value){
-                boolean isOk = true;
-                for(int i = 0; i < entityBlacklist.length; i++){
-                    if(entityBlacklist[i]==aShort){
-                        isOk = false;
-                        break;
+        if(entityBlacklist!=null && entityBlacklist.length!=0){
+            for(Map.Entry<Integer, List<Short>> entry : layers1.entrySet()){
+                List<Short> value = entry.getValue();
+                List<Short> newValue = new ArrayList<>();
+                for(Short aShort : value){
+                    boolean isOk = true;
+                    for(int i = 0; i < entityBlacklist.length; i++){
+                        if(entityBlacklist[i] == aShort){
+                            isOk = false;
+                            break;
+                        }
+                    }
+                    if(isOk){
+                        newValue.add(aShort);
                     }
                 }
-                if(isOk){
-                    newValue.add(aShort);
+                if(!newValue.isEmpty()){
+                    layersToUse.put(entry.getKey(), newValue);
                 }
             }
-            if(!newValue.isEmpty()){
-                layersToUse.put(entry.getKey(), newValue);
-            }
-        }
+        }else layersToUse = layers1;
         bytes.writeShort(layersToUse.size());
         for(Map.Entry<Integer, List<Short>> entry : layersToUse.entrySet()){
             bytes.writeShort(entry.getKey());
@@ -279,24 +307,28 @@ public class World{
     
         HashMap<Short, String> tags = world.getEcsManager().getTags();
         int actualAmount2 = 0;
-        for(Short entry1 : tags.keySet()){
-            for(int i = 0; i < entityBlacklist.length; i++){
-                if(entityBlacklist[i] == entry1)break;
-                if(i == entityBlacklist.length-1){
-                    actualAmount2++;
+        if(entityBlacklist!=null && entityBlacklist.length!=0){
+            for(Short entry1 : tags.keySet()){
+                for(int i = 0; i < entityBlacklist.length; i++){
+                    if(entityBlacklist[i] == entry1) break;
+                    if(i == entityBlacklist.length - 1){
+                        actualAmount2++;
+                    }
                 }
             }
-        }
+        }else actualAmount2 = tags.size();
         bytes.writeInt(actualAmount2);
         for(Map.Entry<Short, String> entry : tags.entrySet()){
-            boolean canPass = true;
-            for(int i = 0; i < entityBlacklist.length; i++){
-                if(entityBlacklist[i] == entry.getKey()){
-                    canPass = false;
+            if(entityBlacklist!=null && entityBlacklist.length!=0){
+                boolean canPass = true;
+                for(int i = 0; i < entityBlacklist.length; i++){
+                    if(entityBlacklist[i] == entry.getKey()){
+                        canPass = false;
+                    }
+                    if(!canPass) break;
                 }
-                if(!canPass)break;
+                if(!canPass) continue;
             }
-            if(!canPass)continue;
             
             bytes.writeByte(entry.getValue().length());
             bytes.writeCharSequence(entry.getValue(), StandardCharsets.US_ASCII);
@@ -379,10 +411,13 @@ public class World{
                         if(values != null && !values.isEmpty()){
                             for(ComponentManager value : values){
                                 for(int i = 0; i < entitiesToAdd.length; i++){
-                                    Component component = value.getComponent(entitiesToAdd[i]);
-                                    if(component != null){
-                                        world.getEcsManager().addComponentToEntityNoCheck(entitiesToAdd[i], component);
-                                        world.getEcsManager().addEntityToInitBlacklist(entitiesToAdd[i]);
+                                    List<Component> components1 = value.getComponents(entitiesToAdd[i]);
+                                    if(components1==null || components1.isEmpty())continue;
+                                    for(Component component : components1){
+                                        if(component != null){
+                                            world.getEcsManager().addComponentToEntityNoCheck(entitiesToAdd[i], component);
+                                            world.getEcsManager().addEntityToInitBlacklist(entitiesToAdd[i]);
+                                        }
                                     }
                                 }
                             }

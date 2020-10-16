@@ -50,6 +50,7 @@ public class LayerStack{
         if(layerInsertIndex==(layerStack.size()-1))return null;
         Map.Entry<Layer, HashMap<Class<? extends Event>, Method>> entry = layerStack.remove(layerStack.size() - 1);
         if(entry==null)return null;
+        entry.getKey().onDetach();
         return entry.getKey();
     }
     
@@ -58,6 +59,7 @@ public class LayerStack{
         layerInsertIndex--;
         Map.Entry<Layer, HashMap<Class<? extends Event>, Method>> entry = layerStack.remove(layerInsertIndex);
         if(entry==null)return null;
+        entry.getKey().onDetach();
         return entry.getKey();
     }
     
@@ -85,6 +87,7 @@ public class LayerStack{
         if(!methodMap.isEmpty()){
             layerStack.add(layerInsertIndex, new DefaultEntry<>(layer, methodMap));
             layerInsertIndex++;
+            layer.onAttach();
         }
     }
     
@@ -109,8 +112,10 @@ public class LayerStack{
                 }
             }
         }
-        if(!methodMap.isEmpty())
+        if(!methodMap.isEmpty()){
             layerStack.add(new DefaultEntry<>(layer, methodMap));
+            layer.onAttach();
+        }
     }
     
     private static final class DefaultEntry<K, V> implements Map.Entry<K, V> {

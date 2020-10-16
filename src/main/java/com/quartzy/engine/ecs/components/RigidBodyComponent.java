@@ -48,6 +48,11 @@ public class RigidBodyComponent extends Component{
     }
     
     @Override
+    public boolean canHaveMultiple(){
+        return false;
+    }
+    
+    @Override
     public void toBytes(ByteBuf out){
         out.writeDouble(body.getMass().getMass());
         out.writeDouble(body.getMass().getInertia());

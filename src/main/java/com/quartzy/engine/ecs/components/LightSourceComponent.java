@@ -44,6 +44,11 @@ public class LightSourceComponent extends Component{
     }
     
     @Override
+    public boolean canHaveMultiple(){
+        return true;
+    }
+    
+    @Override
     public void toBytes(ByteBuf out){
         out.writeFloat(color.x);
         out.writeFloat(color.y);

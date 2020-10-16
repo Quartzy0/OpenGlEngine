@@ -46,6 +46,11 @@ public class AudioSourceComponent extends Component{
     }
     
     @Override
+    public boolean canHaveMultiple(){
+        return true;
+    }
+    
+    @Override
     public void toBytes(ByteBuf out){
     
     }

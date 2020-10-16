@@ -3,8 +3,6 @@ package com.quartzy.engine;
 import com.quartzy.engine.audio.SoundManager;
 import com.quartzy.engine.ecs.components.CustomRenderComponent;
 import com.quartzy.engine.layers.LayerStack;
-import com.quartzy.engine.layers.events.RenderEvent;
-import com.quartzy.engine.layers.events.TickEvent;
 import com.quartzy.engine.layers.layerimpl.WorldLayer;
 import com.quartzy.engine.input.Input;
 import com.quartzy.engine.graphics.Renderer;
@@ -23,10 +21,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.atteo.classindex.ClassIndex;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
@@ -128,10 +126,12 @@ public class Client{
     public void dispose(){
         running = false;
         if(NetworkManager.INSTANCE.getSide()==Side.CLIENT && World.getCurrentWorld()!=null){
-            HashMap<Short, CustomRenderComponent> allCustomRenderers = World.getCurrentWorld().getEcsManager().getAllEntitiesWithComponent(CustomRenderComponent.class);
+            HashMap<Short, List<CustomRenderComponent>> allCustomRenderers = World.getCurrentWorld().getEcsManager().getAllEntitiesWithComponent(CustomRenderComponent.class);
             if(allCustomRenderers != null && !allCustomRenderers.isEmpty()){
-                for(CustomRenderComponent value : allCustomRenderers.values()){
-                    value.dispose();
+                for(List<CustomRenderComponent> values : allCustomRenderers.values()){
+                    for(CustomRenderComponent value : values){
+                        value.dispose();
+                    }
                 }
             }
         }

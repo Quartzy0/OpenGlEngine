@@ -137,6 +137,11 @@ public class CameraComponent extends Component{
     }
     
     @Override
+    public boolean canHaveMultiple(){
+        return false;
+    }
+    
+    @Override
     public void toBytes(ByteBuf out){
         out.writeFloat(cameraPos.x);
         out.writeFloat(cameraPos.y);

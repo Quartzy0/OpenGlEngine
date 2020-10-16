@@ -124,6 +124,8 @@ com/quartzy/engine/ecs/components/BehaviourComponent.java
  com.quartzy.engine.ecs.components.BehaviourComponent
 com/quartzy/engine/graphics/Framebuffer.java
  com.quartzy.engine.graphics.Framebuffer
+com/quartzy/engine/utils/SystemInfo.java
+ com.quartzy.engine.utils.SystemInfo
 com/quartzy/engine/graphics/Color.java
  com.quartzy.engine.graphics.Color
 com/quartzy/engine/utils/Logger.java
@@ -132,6 +134,7 @@ com/quartzy/engine/math/Matrix3f.java
  com.quartzy.engine.math.Matrix3f
 com/quartzy/engine/Client.java
  com.quartzy.engine.Client
+ com.quartzy.engine.Client$ClientBuilder
 com/quartzy/engine/math/Vector4f.java
  com.quartzy.engine.math.Vector4f
 com/quartzy/engine/ecs/components/TextureComponent.java

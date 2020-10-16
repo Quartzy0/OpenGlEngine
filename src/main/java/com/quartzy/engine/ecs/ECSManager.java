@@ -20,7 +20,7 @@ public class ECSManager{
     private HashMap<Short, String> tags = new HashMap<>();
     
     @Getter
-    private List<Short> initBlacklist = new ArrayList<>();
+    private ArrayList<Short> initBlacklist = new ArrayList<>();
     
     private World parent;
     
@@ -38,6 +38,9 @@ public class ECSManager{
             value.addComponent(component, entityId, parent);
             components.put(component.getClass(), value);
         }
+        if(inited){
+            component.init();
+        }
     }
     
     public <T extends Component> void addComponentToEntity(short entityId, T component){
@@ -51,7 +54,16 @@ public class ECSManager{
             }
         }
         if(components.containsKey(component.getClass())){
-            components.get(component.getClass()).addComponent(component, entityId, parent);
+            ComponentManager componentManager = components.get(component.getClass());
+            if(componentManager.hasComponent(entityId)){
+                if(component.canHaveMultiple()){
+                    componentManager.addComponent(component, entityId, parent);
+                }else {
+                    log.warning("Component %s tried to be added on entity %s when it already has one", component.getClass().getName(), entityId + "");
+                }
+            }else{
+                componentManager.addComponent(component, entityId, parent);
+            }
         }else {
             ComponentManager<T> value = new ComponentManager<>(component.getClass());
             value.addComponent(component, entityId, parent);
@@ -65,21 +77,29 @@ public class ECSManager{
     public void initComponents(){
         for(ComponentManager value : components.values()){
             for(Object o : value.getComponents().values()){
-                Component component = (Component) o;
-                if(initBlacklist.contains(component.entityId))continue;
-                component.init();
+                List<Component> components = (List<Component>) o;
+                for(Component component : components){
+                    if(initBlacklist.contains(component.entityId))continue;
+                    component.init();
+                }
             }
         }
         this.inited = true;
     }
     
+    public <T extends Component> List<T> getComponents(short entityId, Class<T> clazz){
+        if(!components.containsKey(clazz))return null;
+        return (List<T>) components.get(clazz).getComponents(entityId);
+    }
+    
     public <T extends Component> T getComponent(short entityId, Class<T> clazz){
         if(!components.containsKey(clazz))return null;
-        return (T) components.get(clazz).getComponent(entityId);
+        return (T) components.get(clazz).getComponents(entityId).get(0);
     }
     
     public boolean entityHasComponent(short entityId, Class<? extends Component> clazz){
-        return components.get(clazz).hasComponent(entityId);
+        ComponentManager componentManager = components.get(clazz);
+        return componentManager != null && componentManager.hasComponent(entityId);
     }
     
     public boolean hasEntity(short entityId){
@@ -126,7 +146,7 @@ public class ECSManager{
         }
     }
     
-    public <T extends Component> HashMap<Short, T> getAllEntitiesWithComponent(Class<T> clazz){
+    public <T extends Component> HashMap<Short, List<T>> getAllEntitiesWithComponent(Class<T> clazz){
         if(!components.containsKey(clazz))return new HashMap<>();
         return components.get(clazz).getComponents();
     }

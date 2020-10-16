@@ -95,6 +95,11 @@ public class TransformComponent extends Component{
     }
     
     @Override
+    public boolean canHaveMultiple(){
+        return false;
+    }
+    
+    @Override
     public void toBytes(ByteBuf out){
         out.writeDouble(this.getX());
         out.writeDouble(this.getY());

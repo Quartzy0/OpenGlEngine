@@ -59,6 +59,11 @@ public class BehaviourComponent extends Component{
     }
     
     @Override
+    public boolean canHaveMultiple(){
+        return true;
+    }
+    
+    @Override
     public void toBytes(ByteBuf out){
         out.writeBoolean(active);
         String name = behaviour.getClass().getName();

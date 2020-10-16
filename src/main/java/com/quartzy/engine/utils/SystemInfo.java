@@ -1,22 +1,22 @@
 package com.quartzy.engine.utils;
 
 import com.quartzy.engine.math.Vector2f;
-import lombok.CustomLog;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 
 import java.awt.*;
 
 @Data
+@AllArgsConstructor
 public class SystemInfo{
     
-    @NonNull private Vector2f[] screenDimensions;
-    @NonNull private Vector2f mainScreen;
-    @NonNull private String os;
-    @NonNull private int cpuCoreCount;
-    @NonNull private long freeMemory;
-    @NonNull private long maxJVMMemory;
-    @NonNull private long totalJVMMemory;
+    private Vector2f[] screenDimensions;
+    private Vector2f mainScreen;
+    private String os;
+    private int cpuCoreCount;
+    private long freeMemory;
+    private long maxJVMMemory;
+    private long totalJVMMemory;
     
     public static SystemInfo getSystemInfo(){
         GraphicsEnvironment localGraphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();

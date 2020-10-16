@@ -5,4 +5,6 @@ import com.quartzy.engine.graphics.Renderer;
 public abstract class Layer{
     public abstract void update(float delta);
     public abstract void render(Renderer renderer);
+    public abstract void onDetach();
+    public abstract void onAttach();
 }

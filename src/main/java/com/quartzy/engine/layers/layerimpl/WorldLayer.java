@@ -61,4 +61,14 @@ public class WorldLayer extends Layer{
             currentWorld.render(renderer);
         }
     }
+    
+    @Override
+    public void onDetach(){
+    
+    }
+    
+    @Override
+    public void onAttach(){
+    
+    }
 }

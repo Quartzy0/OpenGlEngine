@@ -68,6 +68,11 @@ public class CustomRenderComponent extends Component{
     }
     
     @Override
+    public boolean canHaveMultiple(){
+        return true;
+    }
+    
+    @Override
     public void toBytes(ByteBuf out){
         out.writeBoolean(active);
         String name = renderer.getClass().getName();

@@ -108,6 +108,11 @@ public class ParticleEmitterComponent extends Component{
     }
     
     @Override
+    public boolean canHaveMultiple(){
+        return true;
+    }
+    
+    @Override
     public void toBytes(ByteBuf out){
         out.writeFloat(speedRange);
         out.writeFloat(positionRange);

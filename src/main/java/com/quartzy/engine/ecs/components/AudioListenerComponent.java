@@ -61,6 +61,11 @@ public class AudioListenerComponent extends Component{
     }
     
     @Override
+    public boolean canHaveMultiple(){
+        return false;
+    }
+    
+    @Override
     public void toBytes(ByteBuf out){
         out.writeFloat((float) up.x);
         out.writeFloat((float) up.y);
