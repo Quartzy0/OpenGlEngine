@@ -1,5 +1,6 @@
 package com.quartzy.engine.ecs.components;
 
+import com.google.gson.JsonObject;
 import com.quartzy.engine.audio.Sound;
 import com.quartzy.engine.ecs.Component;
 import io.netty.buffer.ByteBuf;
@@ -51,12 +52,12 @@ public class AudioSourceComponent extends Component{
     }
     
     @Override
-    public void toBytes(ByteBuf out){
-    
+    public JsonObject toJson(){
+        return new JsonObject();
     }
     
     @Override
-    public void fromBytes(ByteBuf in){
+    public void fromJson(JsonObject in){
     
     }
     

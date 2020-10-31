@@ -7,7 +7,7 @@ public enum ResourceType{
     IMAGE("png", "png", "jpg", "jpeg", "tga", "bmp", "psd", "gif", "hdr", "pic", "pnm"),
     SOUND("ogg", "ogg"),
     FONT("ttf", "ttf"),
-    WORLD_FILE("wrld", "wrld"),
+    WORLD_FILE("wrld", "wrld", "json"),
     SHADER("glsl", "glsl", "shader"),
     UNKNOWN("*");
     

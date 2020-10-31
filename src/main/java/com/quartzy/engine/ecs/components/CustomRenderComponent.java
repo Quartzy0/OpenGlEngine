@@ -1,5 +1,6 @@
 package com.quartzy.engine.ecs.components;
 
+import com.google.gson.JsonObject;
 import com.quartzy.engine.ecs.Component;
 import com.quartzy.engine.graphics.Renderer;
 import io.netty.buffer.ByteBuf;
@@ -73,18 +74,19 @@ public class CustomRenderComponent extends Component{
     }
     
     @Override
-    public void toBytes(ByteBuf out){
-        out.writeBoolean(active);
-        String name = renderer.getClass().getName();
-        out.writeInt(name.length());
-        out.writeCharSequence(name, StandardCharsets.US_ASCII);
+    public JsonObject toJson(){
+        JsonObject jsonObject = new JsonObject();
+        
+        jsonObject.addProperty("class_name", renderer.getClass().getName());
+        jsonObject.addProperty("active", active);
+        
+        return jsonObject;
     }
     
     @Override
-    public void fromBytes(ByteBuf in){
-        this.active = in.readBoolean();
-        int len = in.readInt();
-        String className = in.readCharSequence(len, StandardCharsets.US_ASCII).toString();
+    public void fromJson(JsonObject in){
+        this.active = in.get("active").getAsBoolean();
+        String className = in.get("class_name").getAsString();
         try{
             Class<?> aClass = Class.forName(className);
             if(!CustomRenderer.class.isAssignableFrom(aClass)){

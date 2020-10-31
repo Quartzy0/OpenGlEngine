@@ -51,7 +51,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.12</version>
+      <version>1.18.16</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -64,6 +64,12 @@
       <groupId>io.netty</groupId>
       <artifactId>netty-all</artifactId>
       <version>4.1.50.Final</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.8.6</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -225,115 +231,115 @@
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-bgfx</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-glfw</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-jemalloc</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-nanovg</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-nfd</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-nuklear</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-openal</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-opengl</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-opengles</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-opus</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-shaderc</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-stb</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-tinyexr</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-tinyfd</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-tootle</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-vma</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-xxhash</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-zstd</artifactId>
-      <classifier>natives-windows</classifier>
+      <classifier>natives-linux</classifier>
       <scope>runtime</scope>
     </dependency>
   </dependencies>

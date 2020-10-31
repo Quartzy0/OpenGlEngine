@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.6.1",
-      "buildId": "5hv2gzezb5aszilyk32phwshta"
+      "buildId": "kuttxzuikzbl3gcx7uu2luto4m"
     }
   },
   "variants": [
@@ -50,7 +50,7 @@
           "group": "org.projectlombok",
           "module": "lombok",
           "version": {
-            "requires": "1.18.12"
+            "requires": "1.18.16"
           }
         },
         {
@@ -65,6 +65,13 @@
           "module": "netty-all",
           "version": {
             "requires": "4.1.50.Final"
+          }
+        },
+        {
+          "group": "com.google.code.gson",
+          "module": "gson",
+          "version": {
+            "requires": "2.8.6"
           }
         },
         {
@@ -254,11 +261,11 @@
         {
           "name": "OpenGlEngine-1.0-SNAPSHOT.jar",
           "url": "OpenGlEngine-1.0-SNAPSHOT.jar",
-          "size": 309940,
-          "sha512": "266189ee5999bc218a1c92361efd735de640f75baacbc32b7dc5851373178392b837dffdf63f458bdf409488806da5f7d3dc2fa94986e0facca45e9d800acc2c",
-          "sha256": "8c928c976d4face9cff539c1b17ff502db44e90d8cdceffa0c3261132af47627",
-          "sha1": "dc50ddd6fb01a4d7f987a2f096ea586c02476155",
-          "md5": "98e2e6b271291f8ee3897821ae43bba3"
+          "size": 312395,
+          "sha512": "e92213035abfbbf18f3244788cd31ae2ca6623523f25b97ed42ba4ffbadf88da1ab0003626de3ad1cd2d6a1f13da6e9b35f6ef370bb9fb42a8920b92cdaf43e2",
+          "sha256": "d29cfd5039e6d41998aa8633838441eabd57412e56ec78ad3adbd6810a07a7cb",
+          "sha1": "a5ea2bc7f4617698d3ecd32800b0320f72c70dff",
+          "md5": "658300edc2b086b9ca6ebdad502b53e3"
         }
       ]
     },
@@ -308,7 +315,7 @@
           "group": "org.projectlombok",
           "module": "lombok",
           "version": {
-            "requires": "1.18.12"
+            "requires": "1.18.16"
           }
         },
         {
@@ -323,6 +330,13 @@
           "module": "netty-all",
           "version": {
             "requires": "4.1.50.Final"
+          }
+        },
+        {
+          "group": "com.google.code.gson",
+          "module": "gson",
+          "version": {
+            "requires": "2.8.6"
           }
         },
         {
@@ -515,7 +529,7 @@
               "name": "lwjgl",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -527,7 +541,7 @@
               "name": "lwjgl-bgfx",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -539,7 +553,7 @@
               "name": "lwjgl-glfw",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -551,7 +565,7 @@
               "name": "lwjgl-jemalloc",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -563,7 +577,7 @@
               "name": "lwjgl-nanovg",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -575,7 +589,7 @@
               "name": "lwjgl-nfd",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -587,7 +601,7 @@
               "name": "lwjgl-nuklear",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -599,7 +613,7 @@
               "name": "lwjgl-openal",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -611,7 +625,7 @@
               "name": "lwjgl-opengl",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -623,7 +637,7 @@
               "name": "lwjgl-opengles",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -635,7 +649,7 @@
               "name": "lwjgl-opus",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -647,7 +661,7 @@
               "name": "lwjgl-shaderc",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -659,7 +673,7 @@
               "name": "lwjgl-stb",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -671,7 +685,7 @@
               "name": "lwjgl-tinyexr",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -683,7 +697,7 @@
               "name": "lwjgl-tinyfd",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -695,7 +709,7 @@
               "name": "lwjgl-tootle",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -707,7 +721,7 @@
               "name": "lwjgl-vma",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -719,7 +733,7 @@
               "name": "lwjgl-xxhash",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         },
@@ -731,7 +745,7 @@
               "name": "lwjgl-zstd",
               "type": "jar",
               "extension": "jar",
-              "classifier": "natives-windows"
+              "classifier": "natives-linux"
             }
           }
         }
@@ -740,11 +754,11 @@
         {
           "name": "OpenGlEngine-1.0-SNAPSHOT.jar",
           "url": "OpenGlEngine-1.0-SNAPSHOT.jar",
-          "size": 309940,
-          "sha512": "266189ee5999bc218a1c92361efd735de640f75baacbc32b7dc5851373178392b837dffdf63f458bdf409488806da5f7d3dc2fa94986e0facca45e9d800acc2c",
-          "sha256": "8c928c976d4face9cff539c1b17ff502db44e90d8cdceffa0c3261132af47627",
-          "sha1": "dc50ddd6fb01a4d7f987a2f096ea586c02476155",
-          "md5": "98e2e6b271291f8ee3897821ae43bba3"
+          "size": 312395,
+          "sha512": "e92213035abfbbf18f3244788cd31ae2ca6623523f25b97ed42ba4ffbadf88da1ab0003626de3ad1cd2d6a1f13da6e9b35f6ef370bb9fb42a8920b92cdaf43e2",
+          "sha256": "d29cfd5039e6d41998aa8633838441eabd57412e56ec78ad3adbd6810a07a7cb",
+          "sha1": "a5ea2bc7f4617698d3ecd32800b0320f72c70dff",
+          "md5": "658300edc2b086b9ca6ebdad502b53e3"
         }
       ]
     }

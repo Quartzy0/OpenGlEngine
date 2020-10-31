@@ -84,11 +84,10 @@ public class LayerStack{
                 }
             }
         }
-        if(!methodMap.isEmpty()){
-            layerStack.add(layerInsertIndex, new DefaultEntry<>(layer, methodMap));
-            layerInsertIndex++;
-            layer.onAttach();
-        }
+        
+        layerStack.add(layerInsertIndex, new DefaultEntry<>(layer, methodMap));
+        layerInsertIndex++;
+        layer.onAttach();
     }
     
     public void pushOverlay(Layer layer){
@@ -112,10 +111,9 @@ public class LayerStack{
                 }
             }
         }
-        if(!methodMap.isEmpty()){
-            layerStack.add(new DefaultEntry<>(layer, methodMap));
-            layer.onAttach();
-        }
+        
+        layerStack.add(new DefaultEntry<>(layer, methodMap));
+        layer.onAttach();
     }
     
     private static final class DefaultEntry<K, V> implements Map.Entry<K, V> {

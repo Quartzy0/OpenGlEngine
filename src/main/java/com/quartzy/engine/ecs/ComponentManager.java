@@ -47,6 +47,16 @@ public class ComponentManager<T extends Component>{
         return remove;
     }
     
+    public Component removeComponent(short entityId, Component component){
+        List<T> ts = this.components.get(entityId);
+        if(ts==null || ts.isEmpty())return null;
+    
+        if(ts.remove(component)){
+            return component;
+        }
+        return null;
+    }
+    
     public void addComponent(T component, short entity, World worldIn){
         if(component==null)return;
         try{

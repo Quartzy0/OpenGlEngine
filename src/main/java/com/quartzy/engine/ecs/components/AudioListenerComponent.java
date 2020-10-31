@@ -1,5 +1,6 @@
 package com.quartzy.engine.ecs.components;
 
+import com.google.gson.JsonObject;
 import com.quartzy.engine.ecs.Component;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
@@ -18,6 +19,8 @@ public class AudioListenerComponent extends Component{
     @Setter
     private Vector3 up, at;
     
+    @Getter
+    @Setter
     private boolean mainAtStartup;
     
     public AudioListenerComponent(boolean main){
@@ -66,31 +69,30 @@ public class AudioListenerComponent extends Component{
     }
     
     @Override
-    public void toBytes(ByteBuf out){
-        out.writeFloat((float) up.x);
-        out.writeFloat((float) up.y);
-        out.writeFloat((float) up.z);
+    public JsonObject toJson(){
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("up_x", up.x);
+        jsonObject.addProperty("up_y", up.y);
+        jsonObject.addProperty("up_z", up.z);
     
-        out.writeFloat((float) at.x);
-        out.writeFloat((float) at.y);
-        out.writeFloat((float) at.z);
-        
-        out.writeBoolean(mainAtStartup);
+        jsonObject.addProperty("at_x", at.x);
+        jsonObject.addProperty("at_y", at.y);
+        jsonObject.addProperty("at_z", at.z);
+        return jsonObject;
     }
     
     @Override
-    public void fromBytes(ByteBuf in){
-        float upX = in.readFloat();
-        float upY = in.readFloat();
-        float upZ = in.readFloat();
+    public void fromJson(JsonObject in){
+        double up_x = in.get("up_x").getAsDouble();
+        double up_y = in.get("up_y").getAsDouble();
+        double up_z = in.get("up_z").getAsDouble();
     
-        float atX = in.readFloat();
-        float atY = in.readFloat();
-        float atZ = in.readFloat();
+        double at_x = in.get("at_x").getAsDouble();
+        double at_y = in.get("at_y").getAsDouble();
+        double at_z = in.get("at_z").getAsDouble();
         
-        this.mainAtStartup = in.readBoolean();
-        this.at = new Vector3(atX, atY, atZ);
-        this.up = new Vector3(upX, upY, upZ);
+        this.up = new Vector3(up_x, up_y, up_z);
+        this.at = new Vector3(at_x, at_y, at_z);
     }
     
     public void setAt(double x, double y, double z){

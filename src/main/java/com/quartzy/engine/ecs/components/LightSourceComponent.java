@@ -1,9 +1,13 @@
 package com.quartzy.engine.ecs.components;
 
+import com.google.gson.JsonObject;
 import com.quartzy.engine.ecs.Component;
+import com.quartzy.engine.graphics.Color;
+import com.quartzy.engine.math.Vector2f;
 import com.quartzy.engine.math.Vector3f;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,15 +17,29 @@ public class LightSourceComponent extends Component{
     private static boolean anyChanged;
     
     @Getter
-    private Vector3f color;
+    private Color color;
+    private Color previousColor;
     private TransformComponent transform;
     
     @Getter
+    private Vector2f offset;
+    private Vector2f prevOffset;
+    
+    @Getter
     private float z;
+    private float prevZ;
     
     public LightSourceComponent(Vector3f color, float z){
+        this(new Color(color.x, color.y, color.z), z);
+    }
+    
+    public LightSourceComponent(Color color, float z){
         this.color = color;
         this.z = z;
+        this.offset = new Vector2f();
+        this.previousColor = color;
+        this.prevZ = z;
+        this.prevOffset = this.offset;
     }
     
     public LightSourceComponent(Vector3f color){
@@ -49,35 +67,55 @@ public class LightSourceComponent extends Component{
     }
     
     @Override
-    public void toBytes(ByteBuf out){
-        out.writeFloat(color.x);
-        out.writeFloat(color.y);
-        out.writeFloat(color.z);
+    public JsonObject toJson(){
+        JsonObject out = new JsonObject();
         
-        out.writeFloat(z);
+        color.toJson(out);
+        out.addProperty("z", this.z);
+        
+        out.addProperty("offset_x", this.offset.x);
+        out.addProperty("offset_y", this.offset.y);
+        
+        return out;
     }
     
     @Override
-    public void fromBytes(ByteBuf in){
-        float x = in.readFloat();
-        float y = in.readFloat();
-        float z = in.readFloat();
-        this.color = new Vector3f(x, y, z);
-        this.z = in.readFloat();
+    public void fromJson(JsonObject in){
+        this.color = Color.fromJson(in);
+        this.z = in.get("z").getAsFloat();
+        this.offset = new Vector2f(in.get("offset_x").getAsFloat(), in.get("offset_y").getAsFloat());
     }
     
     public Vector3f getPosition(){
-        return new Vector3f((float) this.transform.getX(), (float) this.transform.getY(), z);
+        return new Vector3f((float) this.transform.getX() + this.offset.x, (float) this.transform.getY() + this.offset.y, z);
     }
     
-    public void setColor(Vector3f color){
+    public void setColor(Color color){
         this.color = color;
-        anyChanged = true;
+        if(!this.previousColor.equals(this.color)){
+            anyChanged = true;
+            this.previousColor = this.color;
+        }
     }
     
     public void setZ(float z){
         this.z = z;
-        anyChanged = true;
+        if(this.prevZ!=this.z){
+            anyChanged = true;
+            this.prevZ = this.z;
+        }
+    }
+    
+    public void setOffset(Vector2f offset){
+        this.offset = offset;
+        if(!this.prevOffset.equals(this.offset)){
+            anyChanged = true;
+            this.prevOffset = this.offset;
+        }
+    }
+    
+    public Vector3f getColorVec(){
+        return new Vector3f(this.color.getRed(), this.color.getGreen(), this.color.getBlue());
     }
     
     public static boolean isAnyChanged(){

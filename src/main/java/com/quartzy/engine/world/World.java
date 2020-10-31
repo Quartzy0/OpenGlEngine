@@ -1,10 +1,12 @@
 package com.quartzy.engine.world;
 
+import com.google.gson.*;
 import com.quartzy.engine.ecs.Component;
 import com.quartzy.engine.ecs.ComponentManager;
 import com.quartzy.engine.ecs.ECSManager;
 import com.quartzy.engine.ecs.Particle;
 import com.quartzy.engine.ecs.components.*;
+import com.quartzy.engine.graphics.Color;
 import com.quartzy.engine.graphics.Renderer;
 import com.quartzy.engine.graphics.Texture;
 import com.quartzy.engine.math.Vector2f;
@@ -13,6 +15,7 @@ import com.quartzy.engine.utils.Resource;
 import com.quartzy.engine.utils.ResourceType;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import lombok.CustomLog;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -24,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+@CustomLog
 public class World{
     
     @Getter
@@ -76,7 +80,7 @@ public class World{
                             renderer.begin();
                         }
                     }
-                    renderer.drawTextureRegion((float) component.getTransform().getTranslationX(), (float) component.getTransform().getTranslationY(), textureComponent.getTexture().getWidth(), textureComponent.getTexture().getHeight(), k - 1);
+                    renderer.drawTextureRegion(((float) component.getTransform().getTranslationX()) + textureComponent.getOffset().x, ((float) component.getTransform().getTranslationY()) + textureComponent.getOffset().y, textureComponent.getTexture().getWidth(), textureComponent.getTexture().getHeight(), textureComponent.getColor(), k - 1);
                 }
             }
             renderer.end();
@@ -118,7 +122,7 @@ public class World{
                     for(LightSourceComponent light : lights){
                         if(i < renderer.getMaxLightsPerDrawCall()){
                             positions[i] = light.getPosition();
-                            colors[i] = light.getColor();
+                            colors[i] = light.getColorVec();
                             i++;
                         } else{
                             break;
@@ -193,6 +197,24 @@ public class World{
         }
     }
     
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        
+        World world = (World) o;
+        
+        if(!name.equals(world.name)) return false;
+        return ecsManager.equals(world.ecsManager);
+    }
+    
+    @Override
+    public int hashCode(){
+        int result = name.hashCode();
+        result = 31 * result + ecsManager.hashCode();
+        return result;
+    }
+    
     public static Resource saveToFile(String folderPath, World world, short... entityBlacklist){
         String name = world.name;
         Path path = Paths.get(folderPath, name + ".wrld");
@@ -205,141 +227,63 @@ public class World{
         if(!file.exists()){
             file.createNewFile();
         }
-        String name = world.getName();
-        ByteBuf bytes = Unpooled.buffer();
-        bytes.writeByte(name.length());
-        bytes.writeCharSequence(name, StandardCharsets.US_ASCII);
-    
-        HashMap<Class<? extends Component>, ComponentManager> components = world.ecsManager.getComponents();
-        int actualAmount5 = 0;
+        JsonObject worldObject = new JsonObject();
+        worldObject.addProperty("name", world.name);
         
-        for(ComponentManager value : components.values()){
-            HashMap<Short, List<Component>> components1 = value.getComponents();
-            for(Map.Entry<Short, List<Component>> entry : components1.entrySet()){
-                boolean die = false;
+        JsonArray componentsArray = new JsonArray();
+        ECSManager ecsManager = world.ecsManager;
+        for(ComponentManager value : ecsManager.getComponents().values()){
+            HashMap<Short, List<Component>> components = value.getComponents();
+            JsonArray componentArray = new JsonArray();
+            for(Map.Entry<Short, List<Component>> entry : components.entrySet()){
                 if(entityBlacklist!=null && entityBlacklist.length!=0){
+                    boolean skipEntity = false;
                     for(int i = 0; i < entityBlacklist.length; i++){
                         if(entityBlacklist[i]==entry.getKey()){
-                            die = true;
+                            skipEntity = true;
                             break;
                         }
                     }
-                }
-                if(!die)actualAmount5++;
-            }
-        }
-        bytes.writeShort(actualAmount5);
-        for(ComponentManager value : components.values()){
-    
-            Set<Map.Entry<Short, List<Component>>> set = value.getComponents().entrySet();
-            int actualAmount = 0;
-            for(Map.Entry<Short, List<Component>> entry : set){
-                if(entityBlacklist!=null && entityBlacklist.length!=0){
-                    boolean die = false;
-                    for(int i = 0; i < entityBlacklist.length; i++){
-                        if(entityBlacklist[i]==entry.getKey()){
-                            die = true;
-                            break;
-                        }
-                    }
-                    if(die)continue;
-                }
-                actualAmount+=entry.getValue().size();
-            }
-            if(actualAmount==0)continue;
-            String name1 = value.getType().getName();
-            bytes.writeByte(name1.length());
-            bytes.writeCharSequence(name1, StandardCharsets.US_ASCII);
-            bytes.writeInt(actualAmount);
-            
-            for(Map.Entry<Short, List<Component>> entry : set){
-                if(entityBlacklist!=null && entityBlacklist.length!=0){
-                    boolean canPass = true;
-                    for(int i = 0; i < entityBlacklist.length; i++){
-                        if(entityBlacklist[i] == entry.getKey()){
-                            canPass = false;
-                        }
-                        if(!canPass) break;
-                    }
-                    if(!canPass) continue;
+                    if(skipEntity)continue;
                 }
     
                 for(Component component : entry.getValue()){
-                    bytes.writeShort(entry.getKey());
-                    
-                    component.toBytes(bytes);
+                    JsonObject jsonObject = component.toJson();
+                    jsonObject.addProperty("__component_type__", component.getClass().getName());
+                    jsonObject.addProperty("__entity_id__", entry.getKey());
+                    componentArray.add(jsonObject);
                 }
             }
+            componentsArray.add(componentArray);
         }
-    
-        HashMap<Integer, List<Short>> layers1 = world.getEcsManager().getLayers();
-        HashMap<Integer, List<Short>> layersToUse = world.getEcsManager().getLayers();
-        if(entityBlacklist!=null && entityBlacklist.length!=0){
-            for(Map.Entry<Integer, List<Short>> entry : layers1.entrySet()){
-                List<Short> value = entry.getValue();
-                List<Short> newValue = new ArrayList<>();
-                for(Short aShort : value){
-                    boolean isOk = true;
-                    for(int i = 0; i < entityBlacklist.length; i++){
-                        if(entityBlacklist[i] == aShort){
-                            isOk = false;
-                            break;
-                        }
-                    }
-                    if(isOk){
-                        newValue.add(aShort);
-                    }
-                }
-                if(!newValue.isEmpty()){
-                    layersToUse.put(entry.getKey(), newValue);
-                }
-            }
-        }else layersToUse = layers1;
-        bytes.writeShort(layersToUse.size());
-        for(Map.Entry<Integer, List<Short>> entry : layersToUse.entrySet()){
-            bytes.writeShort(entry.getKey());
-            bytes.writeInt(entry.getValue().size());
+        worldObject.add("components", componentsArray);
+        
+        JsonArray layersArray = new JsonArray();
+        for(Map.Entry<Integer, List<Short>> entry : ecsManager.getLayers().entrySet()){
+            JsonArray layerArray = new JsonArray();
+            JsonObject layerObject = new JsonObject();
+            layerObject.addProperty("layer_id", entry.getKey());
     
             for(Short aShort : entry.getValue()){
-                bytes.writeShort(aShort);
+                layerArray.add(aShort);
             }
+            layerObject.add("layer_array", layerArray);
+            layersArray.add(layerObject);
         }
-    
-        HashMap<Short, String> tags = world.getEcsManager().getTags();
-        int actualAmount2 = 0;
-        if(entityBlacklist!=null && entityBlacklist.length!=0){
-            for(Short entry1 : tags.keySet()){
-                for(int i = 0; i < entityBlacklist.length; i++){
-                    if(entityBlacklist[i] == entry1) break;
-                    if(i == entityBlacklist.length - 1){
-                        actualAmount2++;
-                    }
-                }
-            }
-        }else actualAmount2 = tags.size();
-        bytes.writeInt(actualAmount2);
-        for(Map.Entry<Short, String> entry : tags.entrySet()){
-            if(entityBlacklist!=null && entityBlacklist.length!=0){
-                boolean canPass = true;
-                for(int i = 0; i < entityBlacklist.length; i++){
-                    if(entityBlacklist[i] == entry.getKey()){
-                        canPass = false;
-                    }
-                    if(!canPass) break;
-                }
-                if(!canPass) continue;
-            }
-            
-            bytes.writeByte(entry.getValue().length());
-            bytes.writeCharSequence(entry.getValue(), StandardCharsets.US_ASCII);
-            bytes.writeShort(entry.getKey());
+        worldObject.add("layers", layersArray);
+        
+        JsonArray tagsArray = new JsonArray();
+        for(Map.Entry<Short, String> entry : ecsManager.getTags().entrySet()){
+            JsonObject tagObject = new JsonObject();
+            tagObject.addProperty("entity_id", entry.getKey());
+            tagObject.addProperty("tag", entry.getValue());
+            tagsArray.add(tagObject);
         }
-    
-        byte[] compBytes = new byte[bytes.readableBytes()];
-        bytes.readBytes(compBytes);
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-            fos.write(compBytes);
-        }
+        worldObject.add("tags", tagsArray);
+        
+        FileWriter fw = new FileWriter(file);
+        fw.write(new GsonBuilder().setPrettyPrinting().create().toJson(worldObject));
+        fw.close();
         
         return new Resource(file, world.name, ResourceType.WORLD_FILE, world.getName());
     }
@@ -350,56 +294,54 @@ public class World{
     }
     
     public static World loadWorld(File file, short... entitiesToAdd){
-        if(!file.exists())return null;
-        byte[] bytes;
+        if(!file.exists() || !file.isFile())return null;
         try{
-            bytes = Files.readAllBytes(file.toPath());
-        } catch(IOException e){
-            return null;
-        }
-        if(bytes.length == 0)return null;
-        try{
-            ByteBuf in = Unpooled.wrappedBuffer(bytes);
+            Scanner scanner = new Scanner(file);
+            String jsonString = "";
+            while(scanner.hasNextLine()){
+                jsonString+=scanner.nextLine() + "\n";
+            }
+            scanner.close();
+            JsonObject worldObject = JsonParser.parseString(jsonString).getAsJsonObject();
+            World world = new World(worldObject.get("name").getAsString());
     
-            byte worldNameLen = in.readByte();
-            String worldName = in.readCharSequence(worldNameLen, StandardCharsets.US_ASCII).toString();
-            World world = new World(worldName);
+            ECSManager ecsManager = world.ecsManager;
+            JsonArray componentsArray = worldObject.getAsJsonArray("components");
+            for(JsonElement jsonElement : componentsArray){
+                JsonArray component = jsonElement.getAsJsonArray();
+                for(JsonElement element : component){
+                    JsonObject comp = element.getAsJsonObject();
+                    short entity_id = comp.get("__entity_id__").getAsShort();
+                    String component_type = comp.get("__component_type__").getAsString();
+                    
+                    Class<? extends Component> componentClass = (Class<? extends Component>) Class.forName(component_type);
     
-            short componentCount = in.readShort();
-    
-            ECSManager ecsManager = world.getEcsManager();
-            for(int i = 0; i < componentCount; i++){
-                byte componentNameLen = in.readByte();
-                String componentName = in.readCharSequence(componentNameLen, StandardCharsets.US_ASCII).toString();
-        
-                Class<? extends Component> componentClass = (Class<? extends Component>) Class.forName(componentName);
-        
-                int valAmount = in.readInt();
-                for(int j = 0; j < valAmount; j++){
-                    Component component = componentClass.newInstance();
-                    short entityId = in.readShort();
-                    component.fromBytes(in);
-                    ecsManager.addComponentToEntityNoCheck(entityId, component);
+                    Component componentInstance = componentClass.newInstance();
+                    componentInstance.fromJson(comp);
+                    
+                    ecsManager.addComponentToEntityNoCheck(entity_id, componentInstance);
                 }
             }
     
-            short layerAmount = in.readShort();
-            for(int i = 0; i < layerAmount; i++){
-                short layerId = in.readShort();
-        
-                int layerEntityCount = in.readInt();
-                for(int i1 = 0; i1 < layerEntityCount; i1++){
-                    short entityId = in.readShort();
-                    ecsManager.addEntityToLayer(entityId, layerId);
+            JsonArray layersArray = worldObject.getAsJsonArray("layers");
+            for(JsonElement jsonElement : layersArray){
+                JsonObject layersObject = jsonElement.getAsJsonObject();
+                int layer_id = layersObject.get("layer_id").getAsInt();
+                JsonArray layer_array = layersObject.get("layer_array").getAsJsonArray();
+    
+                for(JsonElement element : layer_array){
+                    short entityId = element.getAsShort();
+                    ecsManager.addEntityToLayer(entityId, layer_id);
                 }
             }
     
-            int tayAmount = in.readInt();
-            for(int i = 0; i < tayAmount; i++){
-                byte tagNameLen = in.readByte();
-                String tagName = in.readCharSequence(tagNameLen, StandardCharsets.US_ASCII).toString();
-                short entityId = in.readShort();
-                ecsManager.setEntityTag(entityId, tagName);
+            JsonArray tagsArray = worldObject.getAsJsonArray("tags");
+            for(JsonElement jsonElement : tagsArray){
+                JsonObject tagObject = jsonElement.getAsJsonObject();
+                short entity_id = tagObject.get("entity_id").getAsShort();
+                String tag = tagObject.get("tag").getAsString();
+                
+                ecsManager.setEntityTag(entity_id, tag);
             }
     
             if(entitiesToAdd!=null && entitiesToAdd.length!=0){
@@ -412,7 +354,7 @@ public class World{
                             for(ComponentManager value : values){
                                 for(int i = 0; i < entitiesToAdd.length; i++){
                                     List<Component> components1 = value.getComponents(entitiesToAdd[i]);
-                                    if(components1==null || components1.isEmpty())continue;
+                                    if(components1 == null || components1.isEmpty()) continue;
                                     for(Component component : components1){
                                         if(component != null){
                                             world.getEcsManager().addComponentToEntityNoCheck(entitiesToAdd[i], component);
@@ -447,9 +389,7 @@ public class World{
             }
     
             return world;
-        }catch(IndexOutOfBoundsException e){
-            return null;
-        } catch(IllegalAccessException | InstantiationException | ClassNotFoundException e){
+        } catch(IllegalAccessException | InstantiationException | ClassNotFoundException | FileNotFoundException e){
             e.printStackTrace();
         }
         return null;

@@ -1,10 +1,15 @@
 package com.quartzy.engine.ecs.components;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.quartzy.engine.Client;
 import com.quartzy.engine.ecs.Component;
 import com.quartzy.engine.graphics.Color;
 import com.quartzy.engine.graphics.Texture;
 import com.quartzy.engine.graphics.TextureManager;
+import com.quartzy.engine.math.Vector2f;
+import com.quartzy.engine.network.NetworkManager;
+import com.quartzy.engine.network.Side;
 import com.quartzy.engine.utils.ResourceManager;
 import com.quartzy.engine.world.World;
 import io.netty.buffer.ByteBuf;
@@ -12,6 +17,8 @@ import lombok.CustomLog;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
@@ -24,15 +31,32 @@ public class TextureComponent extends Component{
     @Getter
     @Setter
     private Color color;
+    @Getter
+    @Setter
+    private Vector2f offset;
     
     public TextureComponent(Texture texture, Color color){
         this.texture = texture;
         this.color = color;
+        this.offset = new Vector2f();
     }
     
     public TextureComponent(Texture texture){
         this.texture = texture;
         this.color = Color.WHITE;
+        this.offset = new Vector2f();
+    }
+    
+    public TextureComponent(Texture texture, Vector2f offset){
+        this.texture = texture;
+        this.offset = offset;
+        this.color = Color.WHITE;
+    }
+    
+    public TextureComponent(Texture texture, Color color, Vector2f offset){
+        this.texture = texture;
+        this.color = color;
+        this.offset = offset;
     }
     
     public TextureComponent(){
@@ -54,34 +78,42 @@ public class TextureComponent extends Component{
     }
     
     @Override
-    public void toBytes(ByteBuf out){
-        if(texture.getResource()!=null){
-            String name = texture.getResource().getName();
-            out.writeInt(name.length());
-            out.writeCharSequence(name, StandardCharsets.US_ASCII);
-            boolean equals = color.equals(Color.WHITE);
-            out.writeBoolean(equals);
-            if(!equals){
-                out.writeFloat(color.getRed());
-                out.writeFloat(color.getGreen());
-                out.writeFloat(color.getBlue());
-                out.writeFloat(color.getAlpha());
+    public JsonObject toJson(){
+        JsonObject jsonObject = new JsonObject();
+        if(this.texture.getResource()!=null){
+            jsonObject.addProperty("texture", this.texture.getResource().getName());
+            if(!color.isPreDefined()){
+                JsonObject jsonObject1 = color.toJson();
+                jsonObject.add("color", jsonObject1);
+            }else {
+                jsonObject.addProperty("color", color.getPredefinedString());
             }
-        }else {
-            log.warning("Cannot convert texture component to bytes because it has no resource");
+            if(!this.offset.isZero()){
+                jsonObject.addProperty("pos_x", this.offset.x);
+                jsonObject.addProperty("pos_y", this.offset.y);
+            }
         }
+        return jsonObject;
     }
     
     @Override
-    public void fromBytes(ByteBuf in){
-        int len = in.readInt();
-        String s = in.readCharSequence(len, StandardCharsets.US_ASCII).toString();
-        if(in.readBoolean()){
-            color = Color.WHITE;
-        }else {
-            color = new Color(in.readFloat(), in.readFloat(), in.readFloat(), in.readFloat());
+    public void fromJson(JsonObject in){
+        String texture = in.get("texture").getAsString();
+        if(NetworkManager.INSTANCE.getSide() == Side.CLIENT){
+            this.texture = Client.getInstance().getTextureManager().getTexture(texture);
         }
-        this.texture = Client.getInstance().getTextureManager().getTexture(s);
+        JsonElement color = in.get("color");
+        if(color.isJsonObject()){
+            this.color = Color.fromJson(color.getAsJsonObject());
+        }else {
+            this.color = Color.getFromPredefinedString(color.getAsString());
+        }
+        
+        if(in.has("pos_x")){
+            this.offset = new Vector2f(in.get("pos_x").getAsFloat(), in.get("pos_y").getAsFloat());
+        }else {
+            this.offset = new Vector2f();
+        }
     }
     
     @Override
@@ -92,13 +124,15 @@ public class TextureComponent extends Component{
         TextureComponent that = (TextureComponent) o;
         
         if(texture != null ? !texture.equals(that.texture) : that.texture != null) return false;
-        return color != null ? color.equals(that.color) : that.color == null;
+        if(color != null ? !color.equals(that.color) : that.color != null) return false;
+        return offset != null ? offset.equals(that.offset) : that.offset == null;
     }
     
     @Override
     public int hashCode(){
         int result = texture != null ? texture.hashCode() : 0;
         result = 31 * result + (color != null ? color.hashCode() : 0);
+        result = 31 * result + (offset != null ? offset.hashCode() : 0);
         return result;
     }
 }

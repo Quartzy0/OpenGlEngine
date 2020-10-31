@@ -1,5 +1,6 @@
 package com.quartzy.engine.ecs.components;
 
+import com.google.gson.JsonObject;
 import com.quartzy.engine.ecs.Component;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
@@ -100,15 +101,27 @@ public class TransformComponent extends Component{
     }
     
     @Override
-    public void toBytes(ByteBuf out){
-        out.writeDouble(this.getX());
-        out.writeDouble(this.getY());
+    public JsonObject toJson(){
+        JsonObject jsonObject = new JsonObject();
+        
+        jsonObject.addProperty("x", this.transform.getTranslationX());
+        jsonObject.addProperty("y", this.transform.getTranslationY());
+    
+        jsonObject.addProperty("angle", this.transform.getRotationAngle());
+        
+        return jsonObject;
     }
     
     @Override
-    public void fromBytes(ByteBuf in){
+    public void fromJson(JsonObject in){
+        double x = in.get("x").getAsDouble();
+        double y = in.get("y").getAsDouble();
+        double angle = in.get("angle").getAsDouble();
+        
         this.transform = new Transform();
-        this.transform.translate(in.readDouble(), in.readDouble());
+        this.transform.translate(x, y);
+        this.transform.setRotation(angle);
+        
         anyChanged = true;
     }
     

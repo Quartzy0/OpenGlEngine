@@ -2,8 +2,9 @@ package com.quartzy.engine;
 
 import com.quartzy.engine.audio.SoundManager;
 import com.quartzy.engine.ecs.components.CustomRenderComponent;
+import com.quartzy.engine.graphics.Framebuffer;
 import com.quartzy.engine.layers.LayerStack;
-import com.quartzy.engine.layers.layerimpl.WorldLayer;
+import com.quartzy.engine.world.WorldLayer;
 import com.quartzy.engine.input.Input;
 import com.quartzy.engine.graphics.Renderer;
 import com.quartzy.engine.graphics.TextureManager;
@@ -64,20 +65,23 @@ public class Client{
     @Setter
     private int port;
     
+    private Framebuffer passOnFramebuffer;
+    
     /**
      * Creates the game object
      */
-    public Client(ApplicationClient client, Window window){
+    public Client(ApplicationClient client, ClientBuilder builder){
         Client.instance = this;
         this.applicationClient = client;
-        this.window = window;
+        this.window = new Window(builder.getWindowTitle(), builder.getWindowWidth(), builder.getWindowHeight());
+        this.window.init();
+        this.passOnFramebuffer = builder.getFramebuffer();
     }
     
     /**
      * Initializes the game. This means creating the resource managers and loading all of the tiles from the file. It also initializes the renderer and opens the game window
-     * @param args Game console arguments
      */
-    public void init(String... args){
+    public void init(){
         Thread.currentThread().setName("Main game thread");
         if(host!=null){
             networkManager = new NetworkManagerClient(port, host);
@@ -97,6 +101,7 @@ public class Client{
             resource = resourceManager.addResource(vertexShader);
             resource1 = resourceManager.addResource(fragmentShader);
         }
+        renderer.setFramebuffer(this.passOnFramebuffer);
         renderer.init(resource, resource1, window);
         applicationClient.init(this);
     }
@@ -203,7 +208,7 @@ public class Client{
             ApplicationClient client1 = next.newInstance();
             Client client = client1.preInit(args, SystemInfo.getSystemInfo());
             if(client==null) client = new Client.ClientBuilder().build(client1);
-            client.init(args);
+            client.init();
             client.startGame();
         } catch(InstantiationException | IllegalAccessException e){
             log.severe("Something went wrong while trying to get the application class", e);
@@ -211,11 +216,12 @@ public class Client{
     }
     
     public static class ClientBuilder{
-        private int windowWidth, windowHeight;
+        private int windowWidth = 1280, windowHeight = 720;
         private String windowTitle;
         private String vertexShader, fragmentShader;
         private String host;
         private int port;
+        private Framebuffer framebuffer;
     
         public int getWindowWidth(){
             return windowWidth==0 ? 1280 : windowWidth;
@@ -223,6 +229,15 @@ public class Client{
     
         public ClientBuilder setWindowWidth(int windowWidth){
             this.windowWidth = windowWidth;
+            return this;
+        }
+    
+        public Framebuffer getFramebuffer(){
+            return framebuffer;
+        }
+    
+        public ClientBuilder setFramebuffer(Framebuffer framebuffer){
+            this.framebuffer = framebuffer;
             return this;
         }
     
@@ -281,7 +296,7 @@ public class Client{
         }
         
         public Client build(ApplicationClient application){
-            Client client = new Client(application, new Window(getWindowTitle(), getWindowWidth(), getWindowHeight()));
+            Client client = new Client(application, this);
             client.setVertexShader(vertexShader);
             client.setFragmentShader(fragmentShader);
             client.setHost(host);

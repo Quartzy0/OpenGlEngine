@@ -15,6 +15,65 @@ import java.time.format.DateTimeFormatter;
 
 import static org.lwjgl.opengl.GL43.*;
 
+/**
+ * A utility class for logging
+ *
+ * The format specifiers are the ones of {@code String.format}:
+ * <table border="1">
+ *   <tr>
+ *    <td>%a</td>
+ *    <td>Returns Hex output of floating point number.</td>
+ *   </tr>
+ *   <tr>
+ *    <td>%b</td>
+ *    <td>"true" if non-null, "false" if null</td>
+ *   </tr>
+ *   <tr>
+ *    <td>%c</td>
+ *    <td>Unicode character</td>
+ *   </tr>
+ *   <tr>
+ *    <td>%d</td>
+ *    <td>Decimal Integer</td>
+ *   </tr>
+ *   <tr>
+ *    <td>%e</td>
+ *    <td>decimal number in scientific notation</td>
+ *   </tr>
+ *   <tr>
+ *    <td>%f</td>
+ *    <td>decimal number</td>
+ *   </tr>
+ *   <tr>
+ *    <td>%g</td>
+ *    <td>decimal number, possibly in scientific notation depending on the precision and value.</td>
+ *   </tr>
+ *   <tr>
+ *    <td>%h</td>
+ *    <td>Hex String of value from hashCode() method.</td>
+ *   </tr>
+ *   <tr>
+ *    <td>%n</td>
+ *    <td>Platform-specific line separator.</td>
+ *   </tr>
+ *   <tr>
+ *    <td>%o</td>
+ *    <td>Octal int number</td>
+ *   </tr>
+ *   <tr>
+ *    <td>%s</td>
+ *    <td>String value</td>
+ *   </tr>
+ *   <tr>
+ *    <td>%t</td>
+ *    <td>Date/Time (incl. long, Calendar, Date and TemporalAccessor)</td>
+ *   </tr>
+ *   <tr>
+ *    <td>%x</td>
+ *    <td>Hex int string/td>
+ *   </tr>
+ * </table>
+ */
 public class Logger{
     
     private Level level;

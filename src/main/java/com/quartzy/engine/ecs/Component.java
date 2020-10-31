@@ -1,5 +1,6 @@
 package com.quartzy.engine.ecs;
 
+import com.google.gson.JsonObject;
 import com.quartzy.engine.world.World;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
@@ -22,9 +23,9 @@ public abstract class Component{
     
     public abstract boolean canHaveMultiple();
     
-    public abstract void toBytes(ByteBuf out);
+    public abstract JsonObject toJson();
     
-    public abstract void fromBytes(ByteBuf in);
+    public abstract void fromJson(JsonObject in);
     
     public abstract boolean equals(Object obj);
     

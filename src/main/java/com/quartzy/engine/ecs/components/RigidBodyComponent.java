@@ -1,6 +1,8 @@
 package com.quartzy.engine.ecs.components;
 
+import com.google.gson.JsonObject;
 import com.quartzy.engine.ecs.Component;
+import com.quartzy.engine.math.Vector2f;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import org.dyn4j.dynamics.Body;
@@ -53,28 +55,30 @@ public class RigidBodyComponent extends Component{
     }
     
     @Override
-    public void toBytes(ByteBuf out){
-        out.writeDouble(body.getMass().getMass());
-        out.writeDouble(body.getMass().getInertia());
-        out.writeDouble(body.getMass().getCenter().x);
-        out.writeDouble(body.getMass().getCenter().y);
-        out.writeDouble(body.getTransform().getTranslationX());
-        out.writeDouble(body.getTransform().getTranslationY());
-        out.writeDouble(body.getTransform().getRotationAngle());
+    public JsonObject toJson(){
+        JsonObject jsonObject = new JsonObject();
+        
+        jsonObject.addProperty("mass", body.getMass().getMass());
+        jsonObject.addProperty("inertia", body.getMass().getInertia());
+    
+        jsonObject.addProperty("centre_x", body.getMass().getCenter().x);
+        jsonObject.addProperty("centre_y", body.getMass().getCenter().y);
+    
+        jsonObject.addProperty("pos_x", body.getTransform().getTranslationX());
+        jsonObject.addProperty("pos_y", body.getTransform().getTranslationY());
+    
+        jsonObject.addProperty("rot", body.getTransform().getRotationAngle());
+        
+        return jsonObject;
     }
     
     @Override
-    public void fromBytes(ByteBuf in){
-        double mass = in.readDouble();
-        double inertia = in.readDouble();
-        double centreX = in.readDouble();
-        double centreY = in.readDouble();
-        double x = in.readDouble();
-        double y = in.readDouble();
-        double rotAngle = in.readDouble();
-        this.body.setMass(new Mass(new Vector2(centreX, centreY), mass, inertia));
-        this.body.getTransform().setTranslation(x, y);
-        this.body.getTransform().setRotation(new Rotation(rotAngle));
+    public void fromJson(JsonObject in){
+        Vector2 centre = new Vector2(in.get("centre_x").getAsDouble(), in.get("centre_y").getAsDouble());
+        body.setMass(new Mass(centre, in.get("mass").getAsDouble(), in.get("inertia").getAsDouble()));
+        
+        body.translate(in.get("pos_x").getAsDouble(), in.get("pos_y").getAsDouble());
+        body.rotate(in.get("rot").getAsDouble());
     }
     
     @Override

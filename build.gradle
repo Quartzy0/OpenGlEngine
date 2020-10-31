@@ -40,11 +40,13 @@ dependencies {
     compile 'org.atteo.classindex:classindex:3.9'
     annotationProcessor 'org.atteo.classindex:classindex:3.9'
     compile 'org.dyn4j:dyn4j:3.4.0'
-    compile 'org.projectlombok:lombok:1.18.12'
-    compileOnly 'org.projectlombok:lombok:1.18.12'
+    compile 'org.projectlombok:lombok:1.18.16'
+    compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
     compile 'org.slf4j:slf4j-nop:1.7.30'
     compile 'io.netty:netty-all:4.1.50.Final'
+
+    compile 'com.google.code.gson:gson:2.8.6'
 
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 

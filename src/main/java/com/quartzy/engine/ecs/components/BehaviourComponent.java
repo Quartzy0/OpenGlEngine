@@ -1,5 +1,6 @@
 package com.quartzy.engine.ecs.components;
 
+import com.google.gson.JsonObject;
 import com.quartzy.engine.ecs.Component;
 import io.netty.buffer.ByteBuf;
 import lombok.CustomLog;
@@ -64,36 +65,38 @@ public class BehaviourComponent extends Component{
     }
     
     @Override
-    public void toBytes(ByteBuf out){
-        out.writeBoolean(active);
-        String name = behaviour.getClass().getName();
-        out.writeInt(name.length());
-        out.writeCharSequence(name, StandardCharsets.US_ASCII);
+    public JsonObject toJson(){
+        JsonObject jsonObject = new JsonObject();
+        
+        jsonObject.addProperty("class_name", behaviour.getClass().getName());
+        jsonObject.addProperty("active", active);
+        
+        return jsonObject;
     }
     
     @Override
-    public void fromBytes(ByteBuf in){
-        this.active = in.readBoolean();
-        int len = in.readInt();
-        String className = in.readCharSequence(len, StandardCharsets.US_ASCII).toString();
+    public void fromJson(JsonObject in){
+        String class_name = in.get("class_name").getAsString();
+        this.active = in.get("active").getAsBoolean();
+    
         try{
-            Class<?> aClass = Class.forName(className);
+            Class<?> aClass = Class.forName(class_name);
             if(!Behaviour.class.isAssignableFrom(aClass)){
-                log.warning("Class %s does not extend the Behaviour class", className);
+                log.warning("Class %s does not extend the Behaviour class", class_name);
                 return;
             }
             try{
                 Class<? extends Behaviour> behaviourClass = (Class<? extends Behaviour>) aClass;
                 this.behaviour = behaviourClass.newInstance();
             }catch(ClassCastException e){
-                log.warning("Cannot cast class %s to Behaviour class", e, className);
+                log.warning("Cannot cast class %s to Behaviour class", e, class_name);
             } catch(IllegalAccessException e){
-                log.warning("Cannot access class %s", e, className);
+                log.warning("Cannot access class %s", e, class_name);
             } catch(InstantiationException e){
-                log.warning("Cannot instantiate class %s", e, className);
+                log.warning("Cannot instantiate class %s", e, class_name);
             }
         } catch(ClassNotFoundException e){
-            log.warning("Cannot find behaviour class by the name %s", e, className);
+            log.warning("Cannot find behaviour class by the name %s", e, class_name);
         }
     }
     

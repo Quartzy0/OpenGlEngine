@@ -182,6 +182,14 @@ public class Vector3f {
     public Vector3f lerp(Vector3f other, float alpha) {
         return this.scale(1f - alpha).add(other.scale(alpha));
     }
+    
+    /**
+     * Checks weather this vector is zero
+     * @return Is vector zero
+     */
+    public boolean isZero(){
+        return this.x==0 && this.y==0 && this.z==0;
+    }
 
     /**
      * Stores the vector in a given Buffer.

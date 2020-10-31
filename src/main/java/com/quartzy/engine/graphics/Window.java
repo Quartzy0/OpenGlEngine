@@ -28,6 +28,8 @@ public class Window{
     @Getter
     private float aspectRatio;
     
+    private boolean inited;
+    
     /**
      * @param title Title of the window
      * @param width Width of the window
@@ -38,13 +40,16 @@ public class Window{
         this.width = width;
         this.height = height;
         this.aspectRatio = ((float) this.width)/((float) this.height);
-        init();
     }
     
     /**
      * Creates the GLFW window with the title, width and height from the constructor
      */
-    private void init(){
+    public void init(){
+        if(inited){
+            log.severe("Window already %s initialized", new RuntimeException("Window already initialized"), this.id);
+        }
+        
         GLFWErrorCallback errorCallback = GLFWErrorCallback.createPrint(System.err);
         glfwSetErrorCallback(errorCallback);
     
@@ -154,6 +159,8 @@ public class Window{
                 Client.getInstance().getLayerStack().triggerEvent(new WindowResizeEvent(width1, height1, width, height, id));
             }
         });
+        
+        this.inited = true;
     }
     
     /**

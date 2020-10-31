@@ -1,13 +1,9 @@
 package com.quartzy.engine.input;
 
-import com.quartzy.engine.layers.layerimpl.WorldLayer;
+import com.quartzy.engine.world.WorldLayer;
 import org.joml.Vector2f;
-import org.lwjgl.system.MemoryStack;
 
-import java.nio.DoubleBuffer;
 import java.util.HashMap;
-
-import static org.lwjgl.glfw.GLFW.*;
 
 public class Input{
     private static final HashMap<Integer, Boolean> prevKeyStates = new HashMap<>();

@@ -1,5 +1,6 @@
 package com.quartzy.engine.graphics;
 
+import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -60,5 +61,59 @@ public class Color{
         result = 31 * result + (blue != +0.0f ? Float.floatToIntBits(blue) : 0);
         result = 31 * result + (alpha != +0.0f ? Float.floatToIntBits(alpha) : 0);
         return result;
+    }
+    
+    public void toJson(JsonObject in){
+        in.addProperty("color_red", this.red);
+        in.addProperty("color_green", this.green);
+        in.addProperty("color_blue", this.blue);
+        in.addProperty("color_alpha", this.alpha);
+    }
+    
+    public JsonObject toJson(){
+        JsonObject jsonObject = new JsonObject();
+        this.toJson(jsonObject);
+        return jsonObject;
+    }
+    
+    public boolean isPreDefined(){
+        return isPreDefined(this);
+    }
+    
+    public String getPredefinedString(){
+        return getPredefinedSting(this);
+    }
+    
+    public static Color fromJson(JsonObject jsonObject){
+        float color_red = jsonObject.get("color_red").getAsFloat();
+        float color_green = jsonObject.get("color_green").getAsFloat();
+        float color_blue = jsonObject.get("color_blue").getAsFloat();
+        float color_alpha = jsonObject.get("color_alpha").getAsFloat();
+        
+        return new Color(color_red, color_green, color_blue, color_alpha);
+    }
+    
+    public static boolean isPreDefined(Color color){
+        return color.equals(Color.WHITE) || color.equals(Color.BLACK) || color.equals(Color.BLUE) || color.equals(Color.GREEN) || color.equals(Color.RED) || color.equals(Color.TRANSPARENT);
+    }
+    
+    public static String getPredefinedSting(Color color){
+        if(color.equals(Color.WHITE))return "WHITE";
+        if(color.equals(Color.BLACK))return "BLACK";
+        if(color.equals(Color.BLUE))return "BLUE";
+        if(color.equals(Color.GREEN))return "GREEN";
+        if(color.equals(Color.RED))return "RED";
+        if(color.equals(Color.TRANSPARENT))return "TRANSPARENT";
+        return null;
+    }
+    
+    public static Color getFromPredefinedString(String color){
+        if(color.equals("WHITE"))return Color.WHITE;
+        if(color.equals("BLACK"))return Color.BLACK;
+        if(color.equals("BLUE"))return Color.BLUE;
+        if(color.equals("GREEN"))return Color.GREEN;
+        if(color.equals("RED"))return Color.RED;
+        if(color.equals("TRANSPARENT"))return Color.TRANSPARENT;
+        return null;
     }
 }

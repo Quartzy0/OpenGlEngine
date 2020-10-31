@@ -1,5 +1,6 @@
 package com.quartzy.engine.ecs.components;
 
+import com.google.gson.JsonObject;
 import com.quartzy.engine.Client;
 import com.quartzy.engine.ecs.Component;
 import com.quartzy.engine.graphics.Renderer;
@@ -11,6 +12,7 @@ import com.quartzy.engine.network.Side;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.Setter;
+import org.dyn4j.geometry.Vector3;
 
 import java.util.List;
 
@@ -142,21 +144,27 @@ public class CameraComponent extends Component{
     }
     
     @Override
-    public void toBytes(ByteBuf out){
-        out.writeFloat(cameraPos.x);
-        out.writeFloat(cameraPos.y);
-        out.writeFloat(cameraPos.z);
-        out.writeBoolean(mainOnStartup);
+    public JsonObject toJson(){
+        JsonObject jsonObject = new JsonObject();
+        
+        jsonObject.addProperty("camera_pos_x", this.cameraPos.x);
+        jsonObject.addProperty("camera_pos_y", this.cameraPos.y);
+        jsonObject.addProperty("camera_pos_z", this.cameraPos.z);
+    
+        jsonObject.addProperty("main_on_startup", this.mainOnStartup);
+        
+        return jsonObject;
     }
     
     @Override
-    public void fromBytes(ByteBuf in){
-        float x = in.readFloat();
-        float y = in.readFloat();
-        float z = in.readFloat();
-        boolean b = in.readBoolean();
-        this.cameraPos = new Vector3f(x, y, z);
-        this.mainOnStartup = b;
+    public void fromJson(JsonObject in){
+        float camera_pos_x = in.get("camera_pos_x").getAsFloat();
+        float camera_pos_y = in.get("camera_pos_y").getAsFloat();
+        float camera_pos_z = in.get("camera_pos_z").getAsFloat();
+        
+        this.mainOnStartup = in.get("main_on_startup").getAsBoolean();
+        
+        this.cameraPos = new Vector3f(camera_pos_x, camera_pos_y, camera_pos_z);
         this.changed = true;
     }
     

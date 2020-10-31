@@ -148,6 +148,12 @@ public class Renderer{
         int newHeight = (int) (windowHeight * this.viewportDimensions.y);
         int x = (int) (this.viewportPosition.x * windowWidth);
         int y = (int) (this.viewportPosition.y * windowHeight);
+        if(this.framebuffer!=null){
+            newWidth = (int) (this.framebuffer.getDimensions().x * this.viewportDimensions.x);
+            newHeight = (int) (this.framebuffer.getDimensions().y * this.viewportDimensions.y);
+            x = (int) (this.viewportPosition.x * this.framebuffer.getDimensions().x);
+            y = (int) (this.viewportPosition.y * this.framebuffer.getDimensions().y);
+        }
         glViewport(x, y, newWidth, newHeight);
         CameraComponent mainCamera = getMainCamera();
         if(mainCamera!=null){

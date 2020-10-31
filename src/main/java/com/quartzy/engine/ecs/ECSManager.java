@@ -146,6 +146,26 @@ public class ECSManager{
         }
     }
     
+    public List<Component> removeComponents(short entityId, Class<? extends Component> clazz){
+        ComponentManager componentManager = this.components.get(clazz);
+        if(componentManager==null)return null;
+        return componentManager.removeComponent(entityId);
+    }
+    
+    public Component removeComponent(short entityId, Class<? extends Component> clazz, int index){
+        ComponentManager componentManager = this.components.get(clazz);
+        if(componentManager==null)return null;
+        return componentManager.removeComponent(entityId, index);
+    }
+    
+    public Component removeComponent(short entityId, Component component){
+        if(component==null)return null;
+        ComponentManager componentManager = this.components.get(component.getClass());
+        if(componentManager==null)return null;
+    
+        return componentManager.removeComponent(entityId, component);
+    }
+    
     public <T extends Component> HashMap<Short, List<T>> getAllEntitiesWithComponent(Class<T> clazz){
         if(!components.containsKey(clazz))return new HashMap<>();
         return components.get(clazz).getComponents();

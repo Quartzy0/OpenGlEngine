@@ -1,10 +1,13 @@
 package com.quartzy.engine.ecs.components;
 
+import com.google.gson.JsonObject;
 import com.quartzy.engine.Client;
 import com.quartzy.engine.ecs.Component;
 import com.quartzy.engine.ecs.Particle;
 import com.quartzy.engine.graphics.Texture;
 import com.quartzy.engine.math.Vector2f;
+import com.quartzy.engine.network.NetworkManager;
+import com.quartzy.engine.network.Side;
 import com.quartzy.engine.utils.Resource;
 import io.netty.buffer.ByteBuf;
 import lombok.CustomLog;
@@ -113,61 +116,61 @@ public class ParticleEmitterComponent extends Component{
     }
     
     @Override
-    public void toBytes(ByteBuf out){
-        out.writeFloat(speedRange);
-        out.writeFloat(positionRange);
-        out.writeFloat(scaleRange);
-        out.writeInt(maxParticles);
+    public JsonObject toJson(){
+        JsonObject jsonObject = new JsonObject();
         
-        out.writeLong(particleCreationPeriod);
+        JsonObject particleObject = new JsonObject();
+        particleObject.addProperty("lifetime", this.defaultParticle.getLifeTime());
+        particleObject.addProperty("speed", this.defaultParticle.getSpeed());
+        particleObject.addProperty("scale", this.defaultParticle.getScale());
+        particleObject.addProperty("texture", this.defaultParticle.getTexture().getResource().getName());
         
-        out.writeFloat(positionOffset.x);
-        out.writeFloat(positionOffset.y);
-        
-        out.writeBoolean(active);
-        
-        out.writeFloat(defaultParticle.getSpeed());
-        out.writeLong(defaultParticle.getLifeTime());
-        out.writeFloat(defaultParticle.getBaseSize().x);
-        out.writeFloat(defaultParticle.getBaseSize().y);
-        out.writeFloat(defaultParticle.getDirection().x);
-        out.writeFloat(defaultParticle.getDirection().y);
+        particleObject.addProperty("dir_x", this.defaultParticle.getDirection().x);
+        particleObject.addProperty("dir_y", this.defaultParticle.getDirection().y);
     
-        Resource resource = defaultParticle.getTexture().getResource();
-        if(resource==null){
-            log.warning("Texture has no resource attached and therefore can't be saved. This will cause problems later when loading!");
-            return;
-        }
-        String name = resource.getName();
-        out.writeInt(name.length());
-        out.writeCharSequence(name, StandardCharsets.US_ASCII);
+        particleObject.addProperty("pos_x", this.defaultParticle.getPosition().x);
+        particleObject.addProperty("pos_y", this.defaultParticle.getPosition().y);
+    
+        particleObject.addProperty("size_x", this.defaultParticle.getBaseSize().x);
+        particleObject.addProperty("size_y", this.defaultParticle.getBaseSize().y);
+        
+        jsonObject.add("particle", particleObject);
+        
+        jsonObject.addProperty("max", maxParticles);
+        jsonObject.addProperty("speed", speedRange);
+        jsonObject.addProperty("pos", positionRange);
+        jsonObject.addProperty("scale", scaleRange);
+        jsonObject.addProperty("period", particleCreationPeriod);
+    
+        jsonObject.addProperty("pos_x", positionOffset.x);
+        jsonObject.addProperty("pos_y", positionOffset.y);
+        
+        jsonObject.addProperty("active", active);
+        
+        return jsonObject;
     }
     
     @Override
-    public void fromBytes(ByteBuf in){
-        this.speedRange = in.readFloat();
-        this.positionRange = in.readFloat();
-        this.scaleRange = in.readFloat();
-        this.maxParticles = in.readInt();
-        
-        this.particleCreationPeriod = in.readLong();
+    public void fromJson(JsonObject in){
+        JsonObject particle = in.getAsJsonObject("particle");
     
-        float x = in.readFloat();
-        float y = in.readFloat();
-        this.positionOffset = new Vector2f(x, y);
+        Texture texture = null;
+        if(NetworkManager.INSTANCE.getSide() == Side.CLIENT){
+            texture = Client.getInstance().getTextureManager().getTexture(particle.get("texture").getAsString());
+        }
+        Vector2f dir = new Vector2f(particle.get("dir_x").getAsFloat(), particle.get("dir_y").getAsFloat());
+        Vector2f size = new Vector2f(particle.get("size_x").getAsFloat(), particle.get("size_y").getAsFloat());
+        this.defaultParticle = new Particle(texture, particle.get("lifetime").getAsLong(), particle.get("speed").getAsFloat(), dir, size);
         
-        this.active = in.readBoolean();
-    
-        float speed = in.readFloat();
-        long lifetime = in.readLong();
-        float sizeX = in.readFloat();
-        float sizeY = in.readFloat();
-        float directionX = in.readFloat();
-        float directionY = in.readFloat();
-        int textureNameLen = in.readInt();
-        String textureName = in.readCharSequence(textureNameLen, StandardCharsets.US_ASCII).toString();
-        Texture texture = Client.getInstance().getTextureManager().getTexture(textureName);
-        this.defaultParticle = new Particle(texture, lifetime, speed, new Vector2f(directionX, directionY), new Vector2f(sizeX, sizeY));
+        this.active = in.get("active").getAsBoolean();
+        
+        this.maxParticles = in.get("max").getAsInt();
+        this.speedRange = in.get("speed").getAsFloat();
+        this.positionRange = in.get("pos").getAsFloat();
+        this.scaleRange = in.get("scale").getAsFloat();
+        this.particleCreationPeriod = in.get("period").getAsLong();
+        
+        this.positionOffset = new Vector2f(in.get("pos_x").getAsFloat(), in.get("pos_y").getAsFloat());
     }
     
     @Override
