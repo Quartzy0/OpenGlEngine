@@ -265,6 +265,16 @@ public class World{
             layerObject.addProperty("layer_id", entry.getKey());
     
             for(Short aShort : entry.getValue()){
+                if(entityBlacklist!=null && entityBlacklist.length!=0){
+                    boolean skip = false;
+                    for(int i = 0; i < entityBlacklist.length; i++){
+                        if(entityBlacklist[i]==aShort){
+                            skip = true;
+                            break;
+                        }
+                    }
+                    if(skip)continue;
+                }
                 layerArray.add(aShort);
             }
             layerObject.add("layer_array", layerArray);
@@ -274,6 +284,17 @@ public class World{
         
         JsonArray tagsArray = new JsonArray();
         for(Map.Entry<Short, String> entry : ecsManager.getTags().entrySet()){
+            if(entityBlacklist!=null && entityBlacklist.length!=0){
+                boolean skip = false;
+                for(int i = 0; i < entityBlacklist.length; i++){
+                    if(entityBlacklist[i]==entry.getKey()){
+                        skip = true;
+                        break;
+                    }
+                }
+                if(skip)continue;
+            }
+            
             JsonObject tagObject = new JsonObject();
             tagObject.addProperty("entity_id", entry.getKey());
             tagObject.addProperty("tag", entry.getValue());

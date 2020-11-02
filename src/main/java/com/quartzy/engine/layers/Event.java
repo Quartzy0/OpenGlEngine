@@ -57,10 +57,7 @@ public class Event{
         
         public boolean equals(EventType obj){
             if(obj==this)return true;
-            if(obj.parent==this)return true;
-            if(obj==this.parent)return true;
-            if(obj.parent==this.parent)return true;
-            return false;
+            return obj.parent == this;
         }
     
         @Override

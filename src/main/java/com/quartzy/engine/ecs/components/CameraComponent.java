@@ -13,17 +13,22 @@ import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.Setter;
 import org.dyn4j.geometry.Vector3;
+import org.joml.Matrix4d;
 
 import java.util.List;
 
 public class CameraComponent extends Component{
     @Getter
-    @Setter
     private Matrix4f modelMatrix, viewMatrix, projectionMatrix;
     
     @Getter
     private Vector3f cameraPos;
     
+    @Getter
+    private float scale = 1;
+    
+    @Getter
+    @Setter
     private boolean mainOnStartup;
     private boolean changed;
     
@@ -90,7 +95,7 @@ public class CameraComponent extends Component{
     public void init(){
         if(NetworkManager.INSTANCE.getSide()==Side.CLIENT && this.projectionMatrix==null){
             Window window = Client.getInstance().getWindow();
-            this.projectionMatrix = Matrix4f.orthographic(0f, window.getWidth(), 0f, window.getHeight(), -1f, 1f);
+            this.projectionMatrix = Renderer.makeProjectionMatrix(window.getWidth(), window.getHeight());
         }
         if(this.mainOnStartup) setAsMain();
     }
@@ -104,15 +109,15 @@ public class CameraComponent extends Component{
     public void update(){
         if(!changed)return;
         if(NetworkManager.INSTANCE.getSide()== Side.CLIENT){
-            Client.getInstance().getRenderer().setUniforms(this.modelMatrix, this.viewMatrix, this.projectionMatrix);
+            Client.getInstance().getRenderer().setUniforms(this.modelMatrix, this.viewMatrix, this.projectionMatrix, this.scale);
             changed = false;
         }
     }
     
     public void updateViewport(int newWidth, int newHeight, int x, int y){
-        this.projectionMatrix = Matrix4f.orthographic(x, newWidth, y, newHeight, -1f, 1f);
+        this.projectionMatrix = Renderer.makeProjectionMatrix(newWidth, newHeight);
         if(NetworkManager.INSTANCE.getSide()== Side.CLIENT){
-            Client.getInstance().getRenderer().setUniformsUI(new Matrix4f(), new Matrix4f(), this.projectionMatrix);
+            Client.getInstance().getRenderer().setUniformsUI(this.modelMatrix, this.viewMatrix, this.projectionMatrix, this.scale);
         }
         changed = true;
     }
@@ -131,6 +136,16 @@ public class CameraComponent extends Component{
     
     public void setCameraPos(float x, float y, float z){
         this.setCameraPos(new Vector3f(x, y ,z));
+    }
+    
+    public void setScale(float scale){
+        if(scale<=0)return;
+        this.scale = scale;
+        this.changed = true;
+    }
+    
+    public void addScale(float scale){
+        this.setScale(this.scale + scale);
     }
     
     @Override

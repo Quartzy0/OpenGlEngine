@@ -44,6 +44,7 @@ public class ShaderProgram{
             "uniform mat4 model;\n" +
             "uniform mat4 view;\n" +
             "uniform mat4 projection;\n" +
+            "uniform float scaleFactor;\n" +
             "#ifdef LIGHTING_ENABLED\n" +
             "uniform vec3 lightPosition[MAX_LIGHTS];\n" +
             "#endif\n" +
@@ -53,7 +54,7 @@ public class ShaderProgram{
             "    vertexColor = color;\n" +
             "    textureCoord = texcoord;\n" +
             "    v_textureIndex = textureIndex;\n" +
-            "    gl_Position = projection * view * worldPosition;\n" +
+            "    gl_Position = projection * view * vec4(worldPosition.x*scaleFactor, worldPosition.y*scaleFactor, worldPosition.z, worldPosition.w);\n" +
             "\n" +
             "    #ifdef LIGHTING_ENABLED\n" +
             "    surfaceNormal = normalize((model * vec4(normal, 1.0f)).xyz);\n" +

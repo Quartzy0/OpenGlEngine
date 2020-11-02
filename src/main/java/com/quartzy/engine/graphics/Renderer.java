@@ -122,7 +122,7 @@ public class Renderer{
         
         Matrix4f model = new Matrix4f();
         Matrix4f view = new Matrix4f();
-        Matrix4f projection = Matrix4f.orthographic(0f, window.getWidth(), 0f, window.getHeight(), -1f, 1f);
+        Matrix4f projection = makeProjectionMatrix(window.getWidth(), window.getHeight());
     
         uiProgram.bind();
         uiProgram.setUniform("model", model);
@@ -160,10 +160,10 @@ public class Renderer{
             mainCamera.updateViewport(newWidth, newHeight, 0, 0);
         }
         else{
-            Matrix4f projectionMatrix = Matrix4f.orthographic(0, newWidth, 0, newHeight, -1f, 1f);
+            Matrix4f projectionMatrix = makeProjectionMatrix(newWidth, newHeight);
             if(NetworkManager.INSTANCE.getSide()== Side.CLIENT){
-                Client.getInstance().getRenderer().setUniformsUI(new Matrix4f(), new Matrix4f(), projectionMatrix);
-                Client.getInstance().getRenderer().setUniforms(new Matrix4f(), new Matrix4f(), projectionMatrix);
+                Client.getInstance().getRenderer().setUniformsUI(new Matrix4f(), new Matrix4f(), projectionMatrix, 1);
+                Client.getInstance().getRenderer().setUniforms(new Matrix4f(), new Matrix4f(), projectionMatrix, 1);
             }
         }
         
@@ -174,18 +174,20 @@ public class Renderer{
         this.updateViewport(this.window.getWidth(), this.window.getHeight());
     }
     
-    public void setUniforms(Matrix4f model, Matrix4f view, Matrix4f projection){
+    public void setUniforms(Matrix4f model, Matrix4f view, Matrix4f projection, float scaleFactor){
         program.bind();
         program.setUniform("model", model);
         program.setUniform("view", view);
         program.setUniform("projection", projection);
+        program.setUniform("scaleFactor", scaleFactor);
     }
     
-    public void setUniformsUI(Matrix4f model, Matrix4f view, Matrix4f projection){
+    public void setUniformsUI(Matrix4f model, Matrix4f view, Matrix4f projection, float scaleFactor){
         uiProgram.bind();
         uiProgram.setUniform("model", model);
         uiProgram.setUniform("view", view);
         uiProgram.setUniform("projection", projection);
+        uiProgram.setUniform("scaleFactor", scaleFactor);
     }
     
     /**
@@ -401,5 +403,9 @@ public class Renderer{
         program.dispose();
         uiProgram.dispose();
         font.dispose();
+    }
+    
+    public static Matrix4f makeProjectionMatrix(float width, float height){
+        return Matrix4f.orthographic(0f, width, 0f, height, -1f, 1f);
     }
 }

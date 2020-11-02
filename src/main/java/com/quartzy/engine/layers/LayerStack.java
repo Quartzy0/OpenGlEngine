@@ -116,11 +116,11 @@ public class LayerStack{
         layer.onAttach();
     }
     
-    private static final class DefaultEntry<K, V> implements Map.Entry<K, V> {
+    public static final class DefaultEntry<K, V> implements Map.Entry<K, V> {
         private final K key;
         private final V value;
         
-        DefaultEntry(K key, V value) {
+        public DefaultEntry(K key, V value) {
             this.key = key;
             this.value = value;
         }

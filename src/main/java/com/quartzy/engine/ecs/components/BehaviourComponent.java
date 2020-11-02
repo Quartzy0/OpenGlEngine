@@ -54,6 +54,14 @@ public class BehaviourComponent extends Component{
         behaviour.start();
     }
     
+    public void setBehaviour(Class<? extends Behaviour> behaviourClazz){
+        try{
+            this.behaviour = behaviourClazz.newInstance();
+        } catch(InstantiationException | IllegalAccessException e){
+            log.warning("Can't create new instance of behaviour script %s", e, behaviourClazz.getName());
+        }
+    }
+    
     @Override
     public List<Class<? extends Component>> requiredComponents(){
         return Collections.emptyList();

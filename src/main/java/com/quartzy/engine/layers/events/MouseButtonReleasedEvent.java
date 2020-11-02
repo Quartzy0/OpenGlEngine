@@ -2,6 +2,7 @@ package com.quartzy.engine.layers.events;
 
 import com.quartzy.engine.layers.Event;
 import com.quartzy.engine.input.Mods;
+import com.quartzy.engine.math.Vector2f;
 import lombok.Getter;
 
 public class MouseButtonReleasedEvent extends Event{
@@ -11,10 +12,14 @@ public class MouseButtonReleasedEvent extends Event{
     @Getter
     private Mods mods;
     
-    public MouseButtonReleasedEvent(int button, Mods mods, long windowId){
+    @Getter
+    private Vector2f mousePos;
+    
+    public MouseButtonReleasedEvent(int button, Mods mods, long windowId, Vector2f mousePos){
         super(EventType.MOUSE, windowId);
         this.button = button;
         this.mods = mods;
+        this.mousePos = mousePos;
     }
     
     @Override

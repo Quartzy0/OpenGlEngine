@@ -3,12 +3,15 @@ package com.quartzy.engine.graphics;
 import com.quartzy.engine.Client;
 import com.quartzy.engine.input.Mods;
 import com.quartzy.engine.layers.events.*;
+import com.quartzy.engine.math.Vector2f;
 import lombok.CustomLog;
 import lombok.Getter;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
@@ -29,6 +32,11 @@ public class Window{
     private float aspectRatio;
     
     private boolean inited;
+    
+    private List<MouseDragInfo> pressTimes = new ArrayList<>();
+    
+    @Getter
+    private float mouseX = 0, mouseY = 0;
     
     /**
      * @param title Title of the window
@@ -133,9 +141,17 @@ public class Window{
             public void invoke(long window, int button, int action, int mods){
                 Mods mods1 = new Mods((mods & GLFW_MOD_CONTROL)==GLFW_MOD_CONTROL, (mods & GLFW_MOD_ALT)==GLFW_MOD_ALT, (mods & GLFW_MOD_SHIFT)==GLFW_MOD_SHIFT, (mods & GLFW_MOD_NUM_LOCK)==GLFW_MOD_NUM_LOCK, (mods & GLFW_MOD_SUPER)==GLFW_MOD_SUPER, (mods & GLFW_MOD_CAPS_LOCK)==GLFW_MOD_CAPS_LOCK, mods);
                 if(action==GLFW_PRESS){
-                    Client.getInstance().getLayerStack().triggerEvent(new MouseButtonPressedEvent(button, mods1, id));
+                    Client.getInstance().getLayerStack().triggerEvent(new MouseButtonPressedEvent(button, mods1, id, new Vector2f(mouseX, mouseY)));
+                    MouseDragInfo e = new MouseDragInfo(button, System.currentTimeMillis());
+                    pressTimes.add(e);
                 }else if(action==GLFW_RELEASE){
-                    Client.getInstance().getLayerStack().triggerEvent(new MouseButtonReleasedEvent(button, mods1, id));
+                    Client.getInstance().getLayerStack().triggerEvent(new MouseButtonReleasedEvent(button, mods1, id, new Vector2f(mouseX, mouseY)));
+                    for(int i = 0; i < pressTimes.size(); i++){
+                        if(pressTimes.get(i).button==button){
+                            pressTimes.remove(i);
+                            break;
+                        }
+                    }
                 }
             }
         });
@@ -143,6 +159,17 @@ public class Window{
             @Override
             public void invoke(long window, double xpos, double ypos){
                 Client.getInstance().getLayerStack().triggerEvent(new CursorMoveEvent(xpos, ypos, id));
+                mouseX = (float) xpos;
+                mouseY = (float) ypos;
+                for(int i = 0; i < pressTimes.size(); i++){
+                    MouseDragInfo mouseDragInfo = pressTimes.get(i);
+                    if((System.currentTimeMillis()- mouseDragInfo.start)>=MouseDragEvent.dragDebounce*1000){
+                        if(mouseDragInfo.startPos==null)mouseDragInfo.startPos = new Vector2f((float) xpos, (float) ypos);
+                        Client.getInstance().getLayerStack().triggerEvent(new MouseDragEvent(mouseDragInfo.button, mouseDragInfo.startPos, window));
+                    }else {
+                        mouseDragInfo.startPos = new Vector2f((float) xpos, (float) ypos);
+                    }
+                }
             }
         });
     
@@ -201,5 +228,17 @@ public class Window{
         this.height = height;
         this.width = (int) (this.height*this.aspectRatio);
         glfwSetWindowSize(this.id, this.width, this.height);
+    }
+    
+    private class MouseDragInfo{
+        public int button;
+        public long start;
+        public Vector2f startPos;
+    
+        public MouseDragInfo(int button, long start){
+            this.button = button;
+            this.start = start;
+            this.startPos = startPos;
+        }
     }
 }
