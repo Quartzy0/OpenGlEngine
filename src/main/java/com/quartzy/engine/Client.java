@@ -76,6 +76,10 @@ public class Client{
         this.window = new Window(builder.getWindowTitle(), builder.getWindowWidth(), builder.getWindowHeight());
         this.window.init();
         this.passOnFramebuffer = builder.getFramebuffer();
+        this.fragmentShader = builder.getFragmentShader();
+        this.vertexShader = builder.getVertexShader();
+        this.host = builder.getHost();
+        this.port = builder.getPort();
     }
     
     /**
@@ -222,6 +226,7 @@ public class Client{
         private String host;
         private int port;
         private Framebuffer framebuffer;
+        private boolean resizable;
     
         public int getWindowWidth(){
             return windowWidth==0 ? 1280 : windowWidth;
@@ -294,14 +299,18 @@ public class Client{
             this.port = port;
             return this;
         }
-        
+    
+        public boolean isResizable(){
+            return resizable;
+        }
+    
+        public ClientBuilder setResizable(boolean resizable){
+            this.resizable = resizable;
+            return this;
+        }
+    
         public Client build(ApplicationClient application){
-            Client client = new Client(application, this);
-            client.setVertexShader(vertexShader);
-            client.setFragmentShader(fragmentShader);
-            client.setHost(host);
-            client.setPort(port);
-            return client;
+            return new Client(application, this);
         }
     }
 }

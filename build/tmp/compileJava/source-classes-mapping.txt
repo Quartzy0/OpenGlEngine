@@ -48,6 +48,7 @@ com/quartzy/engine/graphics/Window.java
  com.quartzy.engine.graphics.Window$7
  com.quartzy.engine.graphics.Window$8
  com.quartzy.engine.graphics.Window$9
+ com.quartzy.engine.graphics.Window$MouseDragInfo
 com/quartzy/engine/network/server/ServerUDP.java
  com.quartzy.engine.network.server.ServerUDP
 com/quartzy/engine/text/Font.java
@@ -159,6 +160,8 @@ com/quartzy/engine/layers/events/WindowResizeEvent.java
  com.quartzy.engine.layers.events.WindowResizeEvent
 com/quartzy/engine/layers/events/KeyTypedEvent.java
  com.quartzy.engine.layers.events.KeyTypedEvent
+com/quartzy/engine/layers/events/MouseDragEvent.java
+ com.quartzy.engine.layers.events.MouseDragEvent
 com/quartzy/engine/layers/events/MouseScrollEvent.java
  com.quartzy.engine.layers.events.MouseScrollEvent
 com/quartzy/engine/ecs/ECSManager.java

@@ -5,6 +5,8 @@ import com.quartzy.engine.ecs.Component;
 import com.quartzy.engine.math.Vector2f;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Geometry;
 import org.dyn4j.geometry.Mass;
@@ -16,13 +18,22 @@ import java.util.List;
 
 public class RigidBodyComponent extends Component{
     @Getter
+    @Setter
     private Body body;
     
+    /**
+     * Can be null
+     */
+    @Getter
     private double width,height;
     
     public RigidBodyComponent(double width, double height){
         this.width = width;
         this.height = height;
+    }
+    
+    public RigidBodyComponent(Body customBody){
+        this.body = customBody;
     }
     
     public RigidBodyComponent(){
@@ -31,11 +42,13 @@ public class RigidBodyComponent extends Component{
     @Override
     public void init(){
         TransformComponent component = world.getEcsManager().getComponent(entityId, TransformComponent.class);
-        this.body = new Body();
-        body.setTransform(component.getTransform());
-        body.addFixture(Geometry.createRectangle(width, height));
-        body.setMass(new Mass(new Vector2(0, 0), 30, 30));
-        world.getPhysicsWorld().addBody(body);
+        if(this.body==null){
+            this.body = new Body();
+            body.setTransform(component.getTransform());
+            body.addFixture(Geometry.createRectangle(width, height));
+            body.setMass(new Mass(new Vector2(0, 0), 30, 30));
+            world.getPhysicsWorld().addBody(body);
+        }
     }
     
     public void updateTransform(){

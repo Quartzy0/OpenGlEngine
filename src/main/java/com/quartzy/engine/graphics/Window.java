@@ -165,7 +165,7 @@ public class Window{
                     MouseDragInfo mouseDragInfo = pressTimes.get(i);
                     if((System.currentTimeMillis()- mouseDragInfo.start)>=MouseDragEvent.dragDebounce*1000){
                         if(mouseDragInfo.startPos==null)mouseDragInfo.startPos = new Vector2f((float) xpos, (float) ypos);
-                        Client.getInstance().getLayerStack().triggerEvent(new MouseDragEvent(mouseDragInfo.button, mouseDragInfo.startPos, window));
+                        Client.getInstance().getLayerStack().triggerEvent(new MouseDragEvent(mouseDragInfo.button, mouseDragInfo.startPos, window, new Vector2f(mouseX, mouseY)));
                     }else {
                         mouseDragInfo.startPos = new Vector2f((float) xpos, (float) ypos);
                     }
@@ -228,6 +228,11 @@ public class Window{
         this.height = height;
         this.width = (int) (this.height*this.aspectRatio);
         glfwSetWindowSize(this.id, this.width, this.height);
+    }
+    
+    public WindowProperties getProperties(){
+        if(!inited)return null;
+        return WindowProperties.getProperties(this);
     }
     
     private class MouseDragInfo{

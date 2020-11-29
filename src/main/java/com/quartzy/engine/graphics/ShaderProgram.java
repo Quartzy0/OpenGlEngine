@@ -112,6 +112,8 @@ public class ShaderProgram{
             "    fragColor = (textureColor * vertexColor) * vec4(diffuse, 1.0);\n" +
             "}\n";
     
+    public static ShaderProgram defaultShaderProgram;
+    
     private int vertexShader;
     private int fragmentShader;
     private int programId;

@@ -13,12 +13,13 @@ public class MouseDragEvent extends Event{
     @Getter
     private int button;
     @Getter
-    private Vector2f clickOrigin;
+    private Vector2f clickOrigin, mousePos;
     
-    public MouseDragEvent(int button, Vector2f clickOrigin, long window){
+    public MouseDragEvent(int button, Vector2f clickOrigin, long window, Vector2f mousePos){
         super(EventType.MOUSE, window);
         this.button = button;
         this.clickOrigin = clickOrigin;
+        this.mousePos = mousePos;
     }
     
     @Override
@@ -41,6 +42,7 @@ public class MouseDragEvent extends Event{
         return "MouseDragEvent{" +
                 "button=" + button +
                 ", clickOrigin=" + clickOrigin +
-                '}';
+                ", mousePos=" + mousePos +
+                "} " + super.toString();
     }
 }
