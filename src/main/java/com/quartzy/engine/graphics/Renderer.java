@@ -6,6 +6,7 @@ import com.quartzy.engine.math.Matrix4f;
 import com.quartzy.engine.math.Vector2f;
 import com.quartzy.engine.network.NetworkManager;
 import com.quartzy.engine.network.Side;
+import com.quartzy.engine.utils.Logger;
 import com.quartzy.engine.utils.Resource;
 import lombok.CustomLog;
 import lombok.Getter;
@@ -33,10 +34,6 @@ public class Renderer{
     private VertexBuffer vbo;
     @Getter
     private ShaderProgram program;
-    @Getter
-    private ShaderProgram uiProgram;
-    
-    private boolean drawingUi;
     
     private FloatBuffer vertices;
     private int numVertices;
@@ -47,7 +44,7 @@ public class Renderer{
     private Window window;
     
     @Getter
-    private int maxTextureSlots, maxLightsPerDrawCall;
+    private int maxLightsPerDrawCall;
     
     @Getter
     @Setter
@@ -64,24 +61,21 @@ public class Renderer{
     /**
      * Initializes the renderer. It loads the default shaders from the default resource directory
      */
-    public void init(Resource vertex, Resource fragment, Window window){
-        glEnable(GL_DEBUG_OUTPUT);
-        GL45.glDebugMessageCallback(new GLDebugMessageCallback(){
-            @Override
-            public void invoke(int source, int type, int id, int severity, int length, long message, long userParam){
-                String messageS = getMessage(length, message);
-                log.openGLLog(source, type, id, severity, messageS, userParam);
-            }
-        }, 0L);
+    public void init(Window window, ShaderProgram program){
+        if(Logger.isEnabled()){
+            glEnable(GL_DEBUG_OUTPUT);
+            GL45.glDebugMessageCallback(new GLDebugMessageCallback(){
+                @Override
+                public void invoke(int source, int type, int id, int severity, int length, long message, long userParam){
+                    String messageS = getMessage(length, message);
+                    log.openGLLog(source, type, id, severity, messageS, userParam);
+                }
+            }, 0L);
+        }
         
         maxLightsPerDrawCall = 10;
         log.info("Initializing renderer");
-        try(MemoryStack stack = MemoryStack.stackPush()){
-            IntBuffer buffer = stack.mallocInt(1);
-            GL20.glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, buffer);
-            maxTextureSlots = Math.min(buffer.get(), 32);
-        }
-        log.info("Detected %d usable texture slots for fragment shader", maxTextureSlots);
+        
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
@@ -95,18 +89,8 @@ public class Renderer{
     
         long size = vertices.capacity() * Float.BYTES;
         vbo.uploadData(GL_ARRAY_BUFFER, size, GL_DYNAMIC_DRAW);
-    
-        uiProgram = new ShaderProgram(vertex, fragment);
-        uiProgram.addDefinition("MAX_TEXTURES", maxTextureSlots);
-    
-        uiProgram.compileShaders();
         
-        program = new ShaderProgram(vertex, fragment);
-        program.addDefinition("MAX_TEXTURES", maxTextureSlots);
-        program.addDefinition("MAX_LIGHTS", maxLightsPerDrawCall);
-        program.addDefinition("LIGHTING_ENABLED", 1);
-        
-        program.compileShaders();
+        this.program = program==null ? ShaderProgram.defaultShaderProgram : program;
     
         this.window = window;
         
@@ -123,22 +107,17 @@ public class Renderer{
         Matrix4f model = new Matrix4f();
         Matrix4f view = new Matrix4f();
         Matrix4f projection = makeProjectionMatrix(window.getWidth(), window.getHeight());
-    
-        uiProgram.bind();
-        uiProgram.setUniform("model", model);
-        uiProgram.setUniform("view", view);
-        uiProgram.setUniform("projection", projection);
-        int[] texturesArray = new int[maxTextureSlots];
+        
+        int[] texturesArray = new int[window.getProperties().getMaxTextureSlots()];
         for(int i = 0; i < texturesArray.length; i++){
             texturesArray[i] = i;
         }
-        uiProgram.setUniform("textures", texturesArray);
         
-        program.bind();
-        program.setUniform("model", model);
-        program.setUniform("view", view);
-        program.setUniform("projection", projection);
-        program.setUniform("textures", texturesArray);
+        this.program.bind();
+        this.program.setUniform("model", model);
+        this.program.setUniform("view", view);
+        this.program.setUniform("projection", projection);
+        this.program.setUniform("textures", texturesArray);
     
         font = new Font(new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.PLAIN, 16));
     }
@@ -162,7 +141,6 @@ public class Renderer{
         else{
             Matrix4f projectionMatrix = makeProjectionMatrix(newWidth, newHeight);
             if(NetworkManager.INSTANCE.getSide()== Side.CLIENT){
-                Client.getInstance().getRenderer().setUniformsUI(new Matrix4f(), new Matrix4f(), projectionMatrix, 1);
                 Client.getInstance().getRenderer().setUniforms(new Matrix4f(), new Matrix4f(), projectionMatrix, 1);
             }
         }
@@ -180,14 +158,6 @@ public class Renderer{
         program.setUniform("view", view);
         program.setUniform("projection", projection);
         program.setUniform("scaleFactor", scaleFactor);
-    }
-    
-    public void setUniformsUI(Matrix4f model, Matrix4f view, Matrix4f projection, float scaleFactor){
-        uiProgram.bind();
-        uiProgram.setUniform("model", model);
-        uiProgram.setUniform("view", view);
-        uiProgram.setUniform("projection", projection);
-        uiProgram.setUniform("scaleFactor", scaleFactor);
     }
     
     /**
@@ -236,12 +206,8 @@ public class Renderer{
                 vbo.bind(GL_ARRAY_BUFFER);
                 specifyVertexAttributes();
             }
-            
-            if(drawingUi){
-                uiProgram.bind();
-            }else {
-                program.bind();
-            }
+    
+            program.bind();
             if(this.framebuffer!=null)
                 this.framebuffer.bind();
         
@@ -269,9 +235,7 @@ public class Renderer{
      * @param c Color of the text
      */
     public void drawString(String s, float x, float y, Color c){
-        drawingUi = true;
         font.drawText(this, s, x, y, c);
-        drawingUi = false;
     }
     
     /**
@@ -362,18 +326,15 @@ public class Renderer{
     }
     
     private void specifyVertexAttributes(){
-        uiProgram.bind();
-        uiProgram.setVertexAttribute("position", 2, 9 * Float.BYTES, 0);
-        uiProgram.setVertexAttribute("color", 4, 9 * Float.BYTES, 2 * Float.BYTES);
-        uiProgram.setVertexAttribute("texcoord", 2, 9 * Float.BYTES, 6 * Float.BYTES);
-        uiProgram.setVertexAttribute("textureIndex", 1, 9 * Float.BYTES, 8 * Float.BYTES);
-        
         program.bind();
+        program.setVertexAttributes();
+        /*
         program.setVertexAttribute("position", 2, 12 * Float.BYTES, 0);
         program.setVertexAttribute("color", 4, 12 * Float.BYTES, 2 * Float.BYTES);
         program.setVertexAttribute("texcoord", 2, 12 * Float.BYTES, 6 * Float.BYTES);
         program.setVertexAttribute("textureIndex", 1, 12 * Float.BYTES, 8 * Float.BYTES);
         program.setVertexAttribute("normal", 3, 12 * Float.BYTES, 9 * Float.BYTES);
+        */
     }
     
     /**
@@ -401,11 +362,20 @@ public class Renderer{
         }
         vbo.delete();
         program.dispose();
-        uiProgram.dispose();
         font.dispose();
+    }
+    
+    public ShaderProgram setProgram(ShaderProgram program){
+        ShaderProgram shaderProgram = this.program;
+        this.program = program;
+        return shaderProgram;
     }
     
     public static Matrix4f makeProjectionMatrix(float width, float height){
         return Matrix4f.orthographic(0f, width, 0f, height, -1f, 1f);
+    }
+    
+    public int getMaxTextureSlots(){
+        return this.window.getProperties().getMaxTextureSlots();
     }
 }

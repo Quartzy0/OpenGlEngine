@@ -3,7 +3,9 @@ package com.quartzy.engine.graphics;
 import com.quartzy.engine.Client;
 import com.quartzy.engine.input.Mods;
 import com.quartzy.engine.layers.events.*;
+import com.quartzy.engine.math.Matrix4f;
 import com.quartzy.engine.math.Vector2f;
+import com.quartzy.engine.utils.Resource;
 import lombok.CustomLog;
 import lombok.Getter;
 import org.lwjgl.glfw.*;
@@ -186,8 +188,21 @@ public class Window{
                 Client.getInstance().getLayerStack().triggerEvent(new WindowResizeEvent(width1, height1, width, height, id));
             }
         });
-        
+    
         this.inited = true;
+        
+        ShaderProgram.defaultShaderProgram = new ShaderProgram((Resource) null, null);
+        WindowProperties properties = getProperties();
+        ShaderProgram.defaultShaderProgram.addDefinition("MAX_TEXTURES", properties.getMaxTextureSlots());
+        ShaderProgram.defaultShaderProgram.addDefinition("MAX_LIGHTS", 10);
+        ShaderProgram.defaultShaderProgram.addDefinition("LIGHTING_ENABLED", 1);
+        ShaderProgram.defaultShaderProgram.putVertexAttribute(new ShaderProgram.VertexAttribute("position", 2));
+        ShaderProgram.defaultShaderProgram.putVertexAttribute(new ShaderProgram.VertexAttribute("color", 4));
+        ShaderProgram.defaultShaderProgram.putVertexAttribute(new ShaderProgram.VertexAttribute("texcoord", 2));
+        ShaderProgram.defaultShaderProgram.putVertexAttribute(new ShaderProgram.VertexAttribute("textureIndex", 1));
+        ShaderProgram.defaultShaderProgram.putVertexAttribute(new ShaderProgram.VertexAttribute("normal", 3));
+    
+        ShaderProgram.defaultShaderProgram.compileShaders();
     }
     
     /**

@@ -3,14 +3,15 @@ package com.quartzy.engine.graphics;
 import com.quartzy.engine.math.*;
 import com.quartzy.engine.utils.Resource;
 import lombok.CustomLog;
+import lombok.Getter;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.*;
@@ -112,17 +113,23 @@ public class ShaderProgram{
             "    fragColor = (textureColor * vertexColor) * vec4(diffuse, 1.0);\n" +
             "}\n";
     
-    public static ShaderProgram defaultShaderProgram;
+    static ShaderProgram defaultShaderProgram;
+    
+    public static ShaderProgram getDefaultShaderProgram(){
+        return defaultShaderProgram;
+    }
     
     private int vertexShader;
     private int fragmentShader;
     private int programId;
     
-    private Resource vertexName, fragmentName;
+    private String vertexSource, fragmentSource;
     
     private HashMap<String, Integer> uniforms = new HashMap<>();
     
     private HashMap<String, Integer> definitions = new HashMap<>();
+    
+    private LinkedHashMap<String, VertexAttribute> vertexAttributes = new LinkedHashMap<>();
     
     /**
      * Compiles the shaders
@@ -130,8 +137,23 @@ public class ShaderProgram{
      * @param fragmentName Fragment shader name
      */
     public ShaderProgram(Resource vertexName, Resource fragmentName){
-        this.vertexName = vertexName;
-        this.fragmentName = fragmentName;
+        this(vertexName==null ? null : vertexName.getFile(), fragmentName==null ? null : fragmentName.getFile());
+    }
+    
+    public ShaderProgram(File vertexShader, File fragmentShader){
+        if(vertexShader != null && fragmentShader != null){
+            try{
+                this.vertexSource = new String(Files.readAllBytes(vertexShader.toPath()));
+                this.fragmentSource = new String(Files.readAllBytes(fragmentShader.toPath()));
+            } catch(IOException e){
+                log.crash("Error while loading shader files", e);
+            }
+        }
+    }
+    
+    public ShaderProgram(String vertexSource, String fragmentSource){
+        this.vertexSource = vertexSource;
+        this.fragmentSource = fragmentSource;
     }
     
     /**
@@ -161,13 +183,9 @@ public class ShaderProgram{
         log.info("Initializing shader program");
         String vertexSource = DEFAULT_VERTEX;
         String fragmentSource = DEFAULT_FRAGMENT;
-        if(this.fragmentName != null || this.vertexName != null){
-            try{
-                vertexSource = new String(Files.readAllBytes(this.vertexName.getFile().toPath()));
-                fragmentSource = new String(Files.readAllBytes(this.fragmentName.getFile().toPath()));
-            } catch(IOException e){
-                log.crash("Error while loading shader files", e);
-            }
+        if(this.fragmentSource != null && !this.fragmentSource.isEmpty() && this.vertexSource != null && !this.vertexSource.isEmpty()){
+            vertexSource = this.vertexSource;
+            fragmentSource = this.fragmentSource;
         }
         
         vertexSource = vertexSource.replace("\r\n", "\n");
@@ -230,6 +248,24 @@ public class ShaderProgram{
         int loc = glGetAttribLocation(programId, name);
         glEnableVertexAttribArray(loc);
         glVertexAttribPointer(loc, size, GL_FLOAT, false, stride, offset);
+    }
+    
+    public void putVertexAttribute(VertexAttribute vertexAttribute){
+        this.vertexAttributes.put(vertexAttribute.name, vertexAttribute);
+    }
+    
+    public void setVertexAttributes(){
+        int totalFloatSize = 0;
+        for(VertexAttribute vertexAttribute : this.vertexAttributes.values()){
+            if(!vertexAttribute.isFull())continue;
+            totalFloatSize+=vertexAttribute.size;
+        }
+        int offset = 0;
+        for(VertexAttribute vertexAttribute : this.vertexAttributes.values()){
+            if(!vertexAttribute.isFull())continue;
+            setVertexAttribute(vertexAttribute.name, vertexAttribute.size, totalFloatSize * Float.BYTES, offset * Float.BYTES);
+            offset+=vertexAttribute.size;
+        }
     }
     
     public void addDefinition(String name, int value){
@@ -367,5 +403,34 @@ public class ShaderProgram{
         int value = glGetUniformLocation(programId, name);
         uniforms.put(name, value);
         return value;
+    }
+    
+    public static class VertexAttribute{
+        @Getter
+        private String name = null;
+        @Getter
+        private int size = -1;
+    
+        public VertexAttribute(String name, int size){
+            this.name = name;
+            this.size = size;
+        }
+    
+        public VertexAttribute(){
+        }
+    
+        public VertexAttribute setName(String name){
+            this.name = name;
+            return this;
+        }
+    
+        public VertexAttribute setSize(int size){
+            this.size = size;
+            return this;
+        }
+        
+        public boolean isFull(){
+            return this.size!=-1 && this.name!=null;
+        }
     }
 }

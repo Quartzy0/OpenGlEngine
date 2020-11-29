@@ -3,12 +3,14 @@ package com.quartzy.engine.graphics;
 import lombok.Getter;
 import lombok.Setter;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL20.GL_MAX_TEXTURE_IMAGE_UNITS;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class WindowProperties{
@@ -61,7 +63,10 @@ public class WindowProperties{
     @Setter
     private float windowOpacity;
     
-    public WindowProperties(int width, int height, float contentScaleX, float contentScaleY, int maxWindowWidth, int maxWindowHeight, int minWindowWidth, int minWindowHeight, int aspectRatioWidth, int aspectRatioHeight, int windowX, int windowY, String title, WindowIcon[] icons, long monitor, boolean minimized, boolean maximized, boolean hidden, boolean inputFocus, float windowOpacity, boolean fullscreen){
+    @Getter
+    private int maxTextureSlots;
+    
+    public WindowProperties(int width, int height, float contentScaleX, float contentScaleY, int maxWindowWidth, int maxWindowHeight, int minWindowWidth, int minWindowHeight, int aspectRatioWidth, int aspectRatioHeight, int windowX, int windowY, String title, WindowIcon[] icons, long monitor, boolean minimized, boolean maximized, boolean hidden, boolean inputFocus, float windowOpacity, boolean fullscreen, int maxTextureSlots){
         this.width = width;
         this.height = height;
         this.contentScaleX = contentScaleX;
@@ -83,6 +88,7 @@ public class WindowProperties{
         this.inputFocus = inputFocus;
         this.windowOpacity = windowOpacity;
         this.fullscreen = fullscreen;
+        this.maxTextureSlots = maxTextureSlots;
     }
     
     public static WindowProperties getProperties(long windowId, String title, int maxWindowWidth, int maxWindowHeight, int minWindowWidth, int minWindowHeight, int aspectRatioWidth, int aspectRatioHeight, WindowIcon[] icons){
@@ -121,9 +127,16 @@ public class WindowProperties{
         boolean inputFocus = glfwGetWindowAttrib(windowId, GLFW_FOCUSED) == GLFW_TRUE;
         
         float opacity = glfwGetWindowOpacity(windowId);
+    
+        int maxTextureSlots = 8;
+        try(MemoryStack stack = MemoryStack.stackPush()){
+            IntBuffer buffer = stack.mallocInt(1);
+            GL20.glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, buffer);
+            maxTextureSlots = Math.min(buffer.get(), 32);
+        }
         
         return new WindowProperties(width, height, contentScaleX, contentScaleY, maxWindowWidth, maxWindowHeight, minWindowWidth, minWindowHeight,
-                aspectRatioWidth, aspectRatioHeight, posX, posY, title, icons, monitor, iconofied, maximized, visible, inputFocus, opacity, monitor!=NULL);
+                aspectRatioWidth, aspectRatioHeight, posX, posY, title, icons, monitor, iconofied, maximized, visible, inputFocus, opacity, monitor!=NULL, maxTextureSlots);
     }
     
     public static WindowProperties getProperties(Window window){

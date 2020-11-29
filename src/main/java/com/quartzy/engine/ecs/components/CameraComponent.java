@@ -117,7 +117,7 @@ public class CameraComponent extends Component{
     public void updateViewport(int newWidth, int newHeight, int x, int y){
         this.projectionMatrix = Renderer.makeProjectionMatrix(newWidth, newHeight);
         if(NetworkManager.INSTANCE.getSide()== Side.CLIENT){
-            Client.getInstance().getRenderer().setUniformsUI(this.modelMatrix, this.viewMatrix, this.projectionMatrix, this.scale);
+//            Client.getInstance().getRenderer().setUniformsUI(this.modelMatrix, this.viewMatrix, this.projectionMatrix, this.scale);
         }
         changed = true;
     }

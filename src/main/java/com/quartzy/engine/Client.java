@@ -2,13 +2,10 @@ package com.quartzy.engine;
 
 import com.quartzy.engine.audio.SoundManager;
 import com.quartzy.engine.ecs.components.CustomRenderComponent;
-import com.quartzy.engine.graphics.Framebuffer;
+import com.quartzy.engine.graphics.*;
 import com.quartzy.engine.layers.LayerStack;
 import com.quartzy.engine.world.WorldLayer;
 import com.quartzy.engine.input.Input;
-import com.quartzy.engine.graphics.Renderer;
-import com.quartzy.engine.graphics.TextureManager;
-import com.quartzy.engine.graphics.Window;
 import com.quartzy.engine.network.NetworkManager;
 import com.quartzy.engine.network.Side;
 import com.quartzy.engine.network.client.NetworkManagerClient;
@@ -56,7 +53,7 @@ public class Client{
     
     @Getter
     @Setter
-    private String vertexShader, fragmentShader;
+    private ShaderProgram shaderProgram;
     
     @Getter
     @Setter
@@ -76,8 +73,7 @@ public class Client{
         this.window = new Window(builder.getWindowTitle(), builder.getWindowWidth(), builder.getWindowHeight());
         this.window.init();
         this.passOnFramebuffer = builder.getFramebuffer();
-        this.fragmentShader = builder.getFragmentShader();
-        this.vertexShader = builder.getVertexShader();
+        this.shaderProgram = builder.getShaderProgram();
         this.host = builder.getHost();
         this.port = builder.getPort();
     }
@@ -99,14 +95,9 @@ public class Client{
         textureManager = new TextureManager();
         resourceManager = new ResourceManager(true, true, SoundManager.getInstance(), textureManager);
         renderer = new Renderer();
-        Resource resource = null;
-        Resource resource1 = null;
-        if(vertexShader!=null && fragmentShader!=null){
-            resource = resourceManager.addResource(vertexShader);
-            resource1 = resourceManager.addResource(fragmentShader);
-        }
         renderer.setFramebuffer(this.passOnFramebuffer);
-        renderer.init(resource, resource1, window);
+        if(this.shaderProgram!=null)this.shaderProgram.compileShaders();
+        renderer.init(window, this.shaderProgram);
         applicationClient.init(this);
     }
     
@@ -222,7 +213,7 @@ public class Client{
     public static class ClientBuilder{
         private int windowWidth = 1280, windowHeight = 720;
         private String windowTitle;
-        private String vertexShader, fragmentShader;
+        private ShaderProgram shaderProgram;
         private String host;
         private int port;
         private Framebuffer framebuffer;
@@ -264,21 +255,12 @@ public class Client{
             return this;
         }
     
-        public String getVertexShader(){
-            return vertexShader;
+        public ShaderProgram getShaderProgram(){
+            return shaderProgram;
         }
     
-        public ClientBuilder setVertexShader(String vertexShader){
-            this.vertexShader = vertexShader;
-            return this;
-        }
-    
-        public String getFragmentShader(){
-            return fragmentShader;
-        }
-    
-        public ClientBuilder setFragmentShader(String fragmentShader){
-            this.fragmentShader = fragmentShader;
+        public ClientBuilder setShaderProgram(ShaderProgram shaderProgram){
+            this.shaderProgram = shaderProgram;
             return this;
         }
     
